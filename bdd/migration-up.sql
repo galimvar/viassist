@@ -19,9 +19,10 @@ CREATE TYPE "lieux" AS ENUM (
 
 CREATE TYPE "role" AS ENUM (
 	'admin',
-	'invite',
+	'invité',
 	'proche',
-	'intervenant'
+	'intervenant',
+    'bénéficiaire'
 );
 
 CREATE TABLE IF NOT EXISTS "participer" (
