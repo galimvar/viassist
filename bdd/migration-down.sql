@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS "participer";
+DROP TABLE IF EXISTS "message";
+DROP TABLE IF EXISTS "evenement";
+DROP TABLE IF EXISTS "personne";
+DROP TABLE IF EXISTS "categorie";
+ 
+DROP TYPE IF EXISTS "role";
+DROP TYPE IF EXISTS "lieux";
+DROP TYPE IF EXISTS "importance";
+DROP TYPE IF EXISTS "rdv_categorie";
