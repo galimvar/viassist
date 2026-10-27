@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:3000/api/personne/lister
+
+### GET affiche une personne (200)
+GET {{baseUrl}}
+Content-Type: application/json
+
+{
+    "id": 1,
+    "nom": "Lemaire",
+    "prenom": "Odette",
+    "date_naissance": "1941-03-14",
+    "mail": "odette.lemaire@example.com",
+    "role": "bénéficiaire"
+}
