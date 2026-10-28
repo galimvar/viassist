@@ -1,5 +1,4 @@
-@baseUrl = http://localhost:3000/api/personne/lister
-
+@baseUrl = http://localhost:3000/api/personne/1
 ### GET affiche une personne (200)
 GET {{baseUrl}}
 Content-Type: application/json

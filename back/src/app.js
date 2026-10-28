@@ -1,7 +1,7 @@
 import express from 'express';
 //import cookieParser from 'cookie-parser';
 import { db } from './db.js';
-import { personneRoute } from './routes/personne.js';
+import { personneRoute } from './routes/personneRoutes.js';
 //import { gestionErreurs } from './middlewares/erreurs.js';
 
 export const app = express();
