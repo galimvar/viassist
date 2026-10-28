@@ -3,7 +3,7 @@ import "dotenv/config";
 
 const { Pool } = pg;
 
-export const pool = new Pool({
+export const db = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
