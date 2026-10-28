@@ -27,7 +27,7 @@ Personne dont un proche a besoin d'une assistance à domicile (médicale ou non)
 | Personnel médical (infirmier·ère…) | Connaître posologie et constantes, consigner précisément les soins, transmettre ses observations | Journal de bord, fiche personne complète, protocole sanitaire… |
 
 ### User stories
-Le détail complet est dans `userstories.md`.
+Le détail complet est dans [`userstories.md`](./conception/userstories.md).
 
 26 stories réparties en 4 modules, chacune avec sa priorité MoSCoW :
 
@@ -40,26 +40,24 @@ Le détail complet est dans `userstories.md`.
 
 ## 3. Périmètre de la V1 (MoSCoW)
 
-Les identifiants entre parenthèses renvoient à `userstories.md`.
+Les identifiants entre parenthèses renvoient à [`userstories.md`](./conception/userstories.md).
 
 ### Must have (14 stories)
 - **Agenda** : visualiser le planning, créer, supprimer et modifier un rendez-vous
-- **Fiche Personne** : ajouter, consulter et modifier les constantes physiques, posologie, allergies
 - **Gestion des comptes** : connexion déconnexion rôles
 - **Journal de bord** : consulter les informations, informer des changements de manière précise
 
 ### Should have (8 stories)
 - **Agenda** : catégorie de RDV représentée par une couleur, lieu domicile/extérieur avec icône, filtres par catégorie et lieu, récurrence des RDV
-- **Fiche Personne** : évolution physique en graphique, ajout automatique au journal quand la prise de médicaments est validée
 - **Journal de bord** : filtrer les événements, niveau d'importance d'une information
 
 ### Could have (3 stories)
 - **Agenda** : alerte quand la journée est déjà chargée
-- **Fiche Personne** : protocole sanitaire
 - **Gestion des comptes** : connexion par QR code pour accéder à la fiche
-- Issus du brief, **sans user story dans `userstories.md`** : jauge de charge mentale, administratif (impôts, factures…)
+- Issus du brief, **sans user story dans [`userstories.md`](./conception/userstories.md)** : jauge de charge mentale, administratif (impôts, factures…)
 
 ### Won't have (volontairement exclu de la V1)
+- **Fiche Personne** : ajouter, consulter et modifier les constantes physiques, posologie, allergies, évolution physique en graphique, ajout automatique au journal quand la prise de médicaments est validée, protocole sanitaire
 - Interface du proche : voir son agenda, appels, photos, proches, rappels
 - Domotique (appareils connectés, API à distance)
 - Curatelle (gestion plus complète)
