@@ -69,13 +69,13 @@ Risque de surmenage, amenant à des défaillances dans la transmission d'informa
 - V1 - Planning - Liens familiaux 
 - V1 - Journal de bord 
 - V1 - Rdv (médical, paramédical, coiffeur, à domicile, à l'extérieur, etc...)
-- V1 - Fiche patient (allergies, prescriptions médicales, etc...)
+- V2 - Fiche patient (allergies, prescriptions médicales, etc...)
 - V1 - Gestion de compte, connexion, mots de passe, rôles
 
 #### Should Have
-- V1 - Notifications message et calendrier
+- V2 - Notifications message et calendrier
 - Administratif (impôts, comptes, factures, créanciers, etc...)
-- V1 - Fonctionnalité "liste" par priorité (courses, affaires manquantes, choses à penser, etc...)
+- V2 - Fonctionnalité "liste" par priorité (courses, affaires manquantes, choses à penser, etc...)
 
 #### Could Have
 - V1 - Récurrence des tâches (ajouté au planning et tâches)
