@@ -1,7 +1,7 @@
-# ADR 006 - Choix du SGBD
+# ADR 005 - Choix du SGBD
 
 Date : 2026-10-27  
-Statut : Proposé
+Statut : Accepté
 
 ## Contexte
 Vi'Assist centralise les informations liées au suivi d'un proche en perte d'autonomie : agenda de rendez-vous (catégorie, lieu, récurrence), journal de bord, fiche personne (constantes physiques, posologie, allergies) et comptes utilisateurs avec rôles.

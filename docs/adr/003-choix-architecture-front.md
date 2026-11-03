@@ -1,7 +1,7 @@
-# ADR 004 - Architecture front
+# ADR 003 - Architecture front
 
 Date : 2026-10-27  
-Statut : Proposé
+Statut : Accepté
 
 ## Contexte
 Le front de Vi'Assist sera utilisé par des profils variés (proches, aidants familiaux, aides à domicile, personnel médical) sur plusieurs écrans qui partagent beaucoup d'éléments : agenda avec rendez-vous catégorisés par couleur et lieu par icône, journal de bord, fiche personne, filtres, formulaires, alertes.
