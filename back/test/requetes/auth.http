@@ -1,0 +1,28 @@
+@baseUrl = http://localhost:3000/auth
+### GET connexion ok, renvoie 200
+GET {{baseUrl}}/connexion
+Content-Type: application/json
+
+{
+    "mail":"remy.lagarre@gmail.com",
+    "mot_de_passe":"Prout!1234"
+}
+
+### GET connexion ok, renvoie 204
+GET {{baseUrl}}/deconnexion
+
+
+### POST renvoie 201
+POST {{baseUrl}}/inscription
+Content-Type: application/json
+
+{
+    "nom":"Lagarre",
+    "prenom":"Rémy",
+    "mail":"remy.lagarre@gmeail.com",
+    "date_naissance":"1989/04/10",
+    "role":"admin",
+    "mot_de_passe":"Prout!1234"
+}
+### GET renvoie 200
+GET {{baseUrl}}/moi

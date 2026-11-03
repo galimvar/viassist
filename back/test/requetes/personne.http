@@ -1,6 +1,6 @@
-@baseUrl = http://localhost:3000/api/personne/1
+@baseUrl = http://localhost:3000/api/personne
 ### GET affiche une personne (200)
-GET {{baseUrl}}
+GET {{baseUrl}}/1
 Content-Type: application/json
 
 {
@@ -11,3 +11,4 @@ Content-Type: application/json
     "mail": "odette.lemaire@example.com",
     "role": "bénéficiaire"
 }
+

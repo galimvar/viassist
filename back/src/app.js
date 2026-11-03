@@ -1,18 +1,14 @@
 import express from 'express';
-//import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { db } from './db.js';
-import { personneRoute } from './routes/personneRoutes.js';
-//import { gestionErreurs } from './middlewares/erreurs.js';
+import { personneRoute as personneRouter } from './routes/personneRoutes.js';
+import { gestionErreurs } from './middlewares/erreurs.js';
+import { authRouter } from './routes/authRoutes.js';
 
 export const app = express();
 
 app.use(express.json());        // lit le corps JSON → req.body
-//app.use(cookieParser());        // lit les cookies → req.cookies
-
-app.use((err, req, res, next) => {
-    console.log(err);
-    res.status(500).json({"erreur":"Erreur serveur"});
-})
+app.use(cookieParser());        // lit les cookies → req.cookies
 
 
 // Vérifie que l'API répond et que la base est joignable
@@ -21,6 +17,7 @@ app.get('/', async (req, res) => {
   res.json({ api: 'ok', base: 'ok' });
 });
 
-app.use('/api/personne', personneRoute);
+app.use('/api/personne', personneRouter);
+app.use('/auth', authRouter);
 
-//app.use(gestionErreurs);        // toujours en dernier
+app.use(gestionErreurs);        // toujours en dernier
