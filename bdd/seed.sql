@@ -1,80 +1,303 @@
--- seed.sql : jeu de données de démo (un seul bénéficiaire)
--- À exécuter APRÈS migration-up.sql, sur une base vide.
+-- seed.sql : jeu de données cohérent pour Vi'Assist (à lancer APRÈS 001, 002 et 003)
+--
+-- Histoire : Marguerite Delacroix (bénéficiaire, 85 ans) vit chez elle. Sa fille Sophie
+-- (admin, aidante principale), son fils Laurent, sa petite-fille Camille et sa voisine
+-- Odile l'entourent. Des intervenants se relaient : médecin traitant, neurologue,
+-- infirmier, kinésithérapeute, orthophoniste, aide-soignante et auxiliaire de vie.
+--
+-- Les dates sont relatives à CURRENT_DATE (aujourd'hui et jusqu'à 55 jours avant) :
+-- le jeu de données reste « récent » quel que soit le jour où on le relance.
+--
+-- Tous les comptes ont le même mot de passe : Motdepasse1!
+-- Les tables de référence "role" et "type_evenement" sont remplies par 003 : on n'y touche pas.
+-- ATTENTION : ce script vide d'abord personne, evenement, participer, message et categorie.
 
 BEGIN;
 
--- ---------------------------------------------------------------
--- PERSONNES
--- 1 bénéficiaire, 1 aidante principale (admin), 1 proche,
--- 1 invitée, 3 intervenants
--- ---------------------------------------------------------------
-INSERT INTO "personne" ("id", "nom", "prenom", "date_naissance", "mail", "role") VALUES
-	(1, 'Lemaire',  'Odette', '1941-03-14', 'odette.lemaire@example.com', 'bénéficiaire'),
-	(2, 'Lemaire',  'Claire', '1968-07-22', 'claire.lemaire@example.com', 'admin'),
-	(3, 'Lemaire',  'Thomas', '1996-11-05', 'thomas.lemaire@example.com', 'proche'),
-	(4, 'Bernard',  'Sophie', '1959-01-30', 'sophie.bernard@example.com', 'invité'),
-	(5, 'Petit',    'Marc',   '1972-09-12', 'dr.petit@example.com',       'intervenant'),
-	(6, 'Benali',   'Nadia',  '1985-04-03', 'nadia.benali@example.com',   'intervenant'),
-	(7, 'Dupuis',   'Karine', '1979-12-18', 'karine.dupuis@example.com',  'intervenant');
+TRUNCATE participer, message, evenement, categorie, personne RESTART IDENTITY CASCADE;
 
--- ---------------------------------------------------------------
--- CATEGORIES (messages du journal)
--- ---------------------------------------------------------------
-INSERT INTO "categorie" ("id", "nom") VALUES
-	(1, 'Santé'),
-	(2, 'Médicaments'),
-	(3, 'Repas'),
-	(4, 'Humeur'),
-	(5, 'Logistique');
+-- ---------------------------------------------------------------- personnes
+-- id : 1 Marguerite, 2 Sophie, 3 Laurent, 4 Camille, 5 Odile, 6 Dr Vasseur, 7 Dr Morel,
+--      8 Thomas (infirmier), 9 Élodie (kiné), 10 Nadia (aide-soignante), 11 Karine (auxiliaire de vie), 12 Hugo (orthophoniste)
+INSERT INTO personne (nom, prenom, date_naissance, mail, role_id, mot_de_passe_hash)
+SELECT v.nom, v.prenom, v.date_naissance::date, v.mail, r.id, v.mdp
+FROM (VALUES
+  (1, 'Delacroix', 'Marguerite', '1941-03-14', 'marguerite.delacroix@example.com', 'bénéficiaire', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (2, 'Martin', 'Sophie', '1968-09-02', 'sophie.martin@example.com', 'admin', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (3, 'Delacroix', 'Laurent', '1971-05-21', 'laurent.delacroix@example.com', 'proche', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (4, 'Martin', 'Camille', '2001-11-30', 'camille.martin@example.com', 'proche', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (5, 'Brunet', 'Odile', '1948-02-17', 'odile.brunet@example.com', 'invité', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (6, 'Vasseur', 'Pierre', '1966-07-08', 'dr.vasseur@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (7, 'Morel', 'Claire', '1974-01-25', 'dr.morel@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (8, 'Rivière', 'Thomas', '1985-04-12', 'thomas.riviere@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (9, 'Garnier', 'Élodie', '1990-10-03', 'elodie.garnier@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (10, 'Benali', 'Nadia', '1982-06-19', 'nadia.benali@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (11, 'Dupuis', 'Karine', '1978-12-09', 'karine.dupuis@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e'),
+  (12, 'Lambert', 'Hugo', '1988-08-27', 'hugo.lambert@example.com', 'intervenant', '$2b$10$7YVxL7sud96/bEt9uKjzIeKBThxGZxg8jyAnE7CCPy94jLdkWUM3e')
+) AS v(n, nom, prenom, date_naissance, mail, role, mdp)
+JOIN role r ON r.intitule = v.role
+ORDER BY v.n;
 
--- ---------------------------------------------------------------
--- EVENEMENTS
--- personne_id = la personne qui a créé l'événement
--- ---------------------------------------------------------------
-INSERT INTO "evenement"
-	("id", "nom", "date_debut", "date_fin", "heure_debut", "heure_fin", "type", "lieu", "description", "personne_id") VALUES
-	(1, 'Visite du médecin traitant',  '2026-11-03', '2026-11-03', '10:00', '10:30', 'Médical',
-		'à domicile',    'Visite de contrôle mensuelle du Dr Petit. Penser à préparer la liste des questions.', 2),
-	(2, 'Prise de sang',               '2026-11-05', '2026-11-05', '08:00', '08:30', 'Paramédical',
-		'à domicile',    'Passage de l''infirmière pour la prise de sang, patiente à jeun.', 2),
-	(3, 'Aide à la toilette et courses','2026-11-06', '2026-11-06', '09:00', '11:00', 'Aide à domicile',
-		'à domicile',    'Aide à la toilette puis courses de la semaine avec la liste dans l''entrée.', 2),
-	(4, 'Déjeuner en famille',         '2026-11-08', '2026-11-08', '12:00', '15:00', 'Proches',
-		'à domicile',    'Repas du dimanche avec Claire, Thomas et Sophie.', 2),
-	(5, 'Pharmacie : ordonnance',      '2026-11-10', '2026-11-10', '16:00', '16:30', 'Autres',
-		'à l''extérieur','Renouvellement de l''ordonnance et récupération du pilulier.', 2),
-	(6, 'Consultation mémoire',        '2026-11-12', '2026-11-12', '14:30', '15:30', 'Médical',
-		'à l''extérieur','Consultation à l''hôpital, prévoir carte vitale, ordonnances et carnet de suivi.', 2);
+-- ---------------------------------------------------------------- catégories de messages
+INSERT INTO categorie (intitule) VALUES
+  ('Santé'),
+  ('Traitement'),
+  ('Alimentation'),
+  ('Humeur et comportement'),
+  ('Autonomie et hygiène'),
+  ('Logistique'),
+  ('Administratif');
 
--- ---------------------------------------------------------------
--- PARTICIPER (qui participe à quoi)
--- ---------------------------------------------------------------
-INSERT INTO "participer" ("personne_id", "evenement_id") VALUES
-	(1, 1), (2, 1), (5, 1),
-	(1, 2), (6, 2),
-	(1, 3), (7, 3),
-	(1, 4), (2, 4), (3, 4), (4, 4),
-	(1, 5), (2, 5),
-	(1, 6), (2, 6);
+-- ---------------------------------------------------------------- événements (57)
+-- Insérés du plus ancien au plus récent : les id (1, 2, 3…) suivent l'ordre chronologique.
+INSERT INTO evenement (intitule, date_debut, date_fin, heure_debut, heure_fin, lieu, description, type_evenement_id, personne_id)
+SELECT v.intitule, v.jour, v.jour, v.debut::time, v.fin::time, v.lieu::lieux, v.description, t.id, v.createur
+FROM (VALUES
+  (1, CURRENT_DATE - 52, '14:30', '15:15', 'Consultation neurologie : bilan mémoire', 'Médical', 'à l''extérieur', 'Bilan de suivi chez la neurologue. Sophie accompagne sa mère.', 2),
+  (2, CURRENT_DATE - 49, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (3, CURRENT_DATE - 47, '10:30', '11:30', 'Rendez-vous avec l''assistante sociale', 'Autres', 'à l''extérieur', 'Point sur les aides financières et le dossier APA.', 2),
+  (4, CURRENT_DATE - 46, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (5, CURRENT_DATE - 45, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (6, CURRENT_DATE - 44, '15:00', '16:30', 'Café avec Odile', 'Proches', 'à domicile', 'Visite de la voisine pour un café et une partie de cartes.', 5),
+  (7, CURRENT_DATE - 42, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (8, CURRENT_DATE - 42, '11:00', '11:30', 'Renouvellement d''ordonnance', 'Médical', 'à l''extérieur', 'Consultation chez le médecin traitant pour renouveler les ordonnances.', 2),
+  (9, CURRENT_DATE - 39, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (10, CURRENT_DATE - 38, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (11, CURRENT_DATE - 35, '09:30', '10:15', 'Technicien téléalarme', 'Autres', 'à domicile', 'Remplacement et test du déclencheur de la chambre.', 2),
+  (12, CURRENT_DATE - 35, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (13, CURRENT_DATE - 33, '08:00', '08:30', 'Prise de sang', 'Médical', 'à l''extérieur', 'Bilan sanguin au laboratoire, à jeun.', 2),
+  (14, CURRENT_DATE - 32, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (15, CURRENT_DATE - 31, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (16, CURRENT_DATE - 30, '12:00', '15:00', 'Déjeuner en famille', 'Proches', 'à domicile', 'Repas du dimanche avec Sophie et Camille.', 2),
+  (17, CURRENT_DATE - 28, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (18, CURRENT_DATE - 27, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (19, CURRENT_DATE - 27, '16:30', '17:00', 'Visite à domicile du médecin traitant', 'Médical', 'à domicile', 'Contrôle général : poids, tension, état du genou.', 2),
+  (20, CURRENT_DATE - 26, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (21, CURRENT_DATE - 25, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (22, CURRENT_DATE - 24, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (23, CURRENT_DATE - 23, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (24, CURRENT_DATE - 23, '14:30', '16:30', 'Sortie au parc avec Camille', 'Proches', 'à l''extérieur', 'Promenade accompagnée au parc, en fauteuil pour la distance.', 4),
+  (25, CURRENT_DATE - 22, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (26, CURRENT_DATE - 21, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (27, CURRENT_DATE - 21, '16:00', '16:15', 'Livraison de la pharmacie', 'Autres', 'à domicile', 'Colis de médicaments réceptionné par la voisine.', 5),
+  (28, CURRENT_DATE - 20, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (29, CURRENT_DATE - 19, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (30, CURRENT_DATE - 19, '13:15', '14:00', 'IRM cérébrale de contrôle', 'Médical', 'à l''extérieur', 'Examen d''imagerie prescrit par la neurologue. Sophie accompagne sa mère.', 2),
+  (31, CURRENT_DATE - 18, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (32, CURRENT_DATE - 17, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (33, CURRENT_DATE - 16, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (34, CURRENT_DATE - 16, '10:00', '11:00', 'Visite d''évaluation APA', 'Autres', 'à domicile', 'Évaluation à domicile pour l''allocation personnalisée d''autonomie.', 2),
+  (35, CURRENT_DATE - 16, '14:30', '17:00', 'Goûter et albums photos', 'Proches', 'à domicile', 'Après-midi avec Laurent venu de Nantes : albums photos et gâteau.', 3),
+  (36, CURRENT_DATE - 15, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (37, CURRENT_DATE - 14, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (38, CURRENT_DATE - 14, '15:00', '16:00', 'Coiffeuse à domicile', 'Autres', 'à domicile', 'Coupe et brushing.', 2),
+  (39, CURRENT_DATE - 13, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (40, CURRENT_DATE - 12, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (41, CURRENT_DATE - 12, '15:30', '16:00', 'Consultation ophtalmologie', 'Médical', 'à l''extérieur', 'Contrôle de la vue, changement de lunettes à prévoir.', 2),
+  (42, CURRENT_DATE - 11, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (43, CURRENT_DATE - 10, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (44, CURRENT_DATE - 9, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (45, CURRENT_DATE - 9, '11:00', '12:00', 'Appel vidéo avec les petits-enfants', 'Proches', 'à domicile', 'Visio avec Camille et les cousins.', 4),
+  (46, CURRENT_DATE - 8, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (47, CURRENT_DATE - 7, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2),
+  (48, CURRENT_DATE - 6, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (49, CURRENT_DATE - 6, '08:45', '09:00', 'Vaccin antigrippal', 'Médical', 'à domicile', 'Vaccination à domicile par l''infirmier.', 8),
+  (50, CURRENT_DATE - 5, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (51, CURRENT_DATE - 4, '15:00', '15:45', 'Stimulation cognitive (orthophonie)', 'Paramédical', 'à domicile', 'Exercices de mémoire, de langage et d''orientation dans le temps.', 2),
+  (52, CURRENT_DATE - 3, '14:00', '16:00', 'Ménage et courses', 'Aide à domicile', 'à domicile', 'Entretien du logement, courses de la semaine et préparation d''un repas.', 2),
+  (53, CURRENT_DATE - 2, '08:30', '09:00', 'Passage infirmier', 'Paramédical', 'à domicile', 'Préparation du pilulier, prise de tension et suivi du traitement.', 8),
+  (54, CURRENT_DATE - 2, '12:00', '15:30', 'Repas du dimanche en famille', 'Proches', 'à domicile', 'Repas avec Sophie, Laurent et Camille.', 2),
+  (55, CURRENT_DATE - 1, '09:15', '10:00', 'Toilette et aide au lever', 'Aide à domicile', 'à domicile', 'Aide à la toilette et à l''habillage par l''aide-soignante du service de soins à domicile.', 2),
+  (56, CURRENT_DATE - 1, '17:00', '17:30', 'Résultats IRM avec la neurologue', 'Médical', 'à domicile', 'Téléconsultation pour la restitution des résultats de l''IRM.', 2),
+  (57, CURRENT_DATE, '10:00', '10:45', 'Séance de kinésithérapie', 'Paramédical', 'à domicile', 'Rééducation à la marche et à l''équilibre avec déambulateur, suite à la chute.', 2)
+) AS v(n, jour, debut, fin, intitule, type, lieu, description, createur)
+JOIN type_evenement t ON t.intitule = v.type
+ORDER BY v.n;
 
--- ---------------------------------------------------------------
--- MESSAGES (journal de suivi)
--- ---------------------------------------------------------------
-INSERT INTO "message" ("id", "description", "date", "personne_id", "categorie_id", "importance") VALUES
-	(1, 'Odette a bien pris ses médicaments du matin, sans difficulté.',                          '2026-10-20', 7, 2, 'faible'),
-	(2, 'Elle a peu mangé à midi, elle semblait fatiguée. À surveiller les prochains jours.',     '2026-10-21', 7, 3, 'moyenne'),
-	(3, 'Moment de confusion en fin d''après-midi : elle m''a demandé où était son mari.',        '2026-10-22', 2, 4, 'élevée'),
-	(4, 'Tension prise ce matin : 13/8, rien d''anormal.',                                        '2026-10-23', 6, 1, 'faible'),
-	(5, 'Plus de pilulier pour la semaine prochaine, passer à la pharmacie avant mardi.',         '2026-10-24', 2, 5, 'moyenne'),
-	(6, 'Très bonne humeur aujourd''hui, elle a fait sa promenade avec Sophie.',                  '2026-10-25', 4, 4, 'faible');
+-- ---------------------------------------------------------------- participants
+INSERT INTO participer (evenement_id, personne_id) VALUES
+  (1, 1),
+  (1, 2),
+  (1, 7),
+  (2, 1),
+  (2, 9),
+  (3, 1),
+  (3, 2),
+  (4, 1),
+  (4, 12),
+  (5, 1),
+  (5, 11),
+  (6, 1),
+  (6, 5),
+  (7, 1),
+  (7, 9),
+  (8, 1),
+  (8, 2),
+  (8, 6),
+  (9, 1),
+  (9, 12),
+  (10, 1),
+  (10, 11),
+  (11, 1),
+  (11, 2),
+  (12, 1),
+  (12, 9),
+  (13, 1),
+  (13, 2),
+  (14, 1),
+  (14, 12),
+  (15, 1),
+  (15, 11),
+  (16, 1),
+  (16, 2),
+  (16, 4),
+  (17, 1),
+  (17, 9),
+  (18, 1),
+  (18, 8),
+  (19, 1),
+  (19, 6),
+  (20, 1),
+  (20, 10),
+  (21, 1),
+  (21, 12),
+  (22, 1),
+  (22, 11),
+  (23, 1),
+  (23, 8),
+  (24, 1),
+  (24, 4),
+  (25, 1),
+  (25, 10),
+  (26, 1),
+  (26, 9),
+  (27, 1),
+  (27, 5),
+  (28, 1),
+  (28, 8),
+  (29, 1),
+  (29, 10),
+  (30, 1),
+  (30, 2),
+  (31, 1),
+  (31, 12),
+  (32, 1),
+  (32, 11),
+  (33, 1),
+  (33, 8),
+  (34, 1),
+  (34, 2),
+  (35, 1),
+  (35, 2),
+  (35, 3),
+  (36, 1),
+  (36, 10),
+  (37, 1),
+  (37, 9),
+  (38, 1),
+  (39, 1),
+  (39, 8),
+  (40, 1),
+  (40, 10),
+  (41, 1),
+  (41, 2),
+  (42, 1),
+  (42, 12),
+  (43, 1),
+  (43, 11),
+  (44, 1),
+  (44, 8),
+  (45, 1),
+  (45, 4),
+  (46, 1),
+  (46, 10),
+  (47, 1),
+  (47, 9),
+  (48, 1),
+  (48, 8),
+  (49, 1),
+  (49, 8),
+  (50, 1),
+  (50, 10),
+  (51, 1),
+  (51, 12),
+  (52, 1),
+  (52, 11),
+  (53, 1),
+  (53, 8),
+  (54, 1),
+  (54, 2),
+  (54, 3),
+  (54, 4),
+  (55, 1),
+  (55, 10),
+  (56, 1),
+  (56, 2),
+  (56, 7),
+  (57, 1),
+  (57, 9);
 
--- ---------------------------------------------------------------
--- Réaligne les séquences d'identité après les INSERT à ids explicites
--- (sinon le prochain INSERT sans id échouerait sur une clé déjà prise)
--- ---------------------------------------------------------------
-SELECT setval(pg_get_serial_sequence('"personne"',   'id'), (SELECT MAX("id") FROM "personne"));
-SELECT setval(pg_get_serial_sequence('"categorie"',  'id'), (SELECT MAX("id") FROM "categorie"));
-SELECT setval(pg_get_serial_sequence('"evenement"',  'id'), (SELECT MAX("id") FROM "evenement"));
-SELECT setval(pg_get_serial_sequence('"message"',    'id'), (SELECT MAX("id") FROM "message"));
+-- ---------------------------------------------------------------- messages (55)
+INSERT INTO message (description, date, importance, personne_id, categorie_id)
+SELECT v.description, v.jour, v.importance::importance, v.auteur, c.id
+FROM (VALUES
+  (1, CURRENT_DATE - 55, 'élevée', 2, 'Santé', 'Maman a chuté dans la salle de bain ce matin, sans blessure apparente. Je préviens le Dr Vasseur et je demande un tapis antidérapant.'),
+  (2, CURRENT_DATE - 54, 'moyenne', 6, 'Santé', 'Passage suite à la chute : pas de signe de fracture, surveillance pendant 48 h. Une rééducation à la marche est à mettre en place avec un kiné.'),
+  (3, CURRENT_DATE - 52, 'moyenne', 2, 'Santé', 'Bilan mémoire chez le Dr Morel aujourd''hui. Maman est restée calme mais très fatiguée au retour.'),
+  (4, CURRENT_DATE - 51, 'élevée', 7, 'Traitement', 'Ajustement du traitement après le bilan : nouvelle posologie à appliquer dès ce soir, l''ordonnance est envoyée à la pharmacie.'),
+  (5, CURRENT_DATE - 50, 'moyenne', 8, 'Traitement', 'Pilulier refait selon la nouvelle ordonnance. Merci de ne pas utiliser l''ancien.'),
+  (6, CURRENT_DATE - 49, 'faible', 3, 'Logistique', 'J''ai commandé un tapis antidérapant et une barre d''appui, livraison prévue chez Sophie jeudi.'),
+  (7, CURRENT_DATE - 48, 'moyenne', 9, 'Autonomie et hygiène', 'Première séance de kiné : marche sur 20 m avec le déambulateur, équilibre fragile. Objectif : retrouver confiance dans les déplacements.'),
+  (8, CURRENT_DATE - 47, 'moyenne', 11, 'Alimentation', 'Marguerite a peu mangé à midi (la moitié de l''assiette) et boit peu. À surveiller.'),
+  (9, CURRENT_DATE - 46, 'faible', 10, 'Autonomie et hygiène', 'Toilette faite, elle a accepté de se laver les cheveux. La peau est en bon état.'),
+  (10, CURRENT_DATE - 45, 'faible', 12, 'Humeur et comportement', 'Bonne participation à la séance : elle a reconnu les photos de famille et raconté son voyage à Biarritz.'),
+  (11, CURRENT_DATE - 44, 'faible', 5, 'Humeur et comportement', 'Passée prendre un café avec Marguerite, elle était de bonne humeur. Je repasse dans quelques jours.'),
+  (12, CURRENT_DATE - 43, 'moyenne', 2, 'Administratif', 'Dossier APA déposé au conseil départemental. En attente de la visite d''évaluation.'),
+  (13, CURRENT_DATE - 42, 'faible', 6, 'Traitement', 'Ordonnance renouvelée pour 3 mois, Sophie la dépose à la pharmacie.'),
+  (14, CURRENT_DATE - 41, 'faible', 4, 'Humeur et comportement', 'Visite ce week-end : on a regardé des albums photos, Mamie a beaucoup ri.'),
+  (15, CURRENT_DATE - 40, 'moyenne', 11, 'Santé', 'Marguerite se plaint d''une douleur au genou gauche quand elle se lève du fauteuil. Je préviens le kiné.'),
+  (16, CURRENT_DATE - 39, 'moyenne', 9, 'Santé', 'Genou légèrement gonflé : glace et exercices allégés cette semaine. À signaler au médecin si ça persiste.'),
+  (17, CURRENT_DATE - 38, 'moyenne', 10, 'Humeur et comportement', 'Un peu agitée en fin d''après-midi, elle a demandé plusieurs fois quand son mari rentrait. Rassurée par la discussion.'),
+  (18, CURRENT_DATE - 37, 'moyenne', 2, 'Humeur et comportement', 'Pour les fins d''après-midi agitées : lumière douce, musique calme et thé tiède. Ça semble l''aider.'),
+  (19, CURRENT_DATE - 36, 'faible', 3, NULL::text, 'Je passe le week-end prochain, je préviens dès que j''ai mes horaires de train.'),
+  (20, CURRENT_DATE - 35, 'moyenne', 8, 'Traitement', 'Tension 13/8, pouls régulier. Pilulier refait pour 7 jours, pensez à racheter des pansements.'),
+  (21, CURRENT_DATE - 35, 'faible', 2, 'Logistique', 'Technicien téléalarme passé : le déclencheur de la chambre est remplacé et testé.'),
+  (22, CURRENT_DATE - 33, 'moyenne', 6, 'Santé', 'Prise de sang faite ce matin. Résultats à récupérer sous 48 h au laboratoire.'),
+  (23, CURRENT_DATE - 32, 'moyenne', 12, 'Autonomie et hygiène', 'Calcul mental bien réussi, difficulté sur les dates. Je propose un calendrier mural à gros caractères dans le salon.'),
+  (24, CURRENT_DATE - 31, 'faible', 11, 'Logistique', 'Calendrier mural installé dans le salon. Courses faites, frigo rempli.'),
+  (25, CURRENT_DATE - 30, 'moyenne', 3, 'Administratif', 'Mutuelle contactée : le remboursement des séances de kiné est confirmé.'),
+  (26, CURRENT_DATE - 29, 'moyenne', 10, 'Alimentation', 'Repas pris dans de bonnes conditions. Elle apprécie les soupes, à privilégier le soir.'),
+  (27, CURRENT_DATE - 28, 'faible', 2, 'Alimentation', 'Je prépare des soupes maison à congeler, je les dépose samedi.'),
+  (28, CURRENT_DATE - 27, 'moyenne', 6, 'Santé', 'Visite à domicile : état général correct, poids stable, genou en bonne voie. Tension à suivre chaque semaine par l''infirmier.'),
+  (29, CURRENT_DATE - 26, 'faible', 10, 'Autonomie et hygiène', 'Elle s''est habillée presque seule ce matin, avec de l''aide uniquement pour les boutons.'),
+  (30, CURRENT_DATE - 25, 'faible', 12, 'Humeur et comportement', 'Séance agréable : elle a chanté pendant l''exercice de mémoire musicale.'),
+  (31, CURRENT_DATE - 24, 'faible', 11, 'Logistique', 'Plus de produits d''entretien. À ajouter à la liste : lessive et savon.'),
+  (32, CURRENT_DATE - 23, 'élevée', 8, 'Traitement', 'Oubli de la prise du matin constaté sur le pilulier. Rappel fait à Marguerite. Merci de vérifier le pilulier chaque soir.'),
+  (33, CURRENT_DATE - 22, 'moyenne', 2, 'Traitement', 'Je mets une alarme sur le téléphone de Maman pour les prises du matin et du soir.'),
+  (34, CURRENT_DATE - 21, 'faible', 5, 'Logistique', 'Colis de la pharmacie réceptionné chez moi, je le dépose cet après-midi.'),
+  (35, CURRENT_DATE - 20, 'faible', 4, 'Humeur et comportement', 'Vidéo avec les cousins : Mamie était émue. On refait ça dimanche.'),
+  (36, CURRENT_DATE - 19, 'élevée', 7, 'Santé', 'IRM de contrôle réalisée ce jour. Je vous reçois pour les résultats dans la semaine.'),
+  (37, CURRENT_DATE - 18, 'moyenne', 9, 'Autonomie et hygiène', 'Marche sur 50 m avec le déambulateur, bien meilleur passage assis-debout. Bravo à elle !'),
+  (38, CURRENT_DATE - 17, 'élevée', 2, 'Administratif', 'Visite d''évaluation APA demain à 10 h, je serai présente. Merci de ne pas prévoir d''intervention avant midi.'),
+  (39, CURRENT_DATE - 15, 'faible', 10, 'Santé', 'Légère rougeur au talon droit : crème appliquée, à surveiller.'),
+  (40, CURRENT_DATE - 14, 'faible', 2, NULL::text, 'La coiffeuse passe cet après-midi, Maman a hâte !'),
+  (41, CURRENT_DATE - 13, 'moyenne', 11, 'Alimentation', 'Bon appétit aujourd''hui, elle a fini son dessert. Elle a demandé de la tarte aux pommes.'),
+  (42, CURRENT_DATE - 12, 'moyenne', 2, 'Santé', 'Ophtalmo : lunettes à changer, ordonnance remise. Rendez-vous chez l''opticien à prévoir.'),
+  (43, CURRENT_DATE - 11, 'faible', 12, 'Autonomie et hygiène', 'Elle repère mieux le jour de la semaine grâce au calendrier. On continue.'),
+  (44, CURRENT_DATE - 10, 'faible', 3, 'Logistique', 'Je serai là dimanche, je viens avec le gâteau préféré de Maman.'),
+  (45, CURRENT_DATE - 9, 'moyenne', 8, 'Santé', 'Tension un peu haute (15/9), à recontrôler jeudi. J''ai prévenu le Dr Vasseur.'),
+  (46, CURRENT_DATE - 8, 'moyenne', 6, 'Traitement', 'Pas de changement de traitement pour l''instant. Si la tension reste haute jeudi, on réévalue.'),
+  (47, CURRENT_DATE - 7, 'moyenne', 9, 'Autonomie et hygiène', 'Elle monte les marches du perron avec appui sur la rampe. Exercices à poursuivre entre les séances.'),
+  (48, CURRENT_DATE - 6, 'faible', 8, 'Santé', 'Vaccin antigrippal fait, aucune réaction. Surveiller une éventuelle fatigue demain.'),
+  (49, CURRENT_DATE - 5, 'moyenne', 10, 'Humeur et comportement', 'Mauvaise nuit selon Marguerite, un peu fatiguée mais coopérante. Je lui laisse une collation.'),
+  (50, CURRENT_DATE - 4, 'moyenne', 2, 'Humeur et comportement', 'Maman dort mal depuis trois nuits. Je le note pour la consultation avec le Dr Morel.'),
+  (51, CURRENT_DATE - 3, 'faible', 11, 'Logistique', 'Courses faites. Il reste du pain et de la soupe pour deux jours.'),
+  (52, CURRENT_DATE - 2, 'faible', 2, 'Humeur et comportement', 'Repas en famille : Maman a reconnu tout le monde, belle journée.'),
+  (53, CURRENT_DATE - 1, 'élevée', 7, 'Santé', 'Résultats de l''IRM présentés : pas de modification majeure. On maintient le traitement et on réévalue dans 3 mois. Surveillance du sommeil à poursuivre.'),
+  (54, CURRENT_DATE - 1, 'faible', 10, 'Autonomie et hygiène', 'Toilette faite, très bonne humeur ce matin.'),
+  (55, CURRENT_DATE, 'faible', 9, 'Autonomie et hygiène', 'Séance du jour : bonne énergie, 60 m de marche. Prochain objectif : les escaliers.')
+) AS v(n, jour, importance, auteur, categorie, description)
+LEFT JOIN categorie c ON c.intitule = v.categorie
+ORDER BY v.n;
 
 COMMIT;
