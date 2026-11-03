@@ -8,7 +8,7 @@ const COUT_HASH = 10;
 const DUREE_SESSION = "2h";
 
 export async function getUserProfile(id) {
-    const utilisateurs = await Personne.findUserById(id);
+    const utilisateurs = await Personne.trouverParId(id);
     /*   if (!utilisateurs) {
     throw new ErreurHttp(401, 'Session invalide');
   } */
@@ -16,7 +16,7 @@ export async function getUserProfile(id) {
 }
 
 export async function getUserProfileByMail(mail) {
-    const utilisateurs = await Personne.findUserByMail(mail);
+    const utilisateurs = await Personne.trouverParMail(mail);
     /*   if (!utilisateurs) {
     throw new ErreurHttp(401, 'Session invalide');
   } */
@@ -24,7 +24,7 @@ export async function getUserProfileByMail(mail) {
 }
 
 export async function createUser(personne) {
-    const existante = await Personne.findUserByMail(personne.mail);
+    const existante = await Personne.trouverParMail(personne.mail);
     if (existante) {
         throw new ErreurHttp(409, "Un compte existe déjà avec cet email");
     }

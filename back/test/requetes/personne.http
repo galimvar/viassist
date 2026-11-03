@@ -12,15 +12,3 @@ Content-Type: application/json
     "role": "bénéficiaire"
 }
 
-### POST renvoie 201
-POST {{baseUrl}}/inscription
-Content-Type: application/json
-
-{
-    "nom":"Lagarre",
-    "prenom":"Rémy",
-    "mail":"remy.lagarre@gmail.com",
-    "date_naissance":"1989/04/10",
-    "role":"admin",
-    "mot_de_passe":"Prout!1234"
-}

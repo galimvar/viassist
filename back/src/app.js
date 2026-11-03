@@ -1,8 +1,9 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { db } from './db.js';
-import { personneRoute } from './routes/personneRoutes.js';
+import { personneRoute as personneRouter } from './routes/personneRoutes.js';
 import { gestionErreurs } from './middlewares/erreurs.js';
+import { authRouter } from './routes/authRoutes.js';
 
 export const app = express();
 
@@ -16,6 +17,7 @@ app.get('/', async (req, res) => {
   res.json({ api: 'ok', base: 'ok' });
 });
 
-app.use('/api/personne', personneRoute);
+app.use('/api/personne', personneRouter);
+app.use('/auth', authRouter);
 
 app.use(gestionErreurs);        // toujours en dernier
