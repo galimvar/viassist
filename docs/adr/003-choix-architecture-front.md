@@ -1,7 +1,7 @@
-# ADR 007 - Architecture front
+# ADR 003 - Architecture front
 
 Date : 2026-10-27  
-Statut : Proposé
+Statut : Accepté
 
 ## Contexte
 Le front de Vi'Assist sera utilisé par des profils variés (proches, aidants familiaux, aides à domicile, personnel médical) sur plusieurs écrans qui partagent beaucoup d'éléments : agenda avec rendez-vous catégorisés par couleur et lieu par icône, journal de bord, fiche personne, filtres, formulaires, alertes.
@@ -30,7 +30,7 @@ Nous utilisons React avec Tailwind CSS et DaisyUI, organisés en architecture en
 - **Pages** : assemblent les composants pour chaque grande zone (agenda, journal de bord, fiche personne, compte)
 - **Logique partagée** : regroupée dans des hooks personnalisés, et appels à l'API isolés dans une couche de services dédiée (pas d'appel API dans les composants d'affichage)
 
-L'affichage s'adapte au rôle de l'utilisateur, mais la sécurité des données reste garantie par le back (voir ADR 003).
+L'affichage s'adapte au rôle de l'utilisateur, mais la sécurité des données reste garantie par le back (voir [ADR 005-architecture-back](./005-architecture-back.md)).
 
 ## Conséquences
 

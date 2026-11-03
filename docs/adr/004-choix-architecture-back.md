@@ -1,7 +1,7 @@
-# ADR 006 - Architecture back
+# ADR 004 - Architecture back
 
 Date : 2026-10-27  
-Statut : Proposé
+Statut : Accepté
 
 ## Contexte
 Le back de Vi'Assist est une API Node.js / Express consommée par le front React. Il gère l'agenda, le journal de bord, la fiche personne et les comptes avec rôles (aidant principal, famille, aide à domicile, personnel médical).
