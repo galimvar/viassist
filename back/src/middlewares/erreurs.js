@@ -2,7 +2,7 @@ import { ErreurHttp } from '../erreurs.js';
 
 // Un seul endroit transforme toutes les erreurs en réponses HTTP.
 // Express le reconnaît à ses 4 paramètres.
-export function gestionErreurs(err, req, res, next) {
+export function gestionErreurs(err, req, res, _next) {
   if (err instanceof ErreurHttp) {
     return res.status(err.status).json({ message: err.message, erreurs: err.details });
   }

@@ -29,15 +29,17 @@ export async function createUser(personne) {
         throw new ErreurHttp(409, "Un compte existe déjà avec cet email");
     }
 
+    const role_id = await Personne.trouverRole(personne.role).id;
+
     const mot_de_passe_hash = await bcrypt.hash(personne.mot_de_passe, COUT_HASH);
     try {
-        return await Personne.insertUser(
+        return await Personne.creer(
             personne.nom,
             personne.prenom,
             personne.date_naissance,
             personne.mail,
-            personne.role,
             mot_de_passe_hash,
+            role_id
         );
     } catch (erreur) {
         // 23505 = violation de UNIQUE : deux inscriptions au même instant
