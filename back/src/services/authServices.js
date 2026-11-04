@@ -6,21 +6,30 @@ import { ErreurHttp } from "../erreurs.js";
 const COUT_HASH = 10; // plus c'est haut, plus c'est lent (et sûr)
 const DUREE_SESSION = "2h";
 
-export async function inscrire({ nom, prenom, mail, date_naissance, mot_de_passe }) {
+export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe, role }) {
     // Règle métier : un mail ne sert qu'à un seul compte
     const existante = await Personne.trouverParMail(mail);
     if (existante) {
         throw new ErreurHttp(409, "Un compte existe déjà avec cet mail");
     }
 
+    const role_id = await Personne.trouverRole(role);
+
     const mot_de_passe_hash = await bcrypt.hash(mot_de_passe, COUT_HASH);
 
     try {
-        return await Personne.creer({nom, prenom, date_naissance, mail, mot_de_passe_hash });
+        return await Personne.creer({
+            nom: nom,
+            prenom: prenom,
+            date_naissance: date_naissance,
+            mail: mail,
+            mot_de_passe_hash: mot_de_passe_hash,
+            role_id:role_id.id
+        });
     } catch (erreur) {
         // 23505 = violation de UNIQUE : deux inscriptions au même instant
         if (erreur.code === "23505") {
-            throw new ErreurHttp(409, "Un compte existe déjà avec cet mail");
+            throw new ErreurHttp(409, "Un compte existe déjà avec cet email");
         }
         throw erreur;
     }
@@ -38,7 +47,7 @@ export async function connecter({ mail, mot_de_passe }) {
     }
 
     const token = jwt.sign(
-        { sub: personne.id, role: personne.role },
+        { sub: personne.id },
         process.env.JWT_SECRET,
         { expiresIn: DUREE_SESSION },
     );

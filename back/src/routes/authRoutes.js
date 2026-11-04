@@ -5,6 +5,6 @@ import { auth } from '../middlewares/auth.js';
 export const authRouter = Router();
 
 authRouter.post('/inscription', authController.inscription);
-authRouter.get('/connexion', authController.connexion);
-authRouter.get('/deconnexion', authController.deconnexion);
+authRouter.post('/connexion', authController.connexion);
+authRouter.post('/deconnexion', authController.deconnexion);
 authRouter.get('/moi', auth, authController.moi);

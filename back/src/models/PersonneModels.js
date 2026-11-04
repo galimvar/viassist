@@ -19,12 +19,20 @@ export async function trouverParId(id) {
   return rows[0] ?? null;
 }
 
-export async function creer({ nom, prenom, date_naissance, mail, mot_de_passe_hash }) {
+export async function creer({ nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id }) {
   const { rows } = await db.query(
-    `INSERT INTO personne (nom, prenom, date_naissance, mail, mot_de_passe_hash)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO personne (nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING ${COLONNES_PUBLIQUES}`,
-    [nom, prenom, date_naissance, mail, mot_de_passe_hash]
+    [nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id]
+  );
+  return rows[0];
+}
+
+export async function trouverRole(role){
+  const {rows} = await db.query(
+    `SELECT id FROM role WHERE intitule = $1`,
+    [role]
   );
   return rows[0];
 }

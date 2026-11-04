@@ -61,7 +61,6 @@ export async function postPersonne(req, res) {
         prenom: body.prenom.trim(),
         mail: normaliserMail(body.mail),
         date_naissance: body.date_naissance,
-        role: body.role,
         mot_de_passe: body.mot_de_passe,
     });
     res.status(201).json({ personne });

@@ -2,20 +2,34 @@ import * as authService from '../services/authServices.js';
 import { ErreurHttp } from '../erreurs.js';
 
 const FORMAT_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const FORMAT_DATE_NAISSANCE = /^\d{4}\/\d{2}\/\d{2}$/m;
 const LONGUEUR_MIN_MOT_DE_PASSE = 8;
 const DUREE_COOKIE_MS = 2 * 60 * 60 * 1000;   // 2 h, comme le token
 
 // ---------- Validation : la forme des données, avant toute règle métier ----------
-function validerInscription({ prenom, mail, mot_de_passe }) {
+function validerInscription({ nom, prenom, mail,date_naissance, mot_de_passe }) {
   const erreurs = {};
+  if (typeof nom !== 'string' || nom.trim() === '') {
+    erreurs.nom = 'Le nom est obligatoire';
+  } else if (nom.trim().length > 50) {
+    erreurs.nom = 'Le nom fait au maximum 50 caractères';
+  }
+
   if (typeof prenom !== 'string' || prenom.trim() === '') {
     erreurs.prenom = 'Le prénom est obligatoire';
-  } else if (prenom.trim().length > 100) {
-    erreurs.prenom = 'Le prénom fait au maximum 100 caractères';
+  } else if (prenom.trim().length > 50) {
+    erreurs.prenom = 'Le prénom fait au maximum 50 caractères';
   }
   if (typeof mail !== 'string' || !FORMAT_MAIL.test(mail.trim())) {
     erreurs.mail = "Le mail n'a pas un format valide";
   }
+
+  if (typeof date_naissance !== 'string' || date_naissance.trim() === '') {
+    erreurs.date_naissance = "La date de naissance est obligatoire";
+  } else if (!FORMAT_DATE_NAISSANCE.test(date_naissance.trim())){
+    erreurs.date_naissance = "La date de naissance n'est pas au format YYYY/MM/DD"
+  }
+
   if (typeof mot_de_passe !== 'string' || mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
     erreurs.mot_de_passe = `Le mot de passe fait au moins ${LONGUEUR_MIN_MOT_DE_PASSE} caractères`;
   }
@@ -39,6 +53,7 @@ export async function inscription(req, res) {
     date_naissance: body.date_naissance.trim(),
     mail: normalisermail(body.mail),
     mot_de_passe: body.mot_de_passe,
+    role: body.role
   });
   res.status(201).json({ personne });
 }
