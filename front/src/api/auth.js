@@ -26,3 +26,5 @@ export const connecter = (identifiants) =>
 export const deconnecter = () => appeler('/auth/deconnexion', { method: 'POST' });
 
 export const recupererMoi = () => appeler('/auth/moi');
+
+//! TODO AJOUTER AGENDA ET JOURNAL ///

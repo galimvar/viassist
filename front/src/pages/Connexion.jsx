@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
+import { CircleX } from 'lucide-react';
 
 export default function Connexion() {
 	const { connexion } = useAuth();
@@ -33,7 +34,7 @@ export default function Connexion() {
 					</label>
 					<input
 						id="username"
-						type="mail"
+						type="email"
 						className="input w-full"
 						placeholder="example@example.com"
 						onChange={(e) => {
@@ -53,7 +54,13 @@ export default function Connexion() {
 							setMotDePasse(e.target.value);
 						}}
 					/>
-					{erreur && <p role="alert">{erreur}</p>}
+
+					{erreur && (
+						<div role="alert" className="alert alert-error">
+							<CircleX size={20} color="red" strokeWidth={1.75} />
+							<span>{erreur}</span>
+						</div>
+					)}
 				</fieldset>
 
 				<button

@@ -1,2 +1,24 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+@plugin "daisyui/theme" {
+	name: 'custom-soft-cool';
+	default: false;
+	prefersdark: false;
+	color-scheme: 'light';
+
+	/* Fonds et surfaces */
+	--color-base-100: #fcf6ee; /* Crème (Fond principal) */
+	--color-base-200: #dfe7f3; /* Bleu brume (Fond secondaire) */
+	--color-base-300: #bddafe; /* Bleu ciel (Surface accent) */
+	--color-base-content: #1f2a30; /* Bleu-gris très foncé (Texte principal) */
+
+	/* Couleurs de marque & Actions */
+	--color-primary: #00b6d9; /* Cyan (Primaire) */
+	--color-primary-content: #1f2a30; /* Texte sur le bouton primaire */
+	--color-secondary: #ff8654; /* Corail (Accent / Appel à l'action) */
+	--color-secondary-content: #fcf6ee; /* Texte clair sur le bouton corail */
+	--color-accent: #a7c2c8; /* Bleu sauge (Secondaire) */
+
+	/* Utilitaires & États */
+	--color-neutral: #a49d99; /* Taupe gris (Neutre / Texte secondaire) */
+}
