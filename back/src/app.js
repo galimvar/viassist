@@ -7,17 +7,16 @@ import { authRouter } from './routes/authRoutes.js';
 
 export const app = express();
 
-app.use(express.json());        // lit le corps JSON → req.body
-app.use(cookieParser());        // lit les cookies → req.cookies
-
+app.use(express.json()); // lit le corps JSON → req.body
+app.use(cookieParser()); // lit les cookies → req.cookies
 
 // Vérifie que l'API répond et que la base est joignable
 app.get('/', async (req, res) => {
-  await db.query('SELECT 1');
-  res.json({ api: 'ok', base: 'ok' });
+	await db.query('SELECT 1');
+	res.json({ api: 'ok', base: 'ok' });
 });
 
 app.use('/api/personne', personneRouter);
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 
-app.use(gestionErreurs);        // toujours en dernier
+app.use(gestionErreurs); // toujours en dernier

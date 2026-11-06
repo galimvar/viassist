@@ -5,8 +5,9 @@ import { ErreurHttp } from '../erreurs.js';
 
 const COUT_HASH = 10; // plus c'est haut, plus c'est lent (et sûr)
 const DUREE_SESSION = '2h';
+const LONGUEUR_MIN_MOT_DE_PASSE = 8;
 
-const validerInscription = () => {
+const validerInscription = (mot_de_passe) => {
 	const erreurs = {};
 
 	if (typeof mot_de_passe !== 'string' || mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
