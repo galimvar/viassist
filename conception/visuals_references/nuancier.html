@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nuancier</title>
+<style>
+  :root {
+    --creme: #fcf6ee;
+    --brume: #dfe7f3;
+    --ciel: #bddafe;
+    --sauge: #a7c2c8;
+    --taupe: #a49d99;
+    --cyan: #00b6d9;
+    --corail: #ff8654;
+    --encre: #1f2a30;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 48px 24px 64px;
+    background: var(--creme);
+    color: var(--encre);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+  }
+  main { max-width: 1040px; margin: 0 auto; }
+  h1 { font-size: 2rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { margin: 0 0 32px; color: #5b666c; }
+  .strip {
+    display: flex;
+    height: 72px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 36px;
+    box-shadow: 0 0 0 1px rgba(31,42,48,.08);
+  }
+  .strip div { flex: 1; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    border: 0;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(31,42,48,.08), 0 6px 18px rgba(31,42,48,.06);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover, .card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 0 0 2px var(--encre), 0 10px 24px rgba(31,42,48,.12);
+    outline: none;
+  }
+  .swatch {
+    height: 150px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-end;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--encre);
+  }
+  .info { padding: 14px 16px 16px; }
+  .role { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: #6b767c; }
+  .name { font-size: 1.1rem; font-weight: 700; margin: 2px 0 8px; }
+  .code { font-family: "Courier New", monospace; font-size: .9rem; }
+  .rgb { font-family: "Courier New", monospace; font-size: .8rem; color: #5b666c; }
+  .usage { margin: 10px 0 0; font-size: .85rem; color: #3d484e; }
+  .encre-note { margin-top: 28px; padding: 16px 20px; border-radius: 14px; background: var(--encre); color: var(--creme); display: flex; gap: 16px; align-items: center; }
+  .encre-note i { width: 36px; height: 36px; border-radius: 50%; background: var(--encre); box-shadow: 0 0 0 2px var(--creme); flex: none; }
+  .encre-note p { margin: 0; font-size: .9rem; }
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px);
+    background: var(--encre); color: var(--creme); padding: 10px 18px; border-radius: 999px;
+    font-size: .9rem; opacity: 0; pointer-events: none; transition: all .2s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  h2 { font-size: 1.1rem; margin: 40px 0 12px; }
+  .pairs { display: flex; flex-wrap: wrap; gap: 16px; }
+  .pair { padding: 18px 22px; border-radius: 14px; min-width: 220px; flex: 1; font-size: .9rem; }
+  .pair b { display: block; font-size: 1rem; margin-bottom: 4px; }
+  .btn { display: inline-block; margin-top: 10px; padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: .85rem; color: var(--encre); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Nuancier</h1>
+  <p class="sub">7 couleurs : un ensemble froid et doux, avec un accent chaud. Cliquez sur une carte pour copier le code hexadécimal.</p>
+
+  <div class="strip" aria-hidden="true">
+    <div style="background:#fcf6ee"></div>
+    <div style="background:#dfe7f3"></div>
+    <div style="background:#bddafe"></div>
+    <div style="background:#a7c2c8"></div>
+    <div style="background:#a49d99"></div>
+    <div style="background:#00b6d9"></div>
+    <div style="background:#ff8654"></div>
+  </div>
+
+  <section class="grid">
+    <button class="card" data-hex="#fcf6ee">
+      <div class="swatch" style="background:#fcf6ee; box-shadow: inset 0 -1px 0 rgba(31,42,48,.08)">Aa</div>
+      <div class="info">
+        <div class="role">Fond principal</div>
+        <div class="name">Crème</div>
+        <div class="code">#fcf6ee</div>
+        <div class="rgb">RVB 252 · 246 · 238</div>
+        <p class="usage">Arrière-plan des pages, des sections claires.</p>
+      </div>
+    </button>
+
+    <button class="card" data-hex="#dfe7f3">
+      <div class="swatch" style="background:#dfe7f3">Aa</div>
+      <div class="info">
+        <div class="role">Fond secondaire</div>
+        <div class="name">Bleu brume</div>
+        <div class="code">#dfe7f3</div>
+        <div class="rgb">RVB 223 · 231 · 243</div>
+        <p class="usage">Cartes, bandeaux, zones de contraste léger.</p>
+      </div>
+    </button>
+
+    <button class="card" data-hex="#bddafe">
+      <div class="swatch" style="background:#bddafe">Aa</div>
+      <div class="info">
+        <div class="role">Surface accent</div>
+        <div class="name">Bleu ciel</div>
+        <div class="code">#bddafe</div>
+        <div class="rgb">RVB 189 · 218 · 254</div>
+        <p class="usage">Survols, badges, éléments sélectionnés, illustrations.</p>
+      </div>
+    </button>
+
+    <button class="card" data-hex="#a7c2c8">
+      <div class="swatch" style="background:#a7c2c8">Aa</div>
+      <div class="info">
+        <div class="role">Secondaire</div>
+        <div class="name">Bleu sauge</div>
+        <div class="code">#a7c2c8</div>
+        <div class="rgb">RVB 167 · 194 · 200</div>
+        <p class="usage">Bordures, icônes, graphiques secondaires.</p>
+      </div>
+    </button>
+
+    <button class="card" data-hex="#a49d99">
+      <div class="swatch" style="background:#a49d99">Aa</div>
+      <div class="info">
+        <div class="role">Neutre</div>
+        <div class="name">Taupe gris</div>
+        <div class="code">#a49d99</div>
+        <div class="rgb">RVB 164 · 157 · 153</div>
+        <p class="usage">Texte secondaire, séparateurs, états désactivés.</p>
+      </div>
+    </button>
+
+    <button class="card" data-hex="#00b6d9">
+      <div class="swatch" style="background:#00b6d9">Aa</div>
+      <div class="info">
+        <div class="role">Primaire</div>
+        <div class="name">Cyan</div>
+        <div class="code">#00b6d9</div>
+        <div class="rgb">RVB 0 · 182 · 217</div>
+        <p class="usage">Liens, boutons principaux, éléments interactifs.</p>
+      </div>
+    </button>
+
+    <button class="card" data-hex="#ff8654">
+      <div class="swatch" style="background:#ff8654">Aa</div>
+      <div class="info">
+        <div class="role">Accent</div>
+        <div class="name">Corail</div>
+        <div class="code">#ff8654</div>
+        <div class="rgb">RVB 255 · 134 · 84</div>
+        <p class="usage">Appel à l'action, notifications, points d'attention.</p>
+      </div>
+    </button>
+  </section>
+
+  <div class="encre-note">
+    <i></i>
+    <p><b>Suggestion : #1f2a30</b> (bleu-gris très foncé, non fourni) pour les titres et le texte principal. Contraste de plus de 10:1 sur le Crème. Utilisé pour tout le texte de cette page.</p>
+  </div>
+
+  <h2>Associations</h2>
+  <div class="pairs">
+    <div class="pair" style="background:#dfe7f3">
+      <b>Crème + Bleu brume + Cyan</b>
+      Base claire et aérée avec une couleur d'action nette.
+      <br><span class="btn" style="background:#00b6d9">Bouton principal</span>
+    </div>
+    <div class="pair" style="background:#fcf6ee; box-shadow: inset 0 0 0 1px rgba(31,42,48,.1)">
+      <b>Cyan + Corail</b>
+      Complémentaires : un seul usage chacun (navigation / action clé).
+      <br><span class="btn" style="background:#ff8654">Action clé</span>
+    </div>
+    <div class="pair" style="background:#a7c2c8">
+      <b>Bleu ciel + Sauge + Taupe</b>
+      Dégradé tonal pour graphiques et illustrations.
+      <br><span class="btn" style="background:#bddafe">Survol</span>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  var toast = document.getElementById('toast'), timer;
+  function show(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.classList.remove('show'); }, 1500);
+  }
+  document.querySelectorAll('.card').forEach(function (card) {
+    card.addEventListener('click', function () {
+      var hex = card.dataset.hex;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hex).then(function () { show(hex + ' copié'); }, function () { show(hex); });
+      } else {
+        show(hex);
+      }
+    });
+  });
+</script>
+</body>
+</html>
