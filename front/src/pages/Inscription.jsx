@@ -39,9 +39,9 @@ export default function Inscription() {
 		<>
 			<form
 				onSubmit={soumettre}
-				className="card bg-base-100 w-full max-w-xs mx-auto mt-12 shadow-lg"
+				className="card bg-base-100 w-full max-w-md mx-auto mt-12 shadow-lg"
 			>
-				<div className="card-body items-left text-center">
+				<div className="card-body items-center text-center">
 					<h2 className="card-title">Inscription</h2>
 
 					<fieldset className="fieldset w-full text-left">
@@ -59,7 +59,7 @@ export default function Inscription() {
 								}}
 								required
 							/>
-							<p className="validator-hint hidden">Required</p>
+							<div className="validator-hint">Le nom est obligatoire</div>
 						</div>
 						<div>
 							<label className="label" htmlFor="firstname">
@@ -75,7 +75,7 @@ export default function Inscription() {
 								}}
 								required
 							/>
-							<p className="validator-hint hidden">Required</p>
+							<p className="validator-hint">Le prénom est obligatoire</p>
 						</div>
 
 						<div>
@@ -91,7 +91,6 @@ export default function Inscription() {
 									setDateNaissance(e.target.value);
 								}}
 							/>
-							<p className="validator-hint hidden">Required</p>
 						</div>
 
 						<div>
@@ -108,7 +107,9 @@ export default function Inscription() {
 								}}
 								required
 							/>
-							<p className="validator-hint hidden">Required</p>
+							<p className="validator-hint">
+								Le mail doit être dans un format valide
+							</p>
 						</div>
 						<div>
 							<label className="label" htmlFor="password">
@@ -125,7 +126,11 @@ export default function Inscription() {
 								}}
 								required
 							/>
-							<p className="validator-hint hidden">Required</p>
+							<p className="validator-hint">
+								Entrez un mot de passe valide, d'au moins 8 caractères, comprenant
+								au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1
+								caractère spécial
+							</p>
 						</div>
 						<div>
 							<label className="label" htmlFor="passwordValid">
@@ -142,7 +147,11 @@ export default function Inscription() {
 								}}
 								required
 							/>
-							<p className="validator-hint hidden">Required</p>
+							<p className="validator-hint">
+								Entrez un mot de passe valide, d'au moins 8 caractères, comprenant
+								au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1
+								caractère spécial.
+							</p>
 						</div>
 
 						{erreur && (

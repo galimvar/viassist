@@ -73,9 +73,9 @@ export default function Connexion() {
 						Se connecter
 					</button>
 				</div>
-				<div class="flex justify-center">
+				<div className="flex justify-center">
 					<a
-						class="link link-primary"
+						className="link link-primary"
 						onClick={() => {
 							navigate('/inscription');
 						}}
