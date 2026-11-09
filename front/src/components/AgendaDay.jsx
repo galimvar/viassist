@@ -50,9 +50,9 @@ const AgendaDay = () => {
 
 	return (
 		<>
-			<ChevronLeft color="blue" />
+			<ChevronLeft color="blue" onClick={() => setInterval(interval - 1)} />
 			<h1>{formaterDate(date)}</h1>
-			<ChevronRight color="blue" />
+			<ChevronRight color="blue" onClick={() => setInterval(interval + 1)} />
 			<pre>{JSON.stringify(evenements, null, 2)}</pre>
 		</>
 	);
