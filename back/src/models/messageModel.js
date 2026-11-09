@@ -1,6 +1,6 @@
 import { db } from "../db.js";
 
-export async function findEntriesByDate(date) {
+export async function findMessagesByDate(date) {
 	const { rows } = await db.query(`
 		SELECT message.id, message.description, message.date AS date_message, personne.prenom AS prenom_auteur, personne.nom AS nom_auteur, categorie.intitule AS categorie, message.importance
 		FROM message
