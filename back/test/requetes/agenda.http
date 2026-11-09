@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:3000/api/agenda
+### GET affiche un evenemnt
+GET {{baseUrl}}/jour
+Content-Type: application/json
+
