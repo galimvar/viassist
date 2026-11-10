@@ -6,6 +6,7 @@ import RouteProtegee from './components/RouteProtegee.jsx';
 import Layout from './components/Layout.jsx';
 import Nav from './components/Nav.jsx';
 import Settings from './pages/Settings.jsx';
+import ModifierUtilisateur from './pages//ModifierUtilisateur.jsx';
 
 function App() {
 	return (
@@ -23,6 +24,7 @@ function App() {
 				<Route path="/" element={<TableauDeBord />} />
 				//! TODO AJOUTER JOURNAL ET AGENDA
 				<Route path="/settings" element={<Settings />} />
+				<Route path="/settings/personne/update" element={<ModifierUtilisateur />} />
 			</Route>
 		</Routes>
 	);
