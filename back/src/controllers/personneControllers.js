@@ -10,14 +10,30 @@ function validerInscription({ nom, prenom, date_naissance, mail, mot_de_passe })
 	const erreurs = {};
 	if (typeof prenom !== 'string' || prenom.trim() === '') {
 		erreurs.prenom = 'Le prénom est obligatoire';
-	} else if (prenom.trim().length > 100) {
-		erreurs.prenom = 'Le prénom fait au maximum 100 caractères';
+	} else if (prenom.trim().length > 50) {
+		erreurs.prenom = 'Le prénom fait au maximum 50 caractères';
 	}
 	if (typeof mail !== 'string' || !FORMAT_MAIL.test(mail.trim())) {
 		erreurs.mail = "L'mail n'a pas un format valide";
 	}
 	if (typeof mot_de_passe !== 'string' || mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
 		erreurs.mot_de_passe = `Le mot de passe fait au moins ${LONGUEUR_MIN_MOT_DE_PASSE} caractères`;
+	}
+	return erreurs;
+}
+
+function validerModification(body) {
+	const erreurs = validerInscription(body);
+	delete erreurs.mot_de_passe;
+
+	const { ancien_mot_de_passe, nouveau_mot_de_passe } = body;
+	if (nouveau_mot_de_passe) {
+		if (nouveau_mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
+			erreurs.nouveau_mot_de_passe = `Le mot de passe fait au moins ${LONGUEUR_MIN_MOT_DE_PASSE} caractères`;
+		}
+		if (!ancien_mot_de_passe) {
+			erreurs.ancien_mot_de_passe = `Le mot de passe actuel est requis pour en changer`;
+		}
 	}
 	return erreurs;
 }
@@ -61,13 +77,14 @@ export async function postPersonne(req, res) {
 
 export async function modifierMoi(req, res) {
 	const body = req.body ?? {};
-	const erreurs = validerInscription(body);
+	const erreurs = validerModification(body);
 	if (Object.keys(erreurs).length > 0) {
 		throw new ErreurHttp(422, 'Données invalides', erreurs);
 	}
 
 	const personne = await personneService.modifierUser({
-		nom: body.nom.trim(),
+		id: req.personne.id,
+		nom: body.nom?.trim(),
 		prenom: body.prenom.trim(),
 		mail: normaliserMail(body.mail),
 		date_naissance: body.date_naissance,
@@ -75,5 +92,5 @@ export async function modifierMoi(req, res) {
 		nouveau_mot_de_passe: body.nouveau_mot_de_passe,
 		confirmation_mot_de_passe: body.confirmation_mot_de_passe,
 	});
-	res.status(201).json({ personne });
+	res.status(200).json({ personne });
 }
