@@ -6,8 +6,4 @@ export const personneRoute = Router();
 
 personneRoute.get('/:id', personneController.getPersonneById);
 personneRoute.get('/', auth, personneController.getAllPersonnes);
-/* personneRoute.post('/connexion', authController.connexion);
-personneRoute.post('/deconnexion', authController.deconnexion);
-personneRoute.get('/moi', auth, authController.moi); */
-
 personneRoute.post('/inscription', personneController.postPersonne);
