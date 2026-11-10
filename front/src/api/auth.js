@@ -29,7 +29,8 @@ export const recupererMoi = () => appeler('/auth/moi');
 
 export const recupererPersonnes = () => appeler('/personne/');
 
-export const recupererRoles = () => appeelr('/roles');
+export const recupererRoles = () => appeler('/roles');
 
-export const supprimerPersonne = () => appeler('/personne/delete');
+export const supprimerPersonne = (id) =>
+	appeler('/personne/delete', { method: 'PATCH', body: JSON.stringify({ id: id }) });
 //! TODO AJOUTER AGENDA ET JOURNAL ///

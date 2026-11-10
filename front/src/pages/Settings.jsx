@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router';
-import { recupererPersonnes } from '../api/auth.js';
+import { recupererPersonnes, supprimerPersonne } from '../api/auth.js';
 import { UserRoundPen, Trash } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 
 function Settings() {
 	const [personnes, setPersonnes] = useState([]);
 	const navigate = useNavigate();
+	const [erreur, setErreur] = useState(null);
 
-	const deleteUser = (id) => {};
+	const deleteUser = async (id) => {
+		try {
+			await supprimerPersonne(id);
+			chargerDonnees();
+		} catch (err) {
+			setErreur(err.message);
+		}
+	};
 
 	const openConfirmModal = (modalId) => {
 		const dialog = document.getElementById(modalId);
@@ -18,21 +26,22 @@ function Settings() {
 			const handleClose = () => {
 				dialog.removeEventListener('close', handleClose);
 				// dialog.returnValue contient la valeur du bouton cliqué (si méthode="dialog" et value="..." sur les boutons)
-				resolve(dialog.returnValue === 'yes');
+				resolve(dialog.returnValue === 'oui');
 			};
 
 			dialog.addEventListener('close', handleClose);
 		});
 	};
+
+	const chargerDonnees = async () => {
+		const donnees = await recupererPersonnes();
+
+		if (donnees) {
+			setPersonnes(donnees.personnes);
+		}
+	};
+
 	useEffect(() => {
-		const chargerDonnees = async () => {
-			const donnees = await recupererPersonnes();
-
-			if (donnees) {
-				setPersonnes(donnees.personnes);
-			}
-		};
-
 		chargerDonnees();
 	}, []);
 
@@ -82,9 +91,10 @@ function Settings() {
 								<>
 									<button
 										className="btn btn-square btn-ghost"
-										onClick={() => {
+										onClick={async () => {
 											document.getElementById('my_modal_' + p.id).showModal();
-											const rep = openConfirmModal('my_modal_' + p.id);
+											const rep = await openConfirmModal('my_modal_' + p.id);
+											console.log(rep);
 											if (rep === true) deleteUser(p.id);
 										}}
 									>

@@ -55,3 +55,11 @@ export async function createUser(personne) {
 		throw erreur;
 	}
 }
+
+export async function archiveUserProfile(id) {
+	const utilisateurs = await Personne.archiverParId(id);
+	/*   if (!utilisateurs) {
+    throw new ErreurHttp(401, 'Session invalide');
+  } */
+	return utilisateurs;
+}

@@ -44,7 +44,8 @@ function ModifierUtilisateur() {
 	useEffect(() => {
 		const chargerRole = async () => {
 			const roles = await recupererRoles();
-			setListeRoles(roles);
+
+			setListeRoles(roles.roles);
 		};
 		chargerRole();
 	}, []);
@@ -125,13 +126,15 @@ function ModifierUtilisateur() {
 								Le mail doit être dans un format valide
 							</p>
 						</div>
-						<select className="select [&::picker(select)]:max-h-26">
+						<select
+							className="select [&::picker(select)]:max-h-26"
+							value={role}
+							onChange={(e) => {
+								setRole(this.value);
+							}}
+						>
 							{listeRoles.map((l) => {
-								return (
-									<option {...(l.intitule === role ? 'selected' : '')}>
-										{l.intitule}
-									</option>
-								);
+								return <option key={l.id}>{l.intitule}</option>;
 							})}
 						</select>
 

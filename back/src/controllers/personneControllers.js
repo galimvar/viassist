@@ -71,3 +71,11 @@ export async function postPersonne(req, res) {
 	});
 	res.status(201).json({ personne });
 }
+
+//-----------------------DELETE-------------------------//
+export async function deletePersonneById(req, res) {
+	const id = req.body.id;
+	console.log(id);
+	const personnes = await personneService.archiveUserProfile(id);
+	res.json({ personnes });
+}
