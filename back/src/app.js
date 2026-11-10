@@ -4,6 +4,7 @@ import { db } from './db.js';
 import { personneRoute as personneRouter } from './routes/personneRoutes.js';
 import { gestionErreurs } from './middlewares/erreurs.js';
 import { authRouter } from './routes/authRoutes.js';
+import { agendaRoute } from './routes/agendaRoutes.js';
 
 export const app = express();
 
@@ -18,5 +19,6 @@ app.get('/', async (req, res) => {
 
 app.use('/api/personne', personneRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/agenda', agendaRoute);
 
 app.use(gestionErreurs); // toujours en dernier
