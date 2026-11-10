@@ -12,14 +12,17 @@ Content-Type: application/json
     "mot_de_passe":"Motdepasse1!"
 }
 
-### 3. Connecté => Message(s) du jour - renvoie 200
+### 3. Connecté => Message(s) avec un mauvais format de date - renvoie 422
+GET {{URL}}/message?date=bonjour
+
+### 4. Connecté => Message(s) du jour - renvoie 200
 GET {{URL}}/message
 
-### 4. Connecté => Message(s) d'une date donnée
+### 5. Connecté => Message(s) d'une date donnée
 GET {{URL}}/message?date=2026-11-09
 
-### 5. Déconnexion - renvoie 204 (et supprime le cookie)
+### 8. Déconnexion - renvoie 204 (et supprime le cookie)
 POST {{URL}}/auth/deconnexion
 
-### 6. Déconnecté => Message(s) après déconnexion - renvoie 401
+### 7. Déconnecté => Message(s) après déconnexion - renvoie 401
 GET {{URL}}/message

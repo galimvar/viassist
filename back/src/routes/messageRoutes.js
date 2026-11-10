@@ -1,7 +1,7 @@
-import { Router } from "express";
-import * as messageController from "../controllers/messageController.js";
-import { auth } from "../middlewares/auth.js";
+import { Router } from 'express';
+import * as messageController from '../controllers/messageController.js';
+import { auth } from '../middlewares/auth.js';
 
-export const messageRoute = Router();
+export const messageRouter = Router();
 
-messageRoute.get("/", auth, messageController.listMessages);
+messageRouter.get('/', auth, messageController.listMessages);
