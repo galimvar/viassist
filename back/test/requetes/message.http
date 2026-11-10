@@ -18,10 +18,10 @@ GET {{URL}}/message?date=bonjour
 ### 4. Connecté => Message(s) du jour - renvoie 200
 GET {{URL}}/message
 
-### 5. Connecté => Message(s) d'une date donnée
+### 5. Connecté => Message(s) d'une date donnée - renvoie 200
 GET {{URL}}/message?date=2026-11-09
 
-### 8. Déconnexion - renvoie 204 (et supprime le cookie)
+### 6. Déconnexion - renvoie 204 (et supprime le cookie)
 POST {{URL}}/auth/deconnexion
 
 ### 7. Déconnecté => Message(s) après déconnexion - renvoie 401
