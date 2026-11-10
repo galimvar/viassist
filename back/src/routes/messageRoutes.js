@@ -3,4 +3,4 @@ import * as messageController from "../controllers/messageController.js";
 
 export const messageRoute = Router();
 
-messageRoute.get("/message", messageController.listMessages);
+messageRoute.get("/", messageController.listMessages);
