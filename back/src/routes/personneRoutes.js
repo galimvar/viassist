@@ -9,5 +9,6 @@ personneRoute.get('/:id', personneController.getPersonneById);
 personneRoute.post('/deconnexion', authController.deconnexion);
 personneRoute.get('/moi', auth, authController.moi); */
 
-
 personneRoute.post('/inscription', personneController.postPersonne);
+
+personneRoute.put('/modifierMoi', auth, personneController.modifierMoi);
