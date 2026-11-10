@@ -1,0 +1,7 @@
+@URL = http://localhost:3000/api
+
+### Message du jour
+GET {{URL}}/message
+
+### Messages d'une date donnée
+GET {{URL}}/message?date=2026-11-09
