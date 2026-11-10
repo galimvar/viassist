@@ -5,7 +5,7 @@ const COLONNES_PUBLIQUES = 'id, nom, prenom, date_naissance, mail';
 
 export async function trouverParMail(mail) {
 	const { rows } = await db.query(
-		`SELECT ${COLONNES_PUBLIQUES}, mot_de_passe_hash FROM personne WHERE mail = $1 AND est_archive=false`,
+		`SELECT ${COLONNES_PUBLIQUES}, mot_de_passe_hash, role_id FROM personne WHERE mail = $1 AND est_archive=false`,
 		[mail],
 	);
 	return rows[0] ?? null;

@@ -35,7 +35,6 @@ function ModifierUtilisateur() {
 				mail: mail,
 				mot_de_passe: motDePasse,
 			});
-			//navigate('/connexion');
 		} catch (err) {
 			setErreur(err.message);
 		}
