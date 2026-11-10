@@ -13,7 +13,7 @@ export default function Nav() {
 
 		//! TODO AJOUTER AGENDA ET JOURNAL ///
 
-		{ chemin: '/settings', label: 'Paramètres', Icone: Settings },
+		{ chemin: '/compte', label: 'Mon compte', Icone: Settings },
 	];
 
 	return (

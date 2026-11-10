@@ -5,7 +5,7 @@ import TableauDeBord from './pages/TableauDeBord.jsx';
 import RouteProtegee from './components/RouteProtegee.jsx';
 import Layout from './components/Layout.jsx';
 import Nav from './components/Nav.jsx';
-import Settings from './pages/Settings.jsx';
+import Compte from './pages/Compte.jsx';
 
 function App() {
 	return (
@@ -21,8 +21,8 @@ function App() {
 				}
 			>
 				<Route path="/" element={<TableauDeBord />} />
-				//! TODO AJOUTER JOURNAL ET AGENDA
-				<Route path="/settings" element={<Settings />} />
+				// ! TODO AJOUTER JOURNAL ET AGENDA
+				<Route path="/compte" element={<Compte />} />
 			</Route>
 		</Routes>
 	);
