@@ -59,19 +59,21 @@ export async function postPersonne(req, res) {
 
 //----------------------- PUT ------------------------//
 
-export async function modifierMoi(nom, prenom, mail, date_naissance, mot_de_passe) {
-	const erreurs = {};
-	if (typeof prenom !== 'string' || prenom.trim() === '') {
-		erreurs.prenom = 'Le prénom est obligatoire';
-	} else if (prenom.trim().length > 100) {
-		erreurs.prenom = 'Le prénom doit faire entre 1 et 100 caractères';
-	}
-	if (typeof mail !== 'string' || !FORMAT_MAIL.test(mail.trim())) {
-		erreurs.mail = 'format de mail invalide';
-	}
-	if (typeof mot_de_passe !== 'string' || mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
-		erreurs.mot_de_passe = `Le mot de passe doit faire au moins ${LONGUEUR_MIN_MOT_DE_PASSE} caractères`;
+export async function modifierMoi(req, res) {
+	const body = req.body ?? {};
+	const erreurs = validerInscription(body);
+	if (Object.keys(erreurs).length > 0) {
+		throw new ErreurHttp(422, 'Données invalides', erreurs);
 	}
 
-	return erreurs;
+	const personne = await personneService.modifierUser({
+		nom: body.nom.trim(),
+		prenom: body.prenom.trim(),
+		mail: normaliserMail(body.mail),
+		date_naissance: body.date_naissance,
+		ancien_mot_de_passe: body.ancien_mot_de_passe,
+		nouveau_mot_de_passe: body.nouveau_mot_de_passe,
+		confirmation_mot_de_passe: body.confirmation_mot_de_passe,
+	});
+	res.status(201).json({ personne });
 }
