@@ -16,3 +16,4 @@ personneRoute.patch(
 );
 
 personneRoute.put('/modifierMoi', auth, personneController.modifierMoi);
+personneRoute.patch('/:id', auth, exigerRole(ROLES.ADMIN), personneController.modifierPersonne);

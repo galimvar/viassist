@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router';
-import { recupererPersonnes, recupererRoles } from '../api/auth.js';
+import { Routes, Route, useLocation, useNavigate } from 'react-router';
+import { modifierPersonne, recupererPersonnes, recupererRoles } from '../api/auth.js';
+import { CircleX } from 'lucide-react';
 
 function ModifierUtilisateur() {
 	const location = useLocation();
 	const personne = location.state;
+	const navigate = useNavigate();
 
 	const formateDateReverse = (date) => {
 		const dateTab = date.split('T');
@@ -15,7 +17,7 @@ function ModifierUtilisateur() {
 	const [prenom, setPrenom] = useState(personne.prenom);
 	const [dateNaissance, setDateNaissance] = useState(formateDateReverse(personne.date_naissance));
 	const [mail, setMail] = useState(personne.mail);
-	const [role, setRole] = useState(personne.intitule);
+	const [role, setRole] = useState(personne.role_id);
 	const [erreur, setErreur] = useState(null);
 	const [listeRoles, setListeRoles] = useState([]);
 
@@ -28,13 +30,17 @@ function ModifierUtilisateur() {
 		e.preventDefault();
 		const newDate = formateDate(dateNaissance);
 		try {
-			await inscrire({
-				nom: nom,
-				prenom: prenom,
-				date_naissance: newDate,
-				mail: mail,
-				mot_de_passe: motDePasse,
-			});
+			await modifierPersonne(
+				{
+					nom: nom,
+					prenom: prenom,
+					date_naissance: newDate,
+					mail: mail,
+					role_id: role,
+				},
+				personne.id,
+			);
+			navigate('/settings');
 		} catch (err) {
 			setErreur(err.message);
 		}
@@ -48,6 +54,11 @@ function ModifierUtilisateur() {
 		};
 		chargerRole();
 	}, []);
+
+	console.log('Role de la personne :', personne.role_id);
+	console.log('Type :', typeof personne.role_id);
+	console.log('Liste des rôles :', listeRoles);
+	console.log(personne);
 
 	return (
 		<>
@@ -129,12 +140,14 @@ function ModifierUtilisateur() {
 							className="select [&::picker(select)]:max-h-26"
 							value={role}
 							onChange={(e) => {
-								setRole(this.value);
+								setRole(Number(e.target.value));
 							}}
 						>
-							{listeRoles.map((l) => {
-								return <option key={l.id}>{l.intitule}</option>;
-							})}
+							{listeRoles.map((l) => (
+								<option key={l.id} value={l.id}>
+									{l.intitule}
+								</option>
+							))}
 						</select>
 
 						{erreur && (
@@ -145,14 +158,7 @@ function ModifierUtilisateur() {
 						)}
 					</fieldset>
 
-					<button
-						className="btn btn-primary w-full mt-4"
-						onClick={(e) => {
-							soumettre(e);
-						}}
-					>
-						Modifier
-					</button>
+					<button className="btn btn-primary w-full mt-4">Modifier</button>
 				</div>
 			</form>
 		</>

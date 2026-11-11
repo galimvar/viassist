@@ -13,7 +13,7 @@ export async function trouverParMail(mail) {
 
 export async function trouverTous() {
 	const { rows } = await db.query(
-		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, r.intitule FROM personne p JOIN role r ON p.role_id = r.id WHERE est_archive=false ORDER BY p.id ASC`,
+		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, p.role_id, r.intitule FROM personne p JOIN role r ON p.role_id = r.id WHERE est_archive=false ORDER BY p.id ASC`,
 	);
 	return rows ?? null;
 }
@@ -64,17 +64,21 @@ export async function archiverParId(id) {
 	return rows[0];
 }
 
-export async function updateUser(id, { nom, prenom, date_naissance, mail, mot_de_passe_hash }) {
+export async function updateUser(
+	id,
+	{ nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id },
+) {
 	const { rows } = await db.query(
 		`UPDATE personne 
 		SET nom = COALESCE($1, nom),
 			prenom = COALESCE($2, prenom), 
 			date_naissance = COALESCE($3, date_naissance),
 			mail = COALESCE($4, mail),
-			mot_de_passe_hash = COALESCE($5, mot_de_passe_hash)
-		WHERE id = $6
+			mot_de_passe_hash = COALESCE($5, mot_de_passe_hash),
+			role_id = COALESCE($6, role_id)
+		WHERE id = $7
 		RETURNING ${COLONNES_PUBLIQUES}`,
-		[nom, prenom, date_naissance, mail, mot_de_passe_hash, id],
+		[nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id, id],
 	);
 	return rows[0] ?? null;
 }

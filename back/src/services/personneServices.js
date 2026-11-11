@@ -64,9 +64,10 @@ export async function modifierUser(personne) {
 		ancien_mot_de_passe,
 		nouveau_mot_de_passe,
 		confirmation_mot_de_passe,
+		role_id,
 	} = personne;
 
-	const donneesAEnvoyer = { nom, prenom, mail, date_naissance };
+	const donneesAEnvoyer = { nom, prenom, mail, date_naissance, role_id };
 
 	if (nouveau_mot_de_passe) {
 		if (!ancien_mot_de_passe) {

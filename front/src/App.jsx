@@ -7,6 +7,8 @@ import Layout from './components/Layout.jsx';
 import Nav from './components/Nav.jsx';
 import Compte from './pages/Compte.jsx';
 import ModifierUtilisateur from './pages//ModifierUtilisateur.jsx';
+import Settings from './pages/Settings.jsx';
+import { ROLES } from './constantes/roles.js';
 
 function App() {
 	return (
@@ -16,16 +18,18 @@ function App() {
 			<Route
 				element={
 					<RouteProtegee>
-						{/* ajoute la nav barre sur les routes protégée*/}
 						<Layout />
 					</RouteProtegee>
 				}
 			>
 				<Route path="/" element={<TableauDeBord />} />
-				// ! TODO AJOUTER JOURNAL ET AGENDA
+				{/*!!! TODO AJOUTER JOURNAL ET AGENDA */}
 				<Route path="/compte" element={<Compte />} />
-				<Route path="/settings" element={<Settings />} />
-				<Route path="/settings/personne/update" element={<ModifierUtilisateur />} />
+
+				<Route element={<RouteProtegee roles={[ROLES.ADMIN]} />}>
+					<Route path="/settings" element={<Settings />} />
+					<Route path="/settings/personne/update" element={<ModifierUtilisateur />} />
+				</Route>
 			</Route>
 		</Routes>
 	);

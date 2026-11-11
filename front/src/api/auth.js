@@ -36,5 +36,6 @@ export const supprimerPersonne = (id) =>
 // infos = { nom, prenom, mail, date_naissance, ancien_mot_de_passe, nouveau_mot_de_passe, confirmation_mot_de_passe }
 export const modifierProfil = (infos) =>
 	appeler('/personne/modifierMoi', { method: 'PUT', body: JSON.stringify(infos) });
-
+export const modifierPersonne = (infos, id) =>
+	appeler(`/personne/${id}`, { method: 'PATCH', body: JSON.stringify(infos) });
 //! TODO AJOUTER AGENDA ET JOURNAL ///
