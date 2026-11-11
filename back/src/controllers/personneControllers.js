@@ -14,7 +14,7 @@ function validerInscription({ nom, prenom, date_naissance, mail, mot_de_passe })
 		erreurs.prenom = 'Le prénom fait au maximum 50 caractères';
 	}
 	if (typeof mail !== 'string' || !FORMAT_MAIL.test(mail.trim())) {
-		erreurs.mail = "L'mail n'a pas un format valide";
+		erreurs.mail = "L'email n'a pas un format valide";
 	}
 	if (typeof mot_de_passe !== 'string' || mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
 		erreurs.mot_de_passe = `Le mot de passe fait au moins ${LONGUEUR_MIN_MOT_DE_PASSE} caractères`;
