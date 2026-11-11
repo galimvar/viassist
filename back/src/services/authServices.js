@@ -55,7 +55,7 @@ export async function connecter({ mail, mot_de_passe }) {
 
 	// Même message que le mail existe ou non : on ne dit pas quels mails sont inscrits
 	const correct =
-		personne.mot_de_passe_hash &&
+		personne?.mot_de_passe_hash &&
 		(await bcrypt.compare(mot_de_passe, personne.mot_de_passe_hash));
 	if (!correct) {
 		throw new ErreurHttp(401, 'mail ou mot de passe incorrect');

@@ -70,7 +70,7 @@ function Compte() {
 
 	function modifier(e) {
 		const { name, value } = e.target;
-		setCompte((precedent) => ({ ...precedent, [name]: value }));
+		setFormulaire((precedent) => ({ ...precedent, [name]: value }));
 	}
 
 	async function soumettre(e) {
@@ -89,16 +89,16 @@ function Compte() {
 		setEnvoi(true);
 		try {
 			const donnees = await modifierProfil({
-				nom: compte.nom.trim(),
-				prenom: compte.prenom.trim(),
-				mail: compte.mail.trim(),
+				nom: formulaire.nom.trim(),
+				prenom: formulaire.prenom.trim(),
+				mail: formulaire.mail.trim(),
 				// le back attend AAAA/MM/JJ (comme à l'inscription), le champ date donne AAAA-MM-JJ
-				date_naissance: compte.date_naissance.replaceAll('-', '/'),
-				ancien_mot_de_passe: compte.ancien_mot_de_passe,
-				nouveau_mot_de_passe: compte.nouveau_mot_de_passe,
-				confirmation_mot_de_passe: compte.confirmation_mot_de_passe,
+				date_naissance: formulaire.date_naissance.replaceAll('-', '/'),
+				ancien_mot_de_passe: formulaire.ancien_mot_de_passe,
+				nouveau_mot_de_passe: formulaire.nouveau_mot_de_passe,
+				confirmation_mot_de_passe: formulaire.confirmation_mot_de_passe,
 			});
-			setCompte(versFormulaire(donnees.personne)); // champs mis à jour, mots de passe vidés
+			setCompte((precedent) => ({ ...donnees.personne, role: precedent.role })); // champs mis à jour, mots de passe vidés
 			setEdition(false);
 			setFormulaire(null);
 			setSucces(true);
@@ -170,7 +170,7 @@ function Compte() {
 					id="nom"
 					label="Nom"
 					className="input w-full"
-					value={compte.nom}
+					value={formulaire.nom}
 					onChange={modifier}
 					erreur={erreursChamps.nom}
 				/>
@@ -178,7 +178,7 @@ function Compte() {
 					id="prenom"
 					label="Prénom"
 					className="input w-full"
-					value={compte.prenom}
+					value={formulaire.prenom}
 					onChange={modifier}
 					erreur={erreursChamps.prenom}
 				/>
@@ -187,7 +187,7 @@ function Compte() {
 					label="Adresse mail"
 					type="email"
 					className="input w-full"
-					value={compte.mail}
+					value={formulaire.mail}
 					onChange={modifier}
 					erreur={erreursChamps.mail}
 				/>
@@ -196,7 +196,7 @@ function Compte() {
 					label="Date de naissance"
 					type="date"
 					className="input w-full"
-					value={compte.date_naissance}
+					value={formulaire.date_naissance}
 					onChange={modifier}
 					erreur={erreursChamps.date_naissance}
 				/>
@@ -204,7 +204,7 @@ function Compte() {
 					id="role"
 					label="Rôle"
 					className="input w-full"
-					value={compte.role}
+					value={formulaire.role}
 					readOnly
 				/>
 
@@ -216,7 +216,7 @@ function Compte() {
 					type="password"
 					autoComplete="current-password"
 					className="input w-full"
-					value={compte.ancien_mot_de_passe}
+					value={formulaire.ancien_mot_de_passe}
 					onChange={modifier}
 					erreur={erreursChamps.ancien_mot_de_passe}
 				/>
@@ -226,7 +226,7 @@ function Compte() {
 					type="password"
 					autoComplete="new-password"
 					className="input w-full"
-					value={compte.nouveau_mot_de_passe}
+					value={formulaire.nouveau_mot_de_passe}
 					onChange={modifier}
 					erreur={erreursChamps.nouveau_mot_de_passe}
 				/>
@@ -236,7 +236,7 @@ function Compte() {
 					type="password"
 					autoComplete="new-password"
 					className="input w-full"
-					value={compte.confirmation_mot_de_passe}
+					value={formulaire.confirmation_mot_de_passe}
 					onChange={modifier}
 					erreur={erreursChamps.confirmation_mot_de_passe}
 				/>
@@ -256,6 +256,15 @@ function Compte() {
 
 				<button type="submit" className="btn btn-primary w-full mt-4" disabled={envoi}>
 					Enregistrer
+				</button>
+
+				<button
+					type="button"
+					className="btn btn-ghost w-full"
+					onClick={annuler}
+					disabled={envoi}
+				>
+					Annuler
 				</button>
 			</form>
 		</section>
