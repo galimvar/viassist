@@ -52,7 +52,9 @@ export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe
 
 export async function connecter({ mail, mot_de_passe }) {
 	const personne = await Personne.trouverParMail(mail);
-
+	if (!personne) {
+		throw new ErreurHttp(404, 'mail ou mot de passe incorrect');
+	}
 	// Même message que le mail existe ou non : on ne dit pas quels mails sont inscrits
 	const correct =
 		personne?.mot_de_passe_hash &&
@@ -61,7 +63,7 @@ export async function connecter({ mail, mot_de_passe }) {
 		throw new ErreurHttp(401, 'mail ou mot de passe incorrect');
 	}
 
-	const token = jwt.sign({ sub: personne.id }, process.env.JWT_SECRET, {
+	const token = jwt.sign({ sub: personne.id, role: personne.role_id }, process.env.JWT_SECRET, {
 		expiresIn: DUREE_SESSION,
 	});
 

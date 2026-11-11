@@ -3,12 +3,25 @@ import jwt from 'jsonwebtoken';
 
 import * as Personne from '../models/PersonneModels.js';
 import { ErreurHttp } from '../erreurs.js';
+import * as Personne from '../models/PersonneModels.js';
+import { ErreurHttp } from '../erreurs.js';
 
 const COUT_HASH = 10;
 const DUREE_SESSION = '2h';
 
 export async function getUserProfile(id) {
 	const utilisateurs = await Personne.trouverParId(id);
+	/*   if (!utilisateurs) {
+	const utilisateurs = await Personne.trouverParId(id);
+	/*   if (!utilisateurs) {
+    throw new ErreurHttp(401, 'Session invalide');
+  } */
+	return utilisateurs;
+	return utilisateurs;
+}
+
+export async function getAllUsers() {
+	const utilisateurs = await Personne.trouverTous();
 	/*   if (!utilisateurs) {
     throw new ErreurHttp(401, 'Session invalide');
   } */

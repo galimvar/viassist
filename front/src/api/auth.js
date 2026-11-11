@@ -27,6 +27,11 @@ export const deconnecter = () => appeler('/auth/deconnexion', { method: 'POST' }
 
 export const recupererMoi = () => appeler('/auth/moi');
 
+export const recupererPersonnes = () => appeler('/personne/');
+
+export const recupererRoles = () => appeler('/roles');
+
+export const supprimerPersonne = () => appeler('/personne/delete');
 // infos = { nom, prenom, mail, date_naissance, ancien_mot_de_passe, nouveau_mot_de_passe, confirmation_mot_de_passe }
 export const modifierProfil = (infos) =>
 	appeler('/personne/modifierMoi', { method: 'PUT', body: JSON.stringify(infos) });

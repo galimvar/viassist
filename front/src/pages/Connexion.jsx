@@ -20,58 +20,70 @@ export default function Connexion() {
 		}
 	}
 	return (
-		<form
-			onSubmit={soumettre}
-			className="card bg-base-100 w-full max-w-xs mx-auto mt-12 shadow-lg"
-		>
-			<div className="card-body items-center text-center">
-				<h2 className="card-title">Connexion à votre compte</h2>
-				<p className="text-xs text-base-content/60">Bienvenu sur Vi'Assist !</p>
+		<>
+			<form
+				onSubmit={soumettre}
+				className="card bg-base-100 w-full max-w-xs mx-auto mt-12 shadow-lg"
+			>
+				<div className="card-body items-center text-center">
+					<h2 className="card-title">Connexion à votre compte</h2>
+					<p className="text-xs text-base-content/60">Bienvenu sur Vi'Assist !</p>
 
-				<fieldset className="fieldset w-full text-left">
-					<label className="label" htmlFor="username">
-						Identifiant
-					</label>
-					<input
-						id="username"
-						type="email"
-						className="input w-full"
-						placeholder="example@example.com"
-						onChange={(e) => {
-							setMail(e.target.value);
+					<fieldset className="fieldset w-full text-left">
+						<label className="label" htmlFor="username">
+							Identifiant
+						</label>
+						<input
+							id="username"
+							type="email"
+							className="input w-full"
+							placeholder="example@example.com"
+							onChange={(e) => {
+								setMail(e.target.value);
+							}}
+						/>
+
+						<label className="label" htmlFor="password">
+							Mot de passe
+						</label>
+						<input
+							id="password"
+							type="password"
+							className="input w-full"
+							placeholder="••••••••"
+							onChange={(e) => {
+								setMotDePasse(e.target.value);
+							}}
+						/>
+
+						{erreur && (
+							<div role="alert" className="alert alert-error">
+								<CircleX size={20} color="red" strokeWidth={1.75} />
+								<span>{erreur}</span>
+							</div>
+						)}
+					</fieldset>
+
+					<button
+						className="btn btn-primary w-full mt-4"
+						onClick={(e) => {
+							soumettre(e);
 						}}
-					/>
-
-					<label className="label" htmlFor="password">
-						Mot de passe
-					</label>
-					<input
-						id="password"
-						type="password"
-						className="input w-full"
-						placeholder="••••••••"
-						onChange={(e) => {
-							setMotDePasse(e.target.value);
+					>
+						Se connecter
+					</button>
+				</div>
+				<div className="flex justify-center">
+					<a
+						className="link link-primary"
+						onClick={() => {
+							navigate('/inscription');
 						}}
-					/>
-
-					{erreur && (
-						<div role="alert" className="alert alert-error">
-							<CircleX size={20} color="red" strokeWidth={1.75} />
-							<span>{erreur}</span>
-						</div>
-					)}
-				</fieldset>
-
-				<button
-					className="btn btn-primary w-full mt-4"
-					onClick={(e) => {
-						soumettre(e);
-					}}
-				>
-					Se connecter
-				</button>
-			</div>
-		</form>
+					>
+						S'inscrire
+					</a>
+				</div>
+			</form>
+		</>
 	);
 }

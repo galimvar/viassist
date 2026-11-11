@@ -11,6 +11,13 @@ export async function trouverParMail(mail) {
 	return rows[0] ?? null;
 }
 
+export async function trouverTous() {
+	const { rows } = await db.query(
+		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, r.intitule FROM personne p JOIN role r ON p.role_id = r.id ORDER BY p.id ASC`,
+	);
+	return rows ?? null;
+}
+
 export async function trouverParId(id) {
 	// Jointure sur role : on renvoie aussi l'intitulé (« admin », « proche »...) et pas seulement l'id
 	const { rows } = await db.query(
