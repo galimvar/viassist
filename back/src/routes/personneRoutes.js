@@ -7,3 +7,5 @@ export const personneRoute = Router();
 personneRoute.get('/:id', personneController.getPersonneById);
 personneRoute.get('/', auth, personneController.getAllPersonnes);
 personneRoute.post('/inscription', personneController.postPersonne);
+
+personneRoute.put('/modifierMoi', auth, personneController.modifierMoi);
