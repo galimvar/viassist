@@ -105,6 +105,7 @@ export default function Inscription() {
 								onChange={(e) => {
 									setMail(e.target.value);
 								}}
+								pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
 								required
 							/>
 							<p className="validator-hint">

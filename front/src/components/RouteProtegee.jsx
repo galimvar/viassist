@@ -11,7 +11,7 @@ export default function RouteProtegee({ children, roles }) {
 	if (!utilisatrice) {
 		return <Navigate to="/connexion" replace state={{ depuis: location.pathname }} />;
 	}
-	console.log(utilisatrice);
+
 	if (roles && !roles.includes(utilisatrice.role_id)) {
 		return <Navigate to="/" replace />;
 	}

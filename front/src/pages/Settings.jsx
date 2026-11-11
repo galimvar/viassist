@@ -117,7 +117,7 @@ function Settings() {
 												const rep = await openConfirmModal(
 													'my_modal_' + p.id,
 												);
-												console.log(rep);
+
 												if (rep === true)
 													try {
 														deleteUser(p.id);
