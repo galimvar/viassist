@@ -5,6 +5,7 @@ import { personneRoute as personneRouter } from './routes/personneRoutes.js';
 import { gestionErreurs } from './middlewares/erreurs.js';
 import { authRouter } from './routes/authRoutes.js';
 import { rolesRoute as rolesRouter } from './routes/rolesRoutes.js';
+import { messageRouter } from './routes/messageRoutes.js';
 
 export const app = express();
 
@@ -20,5 +21,6 @@ app.get('/', async (req, res) => {
 app.use('/api/personne', personneRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/roles', rolesRouter);
+app.use('/api/message', messageRouter);
 
 app.use(gestionErreurs); // toujours en dernier

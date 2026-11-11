@@ -1,0 +1,28 @@
+@URL = http://localhost:3000/api
+
+### 1. A lancer EN PREMIER : Message(s) sans être connecté - renvoie 401
+GET {{URL}}/message
+
+### 2. Connexion OBLIGATOIRE - renvoie 200 (et dépose le cookie) 
+POST {{URL}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail":"sophie.martin@example.com",
+    "mot_de_passe":"Motdepasse1!"
+}
+
+### 3. Connecté => Message(s) avec un mauvais format de date - renvoie 422
+GET {{URL}}/message?date=bonjour
+
+### 4. Connecté => Message(s) du jour - renvoie 200
+GET {{URL}}/message
+
+### 5. Connecté => Message(s) d'une date donnée - renvoie 200
+GET {{URL}}/message?date=2026-11-09
+
+### 6. Déconnexion - renvoie 204 (et supprime le cookie)
+POST {{URL}}/auth/deconnexion
+
+### 7. Déconnecté => Message(s) après déconnexion - renvoie 401
+GET {{URL}}/message
