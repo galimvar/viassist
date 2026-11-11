@@ -1,0 +1,221 @@
+@baseUrl = http://localhost:3000/api
+
+# ==========================================================================
+#  compte.http — lire et modifier SON compte
+#  ⚠️ Lancer les requêtes DANS L'ORDRE : REST Client mémorise le cookie
+#     de connexion et l'envoie automatiquement aux requêtes suivantes.
+# ==========================================================================
+
+
+# ---------------------------------------------------------------- SANS CONNEXION
+
+### 0. Déconnexion (repartir d'un état propre) → 204
+POST {{baseUrl}}/auth/deconnexion
+
+### 1. Lire mon compte sans être connecté → 401 « Connexion requise »
+GET {{baseUrl}}/auth/moi
+
+### 2. Modifier sans être connecté → 401 (le middleware auth bloque avant le controller)
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02"
+}
+
+
+# ---------------------------------------------------------------- CONNEXION
+
+### 3. Connexion de Sophie → 200 + cookie mémorisé
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 4. Lire mon compte → 200 avec id, nom, prénom, date, mail, rôle (jamais le hash)
+GET {{baseUrl}}/auth/moi
+
+
+# ---------------------------------------------------------------- MODIFICATIONS OK
+
+### 5. Modifier le prénom seul → 200, prénom = « Sophia »
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophia",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02"
+}
+
+### 6. Modifier la date de naissance → 200, date = 1968-09-03
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophia",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/03"
+}
+
+### 7. Remettre les valeurs d'origine → 200
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02"
+}
+
+
+# ---------------------------------------------------------------- ERREURS DU CONTROLLER (422)
+
+### 8. Prénom vide → 422 + erreurs.prenom
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02"
+}
+
+### 9. Mail mal formé → 422 + erreurs.mail
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie-sans-arobase",
+    "date_naissance": "1968/09/02"
+}
+
+### 10. Nouveau mot de passe SANS l'ancien → 422 + erreurs.ancien_mot_de_passe
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02",
+    "nouveau_mot_de_passe": "NouveauMdp2!",
+    "confirmation_mot_de_passe": "NouveauMdp2!"
+}
+
+### 11. Nouveau mot de passe trop court → 422 + erreurs.nouveau_mot_de_passe
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02",
+    "ancien_mot_de_passe": "Motdepasse1!",
+    "nouveau_mot_de_passe": "court",
+    "confirmation_mot_de_passe": "court"
+}
+
+
+# ---------------------------------------------------------------- ERREURS DU SERVICE
+
+### 12. Confirmation différente → 400 « Le mot de passe n'est pas identique »
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02",
+    "ancien_mot_de_passe": "Motdepasse1!",
+    "nouveau_mot_de_passe": "NouveauMdp2!",
+    "confirmation_mot_de_passe": "AutreChose3!"
+}
+
+### 13. Ancien mot de passe faux → 400 « Ancien mot de passe incorrect »
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02",
+    "ancien_mot_de_passe": "PasLeBon999!",
+    "nouveau_mot_de_passe": "NouveauMdp2!",
+    "confirmation_mot_de_passe": "NouveauMdp2!"
+}
+
+### 14. Mail déjà utilisé (celui de Laurent) → 409 « Un compte existe déjà avec cet email »
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "laurent.delacroix@example.com",
+    "date_naissance": "1968/09/02"
+}
+
+
+# ---------------------------------------------------------------- CHANGEMENT DE MOT DE PASSE
+
+### 15. Changement correct → 200
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02",
+    "ancien_mot_de_passe": "Motdepasse1!",
+    "nouveau_mot_de_passe": "NouveauMdp2!",
+    "confirmation_mot_de_passe": "NouveauMdp2!"
+}
+
+### 16. Reconnexion avec l'ANCIEN mot de passe → 401 (preuve que le 15 a marché)
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 17. Reconnexion avec le NOUVEAU → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "NouveauMdp2!"
+}
+
+### 18. ⚠️ RESTAURER l'ancien mot de passe → 200 (sinon la requête 3 échouera la prochaine fois)
+PUT {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Sophie",
+    "mail": "sophie.martin@example.com",
+    "date_naissance": "1968/09/02",
+    "ancien_mot_de_passe": "NouveauMdp2!",
+    "nouveau_mot_de_passe": "Motdepasse1!",
+    "confirmation_mot_de_passe": "Motdepasse1!"
+}

@@ -1,7 +1,7 @@
 // Tous les appels à l'API d'authentification, au même endroit.
 // Chaque fonction renvoie les données, ou lance une erreur qui porte le status et les erreurs par champ.
 
-async function appeler(chemin, options = {}) {
+export async function appeler(chemin, options = {}) {
 	const res = await fetch(`/api${chemin}`, {
 		headers: { 'Content-Type': 'application/json' },
 		...options,
@@ -33,4 +33,8 @@ export const recupererRoles = () => appeler('/roles');
 
 export const supprimerPersonne = (id) =>
 	appeler('/personne/delete', { method: 'PATCH', body: JSON.stringify({ id: id }) });
+// infos = { nom, prenom, mail, date_naissance, ancien_mot_de_passe, nouveau_mot_de_passe, confirmation_mot_de_passe }
+export const modifierProfil = (infos) =>
+	appeler('/personne/modifierMoi', { method: 'PUT', body: JSON.stringify(infos) });
+
 //! TODO AJOUTER AGENDA ET JOURNAL ///

@@ -14,3 +14,5 @@ personneRoute.patch(
 	exigerRole(ROLES.ADMIN),
 	personneController.deletePersonneById,
 );
+
+personneRoute.put('/modifierMoi', auth, personneController.modifierMoi);
