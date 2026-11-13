@@ -9,6 +9,7 @@ import Compte from './pages/Compte.jsx';
 import ModifierUtilisateur from './pages//ModifierUtilisateur.jsx';
 import Settings from './pages/Settings.jsx';
 import Agenda from './pages/Agenda.jsx';
+import Journal from './pages/Journal.jsx';
 import { ROLES } from './constantes/roles.js';
 
 function App() {
@@ -24,7 +25,6 @@ function App() {
 				}
 			>
 				<Route path="/" element={<TableauDeBord />} />
-				{/*!!! TODO AJOUTER JOURNAL ET AGENDA */}
 				<Route path="/compte" element={<Compte />} />
 
 				<Route
@@ -33,6 +33,21 @@ function App() {
 					}
 				>
 					<Route path="/agenda" element={<Agenda />} />
+				</Route>
+
+				<Route
+					element={
+						<RouteProtegee
+							roles={[
+								ROLES.ADMIN,
+								ROLES.INTERVENANT,
+								ROLES.PROCHE,
+								ROLES.BENEFICIAIRE,
+							]}
+						/>
+					}
+				>
+					<Route path="/journal" element={<Journal />} />
 				</Route>
 
 				<Route element={<RouteProtegee roles={[ROLES.ADMIN]} />}>
