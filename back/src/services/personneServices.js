@@ -1,22 +1,13 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
-import * as Personne from '../models/PersonneModels.js';
-import { ErreurHttp } from '../erreurs.js';
 import * as Personne from '../models/PersonneModels.js';
 import { ErreurHttp } from '../erreurs.js';
 
 const COUT_HASH = 10;
-const DUREE_SESSION = '2h';
 
 export async function getUserProfile(id) {
 	const utilisateurs = await Personne.trouverParId(id);
-	/*   if (!utilisateurs) {
-	const utilisateurs = await Personne.trouverParId(id);
-	/*   if (!utilisateurs) {
-    throw new ErreurHttp(401, 'Session invalide');
-  } */
-	return utilisateurs;
+
 	return utilisateurs;
 }
 
@@ -73,9 +64,10 @@ export async function modifierUser(personne) {
 		ancien_mot_de_passe,
 		nouveau_mot_de_passe,
 		confirmation_mot_de_passe,
+		role_id,
 	} = personne;
 
-	const donneesAEnvoyer = { nom, prenom, mail, date_naissance };
+	const donneesAEnvoyer = { nom, prenom, mail, date_naissance, role_id };
 
 	if (nouveau_mot_de_passe) {
 		if (!ancien_mot_de_passe) {
@@ -113,4 +105,12 @@ export async function modifierUser(personne) {
 	}
 
 	return userModifie;
+}
+
+export async function archiveUserProfile(id) {
+	const utilisateurs = await Personne.archiverParId(id);
+	/*   if (!utilisateurs) {
+    throw new ErreurHttp(401, 'Session invalide');
+  } */
+	return utilisateurs;
 }

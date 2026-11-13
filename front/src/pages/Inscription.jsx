@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { inscrire } from '../api/auth.js';
 import { CircleX } from 'lucide-react';
+import ChampModifier from '../components/ChampModifier.jsx';
 
 export default function Inscription() {
 	const navigate = useNavigate();
@@ -16,6 +17,10 @@ export default function Inscription() {
 	async function soumettre(e) {
 		e.preventDefault();
 		const newDate = formateDate(dateNaissance);
+		if (motDePasse != motDePasseValidation) {
+			setErreur('Les mots de passes doivent être identiques');
+			return;
+		}
 		try {
 			await inscrire({
 				nom: nom,
@@ -45,114 +50,74 @@ export default function Inscription() {
 					<h2 className="card-title">Inscription</h2>
 
 					<fieldset className="fieldset w-full text-left">
-						<div>
-							<label className="label" htmlFor="name">
-								Nom
-							</label>
-							<input
-								id="name"
-								type="text"
-								className="input w-full validator"
-								placeholder="Nom"
-								onChange={(e) => {
-									setNom(e.target.value);
-								}}
-								required
-							/>
-							<div className="validator-hint">Le nom est obligatoire</div>
-						</div>
-						<div>
-							<label className="label" htmlFor="firstname">
-								Prénom
-							</label>
-							<input
-								id="firstname"
-								type="text"
-								className="input w-full validator"
-								placeholder="Prénom"
-								onChange={(e) => {
-									setPrenom(e.target.value);
-								}}
-								required
-							/>
-							<p className="validator-hint">Le prénom est obligatoire</p>
-						</div>
+						<ChampModifier
+							id="nom"
+							label="Nom"
+							value={nom}
+							onChange={setNom}
+							error={'Le nom est requis.'}
+							className="input w-full validator"
+							required
+						/>
+						<ChampModifier
+							id="prenom"
+							label="Prénom"
+							value={prenom}
+							onChange={setPrenom}
+							error={'Le prénom est requis.'}
+							className="input w-full validator"
+							required
+						/>
 
-						<div>
-							<label className="label" htmlFor="birthday">
-								Date de naissance
-							</label>
-							<input
-								id="birthday"
-								type="date"
-								className="input w-full validator"
-								placeholder="Date de naissance"
-								onChange={(e) => {
-									setDateNaissance(e.target.value);
-								}}
-							/>
-						</div>
+						<ChampModifier
+							id="dateNaissance"
+							label="Date de naissance"
+							type="date"
+							value={dateNaissance}
+							onChange={setDateNaissance}
+							error={'La date de naissance doit être au bon format !'}
+							className="input w-full validator"
+						/>
 
-						<div>
-							<label className="label" htmlFor="mail">
-								Adresse mail
-							</label>
-							<input
-								id="mail"
-								type="email"
-								className="input w-full validator"
-								placeholder="Adresse mail"
-								onChange={(e) => {
-									setMail(e.target.value);
-								}}
-								required
-							/>
-							<p className="validator-hint">
-								Le mail doit être dans un format valide
-							</p>
-						</div>
-						<div>
-							<label className="label" htmlFor="password">
-								Mot de passe
-							</label>
-							<input
-								id="password"
-								type="password"
-								className="input w-full validator"
-								pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
-								placeholder="••••••••"
-								onChange={(e) => {
-									setMotDePasse(e.target.value);
-								}}
-								required
-							/>
-							<p className="validator-hint">
-								Entrez un mot de passe valide, d'au moins 8 caractères, comprenant
-								au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1
-								caractère spécial
-							</p>
-						</div>
-						<div>
-							<label className="label" htmlFor="passwordValid">
-								Confirmation du mot de passe
-							</label>
-							<input
-								id="passwordValid"
-								type="password"
-								className="input w-full validator"
-								pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
-								placeholder="••••••••"
-								onChange={(e) => {
-									setMotDePasseValidation(e.target.value);
-								}}
-								required
-							/>
-							<p className="validator-hint">
-								Entrez un mot de passe valide, d'au moins 8 caractères, comprenant
-								au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1
-								caractère spécial.
-							</p>
-						</div>
+						<ChampModifier
+							id="mail"
+							label="Adresse mail"
+							type="email"
+							value={mail}
+							onChange={setMail}
+							error={'Le mail est requis, au bon format'}
+							className="input w-full validator"
+							pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+							required
+						/>
+						<ChampModifier
+							id="password"
+							label="Mot de passe"
+							type="password"
+							value={motDePasse}
+							onChange={setMotDePasse}
+							error={
+								"Entrez un mot de passe valide, d'au moins 8 caractères, comprenant au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1 caractère spécial"
+							}
+							className="input w-full validator"
+							pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
+							placeholder="••••••••"
+							required
+						/>
+						<ChampModifier
+							id="passwordValid"
+							label="Confirmer mot de passe"
+							type="password"
+							value={motDePasseValidation}
+							onChange={setMotDePasseValidation}
+							error={
+								"Entrez un mot de passe valide, d'au moins 8 caractères, comprenant au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1 caractère spécial"
+							}
+							className="input w-full validator"
+							pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
+							placeholder="••••••••"
+							required
+						/>
 
 						{erreur && (
 							<div role="alert" className="alert alert-error">
@@ -162,14 +127,7 @@ export default function Inscription() {
 						)}
 					</fieldset>
 
-					<button
-						className="btn btn-primary w-full mt-4"
-						onClick={(e) => {
-							soumettre(e);
-						}}
-					>
-						Se connecter
-					</button>
+					<button className="btn btn-primary w-full mt-4">Créer mon compte</button>
 				</div>
 				<div class="flex justify-center">
 					<a

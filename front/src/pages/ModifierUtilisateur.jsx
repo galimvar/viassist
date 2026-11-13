@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router';
-import { recupererPersonnes, recupererRoles } from '../api/auth.js';
+import { Routes, Route, useLocation, useNavigate } from 'react-router';
+import { modifierPersonne, recupererPersonnes, recupererRoles } from '../api/auth.js';
+import { CircleX } from 'lucide-react';
+import ChampModifier from '../components/ChampModifier.jsx';
+import SelectModifier from '../components/SelectModifier.jsx';
 
 function ModifierUtilisateur() {
 	const location = useLocation();
 	const personne = location.state;
+	const navigate = useNavigate();
 
 	const formateDateReverse = (date) => {
 		const dateTab = date.split('T');
@@ -15,7 +19,7 @@ function ModifierUtilisateur() {
 	const [prenom, setPrenom] = useState(personne.prenom);
 	const [dateNaissance, setDateNaissance] = useState(formateDateReverse(personne.date_naissance));
 	const [mail, setMail] = useState(personne.mail);
-	const [role, setRole] = useState(personne.intitule);
+	const [role, setRole] = useState(personne.role_id);
 	const [erreur, setErreur] = useState(null);
 	const [listeRoles, setListeRoles] = useState([]);
 
@@ -28,14 +32,17 @@ function ModifierUtilisateur() {
 		e.preventDefault();
 		const newDate = formateDate(dateNaissance);
 		try {
-			await inscrire({
-				nom: nom,
-				prenom: prenom,
-				date_naissance: newDate,
-				mail: mail,
-				mot_de_passe: motDePasse,
-			});
-			//navigate('/connexion');
+			await modifierPersonne(
+				{
+					nom: nom,
+					prenom: prenom,
+					date_naissance: newDate,
+					mail: mail,
+					role_id: role,
+				},
+				personne.id,
+			);
+			navigate('/settings');
 		} catch (err) {
 			setErreur(err.message);
 		}
@@ -44,7 +51,8 @@ function ModifierUtilisateur() {
 	useEffect(() => {
 		const chargerRole = async () => {
 			const roles = await recupererRoles();
-			setListeRoles(roles);
+
+			setListeRoles(roles.roles);
 		};
 		chargerRole();
 	}, []);
@@ -59,81 +67,49 @@ function ModifierUtilisateur() {
 					<h2 className="card-title">Modifier</h2>
 
 					<fieldset className="fieldset w-full text-left">
-						<div>
-							<label className="label" htmlFor="name">
-								Nom
-							</label>
-							<input
-								id="name"
-								type="text"
-								className="input w-full validator"
-								value={nom}
-								onChange={(e) => {
-									setNom(e.target.value);
-								}}
-								required
-							/>
-							<div className="validator-hint">Le nom est obligatoire</div>
-						</div>
-						<div>
-							<label className="label" htmlFor="firstname">
-								Prénom
-							</label>
-							<input
-								id="firstname"
-								type="text"
-								className="input w-full validator"
-								value={prenom}
-								onChange={(e) => {
-									setPrenom(e.target.value);
-								}}
-								required
-							/>
-							<p className="validator-hint">Le prénom est obligatoire</p>
-						</div>
+						<ChampModifier
+							id="nom"
+							label="Nom"
+							value={nom}
+							onChange={setNom}
+							error={'Le nom est requis.'}
+							className="input w-full validator"
+							required
+						/>
 
-						<div>
-							<label className="label" htmlFor="birthday">
-								Date de naissance
-							</label>
-							<input
-								id="birthday"
-								type="date"
-								className="input w-full validator"
-								value={dateNaissance}
-								onChange={(e) => {
-									setDateNaissance(e.target.value);
-								}}
-							/>
-						</div>
+						<ChampModifier
+							id="prenom"
+							label="Prénom"
+							value={prenom}
+							onChange={setPrenom}
+							error={'Le prénom est requis.'}
+							className="input w-full validator"
+							required
+						/>
 
-						<div>
-							<label className="label" htmlFor="mail">
-								Adresse mail
-							</label>
-							<input
-								id="mail"
-								type="email"
-								className="input w-full validator"
-								value={mail}
-								onChange={(e) => {
-									setMail(e.target.value);
-								}}
-								required
-							/>
-							<p className="validator-hint">
-								Le mail doit être dans un format valide
-							</p>
-						</div>
-						<select className="select [&::picker(select)]:max-h-26">
-							{listeRoles.map((l) => {
-								return (
-									<option {...(l.intitule === role ? 'selected' : '')}>
-										{l.intitule}
-									</option>
-								);
-							})}
-						</select>
+						<ChampModifier
+							id="dateNaissance"
+							label="Date de naissance"
+							type="date"
+							value={dateNaissance}
+							onChange={setDateNaissance}
+							error={'La date de naissance doit être au bon format !'}
+							className="input w-full validator"
+						/>
+
+						<ChampModifier
+							id="mail"
+							label="Adresse mail"
+							type="email"
+							value={mail}
+							onChange={setMail}
+							error={'Le mail est requis, au bon format'}
+							className="input w-full validator"
+							pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+							required
+						/>
+
+						<SelectModifier value={role} onChange={setRole} liste={listeRoles} />
 
 						{erreur && (
 							<div role="alert" className="alert alert-error">
@@ -143,14 +119,7 @@ function ModifierUtilisateur() {
 						)}
 					</fieldset>
 
-					<button
-						className="btn btn-primary w-full mt-4"
-						onClick={(e) => {
-							soumettre(e);
-						}}
-					>
-						Modifier
-					</button>
+					<button className="btn btn-primary w-full mt-4">Modifier</button>
 				</div>
 			</form>
 		</>

@@ -31,9 +31,11 @@ export const recupererPersonnes = () => appeler('/personne/');
 
 export const recupererRoles = () => appeler('/roles');
 
-export const supprimerPersonne = () => appeler('/personne/delete');
+export const supprimerPersonne = (id) =>
+	appeler('/personne/delete', { method: 'PATCH', body: JSON.stringify({ id: id }) });
 // infos = { nom, prenom, mail, date_naissance, ancien_mot_de_passe, nouveau_mot_de_passe, confirmation_mot_de_passe }
 export const modifierProfil = (infos) =>
 	appeler('/personne/modifierMoi', { method: 'PUT', body: JSON.stringify(infos) });
-
+export const modifierPersonne = (infos, id) =>
+	appeler(`/personne/${id}`, { method: 'PATCH', body: JSON.stringify(infos) });
 //! TODO AJOUTER AGENDA ET JOURNAL ///

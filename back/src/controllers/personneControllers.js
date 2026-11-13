@@ -109,3 +109,29 @@ export async function modifierMoi(req, res) {
 	});
 	res.status(200).json({ personne });
 }
+
+export async function modifierPersonne(req, res) {
+	const body = req.body ?? {};
+	const erreurs = validerModification(body);
+	if (Object.keys(erreurs).length > 0) {
+		throw new ErreurHttp(422, 'Données invalides', erreurs);
+	}
+
+	const personne = await personneService.modifierUser({
+		id: req.params.id,
+		nom: body.nom?.trim(),
+		prenom: body.prenom.trim(),
+		mail: normaliserMail(body.mail),
+		date_naissance: body.date_naissance,
+		role_id: body.role_id,
+	});
+	res.status(200).json({ personne });
+}
+
+//-----------------------DELETE-------------------------//
+export async function deletePersonneById(req, res) {
+	const id = req.body.id;
+	console.log(id);
+	const personnes = await personneService.archiveUserProfile(id);
+	res.json({ personnes });
+}
