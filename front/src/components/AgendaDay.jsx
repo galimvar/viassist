@@ -9,28 +9,15 @@ const formaterDate = (iso) =>
 	});
 
 const AgendaDay = () => {
-	const API = 'http://localhost:5173/api/agenda';
+	const API = '/api/agenda';
 
 	const [data, setData] = useState();
-	const [interval, setInterval] = useState(0);
-
-	const chargerData = async () => {
-		try {
-			const response = await fetch(API + `/jour?interval=${interval}`);
-
-			if (!response.ok) {
-				throw new Error(`Erreur ${response.status}: Impossible de charger les evenements`);
-			}
-			setData(await response.json());
-		} catch (error) {
-			console.error(error.message);
-		}
-	};
+	const [decalage, setDecalage] = useState(0);
 
 	useEffect(() => {
 		const chargerData = async () => {
 			try {
-				const response = await fetch(`${API}/jour?interval=${interval}`);
+				const response = await fetch(`${API}/jour?decalage=${decalage}`);
 				if (!response.ok) {
 					throw new Error(
 						`Erreur ${response.status}: Impossible de charger les evenements`,
@@ -42,7 +29,7 @@ const AgendaDay = () => {
 			}
 		};
 		chargerData();
-	}, [interval]);
+	}, [decalage]);
 
 	if (!data) return <p>Chargement…</p>;
 
@@ -50,9 +37,9 @@ const AgendaDay = () => {
 
 	return (
 		<>
-			<ChevronLeft color="blue" onClick={() => setInterval(interval - 1)} />
-			<h1>{formaterDate(date)}</h1>
-			<ChevronRight color="blue" onClick={() => setInterval(interval + 1)} />
+			<ChevronLeft color="blue" onClick={() => setDecalage(decalage - 1)} />
+			<h2>{formaterDate(date)}</h2>
+			<ChevronRight color="blue" onClick={() => setDecalage(decalage + 1)} />
 			<pre>{JSON.stringify(evenements, null, 2)}</pre>
 		</>
 	);

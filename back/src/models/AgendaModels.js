@@ -12,7 +12,7 @@ const EVENEMENTS = `(
   LEFT JOIN type_evenement t ON t.id = ev.type_evenement_id
 )`;
 
-export const dayQuery = async (interval) => {
+export const dayQuery = async (decalage) => {
 	const { rows } = await db.query(
 		`
         SELECT json_build_object((CURRENT_DATE + $1::int)::text,
@@ -21,12 +21,12 @@ export const dayQuery = async (interval) => {
         WHERE e.date_debut <= CURRENT_DATE + $1::int
           AND COALESCE(e.date_fin, e.date_debut) >= CURRENT_DATE + $1::int),
         '[]'::json)) AS resultat`,
-		[interval],
+		[decalage],
 	);
 	return rows[0].resultat;
 };
 
-export const weekQuery = async (interval) => {
+export const weekQuery = async (decalage) => {
 	const { rows } = await db.query(
 		`
         SELECT json_object_agg(jour, evenements ORDER BY jour) AS resultat
@@ -42,12 +42,12 @@ export const weekQuery = async (interval) => {
           ON e.date_debut <= d::date AND COALESCE(e.date_fin, e.date_debut) >= d::date
         GROUP BY d
         ) AS jours`,
-		[interval],
+		[decalage],
 	);
 	return rows[0].resultat;
 };
 
-export const monthQuery = async (interval) => {
+export const monthQuery = async (decalage) => {
 	const { rows } = await db.query(
 		`
         WITH bornes AS (
@@ -75,7 +75,7 @@ export const monthQuery = async (interval) => {
         'mois', json_agg(semaine ORDER BY lundi)
         ) AS resultat
         FROM semaines`,
-		[interval],
+		[decalage],
 	);
 	return rows[0].resultat;
 };
