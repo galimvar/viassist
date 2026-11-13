@@ -13,7 +13,12 @@ export default function Nav() {
 		{ chemin: '/', label: 'Home', Icone: House },
 		{ chemin: '/settings', label: 'Settings', Icone: Settings, roles: [ROLES.ADMIN] },
 		{ chemin: '/compte', label: 'Mon compte', Icone: UserRound },
-		{ chemin: '/agenda', label: 'Agenda', Icone: CalendarRange },
+		{
+			chemin: '/agenda',
+			label: 'Agenda',
+			Icone: CalendarRange,
+			roles: [ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE],
+		},
 	].filter((l) => !l.roles || l.roles.includes(utilisatrice?.role_id));
 
 	return (

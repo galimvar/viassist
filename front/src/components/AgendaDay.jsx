@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getAgendaDay } from '../api/auth';
 
 const formaterDate = (iso) =>
 	new Date(`${iso}T00:00`).toLocaleDateString('fr-FR', {
@@ -15,20 +16,10 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 
 	useEffect(() => {
 		const chargerData = async () => {
-			try {
-				const response = await fetch(`${API}/jour?decalage=${decalage}`);
-				if (!response.ok) {
-					throw new Error(
-						`Erreur ${response.status}: Impossible de charger les evenements`,
-					);
-				}
-				const json = await response.json();
-				setData(json);
-				dateFormat(formaterDate(Object.keys(json)[0]));
-				setEvents(Object.values(json)[0]);
-			} catch (error) {
-				console.error(error.message);
-			}
+			const json = await getAgendaDay();
+			setData(json);
+			dateFormat(formaterDate(Object.keys(json)[0]));
+			setEvents(Object.values(json)[0]);
 		};
 		chargerData();
 	}, [decalage]);

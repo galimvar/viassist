@@ -26,7 +26,14 @@ function App() {
 				<Route path="/" element={<TableauDeBord />} />
 				{/*!!! TODO AJOUTER JOURNAL ET AGENDA */}
 				<Route path="/compte" element={<Compte />} />
-				<Route path="/agenda" element={<Agenda />} />
+
+				<Route
+					element={
+						<RouteProtegee roles={[ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE]} />
+					}
+				>
+					<Route path="/agenda" element={<Agenda />} />
+				</Route>
 
 				<Route element={<RouteProtegee roles={[ROLES.ADMIN]} />}>
 					<Route path="/settings" element={<Settings />} />
