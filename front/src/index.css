@@ -22,3 +22,9 @@
 	/* Utilitaires & États */
 	--color-neutral: #a49d99; /* Taupe gris (Neutre / Texte secondaire) */
 }
+
+/* Message d'erreur sous un champ (composant Champ) */
+.erreur {
+	color: var(--color-error);
+	font-size: 0.875rem;
+}
