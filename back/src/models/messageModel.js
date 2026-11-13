@@ -9,7 +9,9 @@ export async function findMessagesByDate(date) {
 		JOIN personne ON message.personne_id = personne.id
 		LEFT JOIN categorie ON message.categorie_id = categorie.id
 		WHERE message.date = $1
-		ORDER BY message.importance DESC;`, // importance est un ENUM, donc trié par ordre de déclaration. cf. 001-migration : 'faible', 'moyenne', 'élevée'
+		ORDER BY message.importance DESC, message.id ASC;`,
+		// importance est un ENUM, donc trié par ordre de déclaration. cf. 001-migration : 'faible', 'moyenne', 'élevée'
+		// Départage par id (ASC) : à importance égale, les messages s'affichent dans l'ordre où ils ont été enregistrés, pour une lecture chronologique de la journée (message.date n'a pas d'heure)
 		[date],
 	);
 
