@@ -7,3 +7,10 @@ export const ROLES = Object.freeze({
 	INTERVENANT: 4,
 	BENEFICIAIRE: 5,
 });
+
+export const JOURNAL_ROLES = Object.freeze([
+	ROLES.ADMIN,
+	ROLES.PROCHE,
+	ROLES.INTERVENANT,
+	ROLES.BENEFICIAIRE,
+]);

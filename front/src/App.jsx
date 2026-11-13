@@ -10,7 +10,7 @@ import ModifierUtilisateur from './pages//ModifierUtilisateur.jsx';
 import Settings from './pages/Settings.jsx';
 import Agenda from './pages/Agenda.jsx';
 import Journal from './pages/Journal.jsx';
-import { ROLES } from './constantes/roles.js';
+import { ROLES, JOURNAL_ROLES } from './constantes/roles.js';
 
 function App() {
 	return (
@@ -35,18 +35,7 @@ function App() {
 					<Route path="/agenda" element={<Agenda />} />
 				</Route>
 
-				<Route
-					element={
-						<RouteProtegee
-							roles={[
-								ROLES.ADMIN,
-								ROLES.INTERVENANT,
-								ROLES.PROCHE,
-								ROLES.BENEFICIAIRE,
-							]}
-						/>
-					}
-				>
+				<Route element={<RouteProtegee roles={JOURNAL_ROLES} />}>
 					<Route path="/journal" element={<Journal />} />
 				</Route>
 
