@@ -4,6 +4,7 @@ import { db } from './db.js';
 import { personneRoute as personneRouter } from './routes/personneRoutes.js';
 import { gestionErreurs } from './middlewares/erreurs.js';
 import { authRouter } from './routes/authRoutes.js';
+import { agendaRoute } from './routes/agendaRoutes.js';
 import { rolesRoute as rolesRouter } from './routes/rolesRoutes.js';
 import { messageRouter } from './routes/messageRoutes.js';
 
@@ -20,6 +21,7 @@ app.get('/', async (req, res) => {
 
 app.use('/api/personne', personneRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/agenda', agendaRoute);
 app.use('/api/roles', rolesRouter);
 app.use('/api/message', messageRouter);
 

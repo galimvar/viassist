@@ -39,3 +39,11 @@ export const modifierProfil = (infos) =>
 export const modifierPersonne = (infos, id) =>
 	appeler(`/personne/${id}`, { method: 'PATCH', body: JSON.stringify(infos) });
 //! TODO AJOUTER AGENDA ET JOURNAL ///
+
+export const getAgendaDay = (decalage) => {
+	return appeler(`/agenda/jour?decalage=${decalage}`);
+};
+
+export const getAgendaWeek = (decalage) => {
+	return appeler(`/agenda/semaine?decalage=${decalage}`);
+};
