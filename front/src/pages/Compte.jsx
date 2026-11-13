@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CircleCheck, CircleX } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { recupererMoi, modifierProfil } from '../api/auth.js';
-import Champ from '../components/Champ.jsx';
+import ChampModifier from '../components/ChampModifier.jsx';
 
 // Réponse de l'API -> valeurs des champs. Les mots de passe démarrent toujours vides.
 function versFormulaire(p) {
@@ -166,76 +166,76 @@ function Compte() {
 		<section className="card bg-base-100 shadow-md w-full max-w-md mx-auto">
 			<form className="card-body" onSubmit={soumettre}>
 				<h1 className="card-title">Mon Compte</h1>
-				<Champ
+				<ChampModifier
 					id="nom"
 					label="Nom"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.nom}
 					onChange={modifier}
 					erreur={erreursChamps.nom}
 				/>
-				<Champ
+				<ChampModifier
 					id="prenom"
 					label="Prénom"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.prenom}
 					onChange={modifier}
 					erreur={erreursChamps.prenom}
 				/>
-				<Champ
+				<ChampModifier
 					id="mail"
 					label="Adresse mail"
 					type="email"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.mail}
 					onChange={modifier}
 					erreur={erreursChamps.mail}
 				/>
-				<Champ
+				<ChampModifier
 					id="date_naissance"
 					label="Date de naissance"
 					type="date"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.date_naissance}
 					onChange={modifier}
 					erreur={erreursChamps.date_naissance}
 				/>
-				<Champ
+				<ChampModifier
 					id="role"
 					label="Rôle"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.role}
 					readOnly
 				/>
 
 				<h2 className="mt-4 font-semibold">Changer de mot de passe</h2>
 				<p className="text-xs text-base-content/60">Laisse vide pour garder l'actuel.</p>
-				<Champ
+				<ChampModifier
 					id="ancien_mot_de_passe"
 					label="Mot de passe actuel"
 					type="password"
 					autoComplete="current-password"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.ancien_mot_de_passe}
 					onChange={modifier}
 					erreur={erreursChamps.ancien_mot_de_passe}
 				/>
-				<Champ
+				<ChampModifier
 					id="nouveau_mot_de_passe"
 					label="Nouveau mot de passe"
 					type="password"
 					autoComplete="new-password"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.nouveau_mot_de_passe}
 					onChange={modifier}
 					erreur={erreursChamps.nouveau_mot_de_passe}
 				/>
-				<Champ
+				<ChampModifier
 					id="confirmation_mot_de_passe"
 					label="Confirmer le nouveau mot de passe"
 					type="password"
 					autoComplete="new-password"
-					className="input w-full"
+					className="input w-full validator"
 					value={formulaire.confirmation_mot_de_passe}
 					onChange={modifier}
 					erreur={erreursChamps.confirmation_mot_de_passe}
