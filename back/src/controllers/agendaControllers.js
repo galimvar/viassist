@@ -1,7 +1,7 @@
 import * as AgendaService from '../services/agendaServices.js';
 
 export const getDay = async (req, res) => {
-	const interval = Number(req.query.decalage ?? 0);
+	const decalage = Number(req.query.decalage ?? 0);
 	if (!Number.isInteger(decalage)) {
 		return res.status(400).json({ error: 'decalage doit être un entier' });
 	}

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
 
 const formaterDate = (iso) =>
 	new Date(`${iso}T00:00`).toLocaleDateString('fr-FR', {
@@ -8,11 +7,11 @@ const formaterDate = (iso) =>
 		month: 'long',
 	});
 
-const AgendaDay = () => {
+const AgendaDay = ({ decalage, dateFormat }) => {
 	const API = '/api/agenda';
 
 	const [data, setData] = useState();
-	const [decalage, setDecalage] = useState(0);
+	const [events, setEvents] = useState([]);
 
 	useEffect(() => {
 		const chargerData = async () => {
@@ -23,7 +22,10 @@ const AgendaDay = () => {
 						`Erreur ${response.status}: Impossible de charger les evenements`,
 					);
 				}
-				setData(await response.json());
+				const json = await response.json();
+				setData(json);
+				dateFormat(formaterDate(Object.keys(json)[0]));
+				setEvents(Object.values(json)[0]);
 			} catch (error) {
 				console.error(error.message);
 			}
@@ -36,12 +38,31 @@ const AgendaDay = () => {
 	const [date, evenements] = Object.entries(data)[0];
 
 	return (
-		<>
-			<ChevronLeft color="blue" onClick={() => setDecalage(decalage - 1)} />
-			<h2>{formaterDate(date)}</h2>
-			<ChevronRight color="blue" onClick={() => setDecalage(decalage + 1)} />
-			<pre>{JSON.stringify(evenements, null, 2)}</pre>
-		</>
+		<section
+			id="displayWindow"
+			className="bg-base-100 border border-base-500 h-200 bg-secondary  w-2xl mx-auto overflow-y-auto"
+		>
+			<div id="BackgroundDailies"></div>
+			{events.map((element) => (
+				<details
+					className="collapse bg-base-100 border border-base-300"
+					name="my-accordion-det-1"
+					open
+					key={element.id}
+				>
+					<summary className="collapse-title font-semibold">
+						<p>{element.heure_debut}</p>
+						<p>{element.intitule}</p>
+					</summary>
+					<section className="collapse-content text-sm">
+						<dl>
+							<dt>Description :</dt>
+							<dd>{element.description}</dd>
+						</dl>
+					</section>
+				</details>
+			))}
+		</section>
 	);
 };
 
