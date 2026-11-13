@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
+import ChampModifier from '../components/ChampModifier.jsx';
 import { CircleX } from 'lucide-react';
 
 export default function Connexion() {
@@ -30,30 +31,31 @@ export default function Connexion() {
 					<p className="text-xs text-base-content/60">Bienvenu sur Vi'Assist !</p>
 
 					<fieldset className="fieldset w-full text-left">
-						<label className="label" htmlFor="username">
-							Identifiant
-						</label>
-						<input
-							id="username"
+						<ChampModifier
+							id="mail"
+							label="Identifiant"
 							type="email"
-							className="input w-full"
-							placeholder="example@example.com"
-							onChange={(e) => {
-								setMail(e.target.value);
-							}}
+							value={mail}
+							onChange={setMail}
+							error={'Le mail est requis, au bon format'}
+							className="input w-full validator"
+							pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+							required
 						/>
 
-						<label className="label" htmlFor="password">
-							Mot de passe
-						</label>
-						<input
+						<ChampModifier
 							id="password"
+							label="Mot de passe"
 							type="password"
-							className="input w-full"
+							value={motDePasse}
+							onChange={setMotDePasse}
+							error={
+								"Entrez un mot de passe valide, d'au moins 8 caractères, comprenant au moins 1 lettre minuscule, 1 lettre majuscule, 1 chiffre et 1 caractère spécial"
+							}
+							className="input w-full validator"
+							pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}"
 							placeholder="••••••••"
-							onChange={(e) => {
-								setMotDePasse(e.target.value);
-							}}
+							required
 						/>
 
 						{erreur && (
