@@ -1,4 +1,5 @@
 import AgendaDay from '../components/AgendaDay';
+import AgendaWeek from '../components/AgendaWeek';
 import { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -14,9 +15,21 @@ const Agenda = () => {
 			<section className="grid grid-col-2 gap-10">
 				<div className="grid grid-cols-3" id="enTete">
 					<div className="col-start-2 flex justify-center">
-						<ChevronLeft color="blue" onClick={() => setDecalage(decalage - 1)} />
+						<button
+							type="button"
+							aria-label="Jour précédent"
+							onClick={() => setDecalage(decalage - 1)}
+						>
+							<ChevronLeft
+								size={32}
+								aria-hidden="true"
+								color="var(--color-primary)"
+							/>
+						</button>
 						<h3 className="mx-30 justify-center bg-color-red">{date}</h3>
-						<ChevronRight color="blue" onClick={() => setDecalage(decalage + 1)} />
+						<button type="button" onClick={() => setDecalage(decalage + 1)}>
+							<ChevronRight size={32} color="var(--color-primary)" />
+						</button>
 					</div>
 
 					<div className="col-start-3 dropdown dropdown-hover">
