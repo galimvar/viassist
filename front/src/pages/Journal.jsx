@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getMessagesByDate } from '../api/auth.js';
+import MessageCard from '../components/MessageCard.jsx';
 
 //==================== FONCTIONS UTILES ====================//
 function getTodayDate() {
@@ -48,6 +49,9 @@ export default function Journal() {
 			{errorMessage !== null && <p role="alert">{errorMessage}</p>}
 
 			{isLoading === false && errorMessage === null && messages.length === 0 && <p>Aucun message</p>}
+
+			{/* TEMPORAIRE : test de MessageCard avec le premier message */}
+			{messages.length > 0 && <MessageCard message={messages[0]} />}
 
 			{/* TEMPORAIRE : affichage brut pour vérifier les données */}
 			<p>{messages.length} message(s)</p>
