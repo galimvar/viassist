@@ -30,6 +30,9 @@ export default function Journal() {
 		<>
 			<h2>Journal</h2>
 
+			{messages.length === 0 && <p>Aucun message</p>}
+
+			{/* TEMPORAIRE : affichage brut pour vérifier les données */}
 			<p>{messages.length} message(s)</p>
 			<pre>{JSON.stringify(messages, null, 2)}</pre>
 		</>
