@@ -17,11 +17,24 @@ function getTodayDate() {
 export default function Journal() {
 	const [selectedDate, setSelectedDate] = useState(getTodayDate());
 	const [messages, setMessages] = useState([]);
+	const [isLoading, setIsLoading] = useState(true); // true : au 1er affichage, l'appel va partir
+	const [errorMessage, setErrorMessage] = useState(null); // null : pas d'erreur
 
 	useEffect(() => {
 		const loadMessages = async () => {
-			const data = await getMessagesByDate(selectedDate);
-			setMessages(data.messages);
+			setIsLoading(true); // un nouveau chargement commence
+			setErrorMessage(null); // on efface une éventuelle erreur précédente
+
+			try {
+				const data = await getMessagesByDate(selectedDate);
+				setMessages(data.messages);
+			} catch (error) {
+				console.error(error);
+				setMessages([]); // pas de données affichées en cas d'erreur
+				setErrorMessage('Impossible de charger les messages. Réessayez plus tard.');
+			} finally {
+				setIsLoading(false); // chargement terminé (erreur ou pas)
+			}
 		};
 		loadMessages();
 	}, [selectedDate]);
@@ -30,7 +43,11 @@ export default function Journal() {
 		<>
 			<h2>Journal</h2>
 
-			{messages.length === 0 && <p>Aucun message</p>}
+			{isLoading === true && <p role="status">Chargement...</p>}
+
+			{errorMessage !== null && <p role="alert">{errorMessage}</p>}
+
+			{isLoading === false && errorMessage === null && messages.length === 0 && <p>Aucun message</p>}
 
 			{/* TEMPORAIRE : affichage brut pour vérifier les données */}
 			<p>{messages.length} message(s)</p>
