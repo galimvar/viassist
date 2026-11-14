@@ -3,5 +3,17 @@
 // { id, description, date_message, prenom_auteur, nom_auteur, categorie, importance }
 
 export default function MessageCard({ message }) {
-	return <p>{message.description}</p>;
+	return (
+		<article>
+			<p>
+				Par {message.prenom_auteur} {message.nom_auteur}
+			</p>
+			<p>
+				Importance : {message.importance}
+				{' - '}
+				{message.categorie !== null ? message.categorie : 'Sans catégorie'}
+			</p>
+			<p>{message.description}</p>
+		</article>
+	);
 }
