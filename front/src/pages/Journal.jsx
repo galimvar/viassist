@@ -22,7 +22,7 @@ export default function Journal() {
 	const [errorMessage, setErrorMessage] = useState(null); // null : pas d'erreur
 
 	useEffect(() => {
-		let isOutdated = false; // passera à true si une autre date es tchoisie entre-temps
+		let isOutdated = false; // passera à true si une autre date est choisie entre-temps
 
 		const loadMessages = async () => {
 			setIsLoading(true); // un nouveau chargement commence
@@ -47,7 +47,7 @@ export default function Journal() {
 		};
 		loadMessages();
 
-		// Nettoyage : exécuté avant le prochain effeft (nouvelle date) ou quand on quitte la page
+		// Nettoyage : exécuté avant le prochain effet (nouvelle date) ou quand on quitte la page
 		return () => {
 			isOutdated = true;
 		};
@@ -58,16 +58,26 @@ export default function Journal() {
 		const newDate = event.target.value; // chaîne 'AAAA-MM-JJ' ou '' si le champ est vidé
 
 		if (newDate !== '') {
-			setSelectedDate(newDate); // le uuseEffect se relance et recharge les messages
+			setSelectedDate(newDate); // le useEffect se relance et recharge les messages
 		}
 	}
 
 	return (
 		<>
-			<h2>Journal</h2>
+			<h2 className="sr-only">Journal de bord</h2>
 
-			<label htmlFor="journal-date">Date</label>
-			<input id="journal-date" type="date" value={selectedDate} onChange={handleChangeDate} />
+			<div className="flex justify-center items-center gap-4 mb-10">
+				<label className="label" htmlFor="journal-date">
+					Date
+				</label>
+				<input
+					className="input"
+					id="journal-date"
+					type="date"
+					value={selectedDate}
+					onChange={handleChangeDate}
+				/>
+			</div>
 
 			{isLoading === true && <p role="status">Chargement...</p>}
 
