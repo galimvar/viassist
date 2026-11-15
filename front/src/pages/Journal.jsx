@@ -87,7 +87,7 @@ export default function Journal() {
 				<p>Aucun message</p>
 			)}
 
-			<section className="flex flex-col gap-4 max-w-2x1 mx-auto">
+			<section className="flex flex-col gap-4 max-w-2xl mx-auto">
 				{messages.map((message) => {
 					return <MessageCard key={message.id} message={message} />;
 				})}
