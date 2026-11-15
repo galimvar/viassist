@@ -198,8 +198,6 @@ Rôle → Accès :
 
 ## Gestion de compte
 
-## Gestion de compte
-
 ### MUST - 1 - Consultation
 
 Ticket Linear : VIA-90
