@@ -4,21 +4,24 @@ import { BookText, TrafficCone, TriangleAlert } from 'lucide-react';
 
 const IMPORTANCE_STYLES = Object.freeze({
 	faible: {
-		label: 'Informatif',
+		label: 'Information',
 		cardClassName: 'bg-success/20 border border-success',
 		iconClassName: 'text-success',
+		badgeClassName: 'badge badge-success',
 		Icon: BookText,
 	},
 	moyenne: {
-		label: 'Attention',
+		label: 'A surveiller',
 		cardClassName: 'bg-warning/20 border border-warning',
 		iconClassName: 'text-warning',
+		badgeClassName: 'badge badge-warning',
 		Icon: TrafficCone,
 	},
 	élevée: {
 		label: 'Important',
 		cardClassName: 'bg-error/20 border border-error',
 		iconClassName: 'text-error',
+		badgeClassName: 'badge badge-error',
 		Icon: TriangleAlert,
 	},
 });
@@ -37,8 +40,8 @@ export default function MessageCard({ message }) {
 			<div className="card-body">
 				<h3 className="card-title">
 					<Icon size={28} className={style.iconClassName} aria-hidden="true" />
-					<span className="sr-only">{style.label} :</span>
 					{message.categorie !== null ? message.categorie : 'Sans catégorie'}
+					<span className={`${style.badgeClassName} ml-auto`}>{style.label}</span>
 				</h3>
 
 				<p>
