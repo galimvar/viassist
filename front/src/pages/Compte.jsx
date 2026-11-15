@@ -191,15 +191,6 @@ function Compte() {
 					error={erreursChamps.prenom}
 				/>
 				<ChampModifier
-					id="mail"
-					label="Adresse mail"
-					type="email"
-					className="input w-full validator"
-					value={formulaire.mail}
-					onChange={modifierChamp('mail')}
-					error={erreursChamps.mail}
-				/>
-				<ChampModifier
 					id="date_naissance"
 					label="Date de naissance"
 					type="date"
@@ -207,6 +198,15 @@ function Compte() {
 					value={formulaire.date_naissance}
 					onChange={modifierChamp('date_naissance')}
 					error={erreursChamps.date_naissance}
+				/>
+				<ChampModifier
+					id="mail"
+					label="Adresse mail"
+					type="email"
+					className="input w-full validator"
+					value={formulaire.mail}
+					onChange={modifierChamp('mail')}
+					error={erreursChamps.mail}
 				/>
 				{afficherTelephone ? (
 					<ChampModifier
