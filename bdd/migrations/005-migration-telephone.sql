@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE "personne"
+ADD COLUMN IF NOT EXISTS "telephone" VARCHAR(17);
+
+COMMIT;
