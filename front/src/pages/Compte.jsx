@@ -9,8 +9,9 @@ function versFormulaire(p) {
 	return {
 		nom: p.nom ?? '',
 		prenom: p.prenom ?? '',
-		mail: p.mail ?? '',
 		date_naissance: p.date_naissance?.slice(0, 10) ?? '', // "AAAA-MM-JJ" exigé par type="date"
+		mail: p.mail ?? '',
+		telephone: p.telephone ?? '',
 		role: p.role ?? '',
 		ancien_mot_de_passe: '',
 		nouveau_mot_de_passe: '',
@@ -33,6 +34,10 @@ function Compte() {
 	const [erreurEnvoi, setErreurEnvoi] = useState(null);
 	const [succes, setSucces] = useState(false);
 	const [envoi, setEnvoi] = useState(false);
+	const [afficherTelephone, setAfficherTelephone] = useState(false);
+
+	const modifierChamp = (name) => (value) =>
+		setFormulaire((precedent) => ({ ...precedent, [name]: value }));
 
 	// ------------ GET : récupère les infos à l'affichage de la page
 	useEffect(() => {
@@ -59,6 +64,7 @@ function Compte() {
 		setErreurEnvoi(null);
 		setSucces(false);
 		setEdition(true);
+		setAfficherTelephone(Boolean(compte.telephone));
 	}
 
 	function annuler() {
@@ -66,11 +72,7 @@ function Compte() {
 		setErreursChamps({});
 		setErreurEnvoi(null);
 		setEdition(false);
-	}
-
-	function modifier(e) {
-		const { name, value } = e.target;
-		setFormulaire((precedent) => ({ ...precedent, [name]: value }));
+		setAfficherTelephone(false);
 	}
 
 	async function soumettre(e) {
@@ -91,9 +93,12 @@ function Compte() {
 			const donnees = await modifierProfil({
 				nom: formulaire.nom.trim(),
 				prenom: formulaire.prenom.trim(),
-				mail: formulaire.mail.trim(),
 				// le back attend AAAA/MM/JJ (comme à l'inscription), le champ date donne AAAA-MM-JJ
 				date_naissance: formulaire.date_naissance.replaceAll('-', '/'),
+				mail: formulaire.mail.trim(),
+				...(afficherTelephone && {
+					telephone: formulaire.telephone.trim(),
+				}),
 				ancien_mot_de_passe: formulaire.ancien_mot_de_passe,
 				nouveau_mot_de_passe: formulaire.nouveau_mot_de_passe,
 				confirmation_mot_de_passe: formulaire.confirmation_mot_de_passe,
@@ -141,11 +146,14 @@ function Compte() {
 						<dt className="font-semibold">Prénom</dt>
 						<dd>{compte.prenom}</dd>
 
+						<dt className="font-semibold">Date de naissance</dt>
+						<dd>{formaterDate(compte.date_naissance)}</dd>
+
 						<dt className="font-semibold">Adresse mail</dt>
 						<dd>{compte.mail}</dd>
 
-						<dt className="font-semibold">Date de naissance</dt>
-						<dd>{formaterDate(compte.date_naissance)}</dd>
+						<dt className="font-semibold">Téléphone</dt>
+						<dd>{compte.telephone ?? '—'}</dd>
 
 						<dt className="font-semibold">Rôle</dt>
 						<dd>{compte.role ?? '—'}</dd>
@@ -171,16 +179,16 @@ function Compte() {
 					label="Nom"
 					className="input w-full validator"
 					value={formulaire.nom}
-					onChange={modifier}
-					erreur={erreursChamps.nom}
+					onChange={modifierChamp('nom')}
+					error={erreursChamps.nom}
 				/>
 				<ChampModifier
 					id="prenom"
 					label="Prénom"
 					className="input w-full validator"
 					value={formulaire.prenom}
-					onChange={modifier}
-					erreur={erreursChamps.prenom}
+					onChange={modifierChamp('prenom')}
+					error={erreursChamps.prenom}
 				/>
 				<ChampModifier
 					id="mail"
@@ -188,8 +196,8 @@ function Compte() {
 					type="email"
 					className="input w-full validator"
 					value={formulaire.mail}
-					onChange={modifier}
-					erreur={erreursChamps.mail}
+					onChange={modifierChamp('mail')}
+					error={erreursChamps.mail}
 				/>
 				<ChampModifier
 					id="date_naissance"
@@ -197,9 +205,28 @@ function Compte() {
 					type="date"
 					className="input w-full validator"
 					value={formulaire.date_naissance}
-					onChange={modifier}
-					erreur={erreursChamps.date_naissance}
+					onChange={modifierChamp('date_naissance')}
+					error={erreursChamps.date_naissance}
 				/>
+				{afficherTelephone ? (
+					<ChampModifier
+						id="telephone"
+						label="Téléphone"
+						type="tel"
+						value={formulaire.telephone}
+						onChange={modifierChamp('telephone')}
+						error={erreursChamps.telephone}
+					/>
+				) : (
+					<button
+						type="button"
+						className="btn btn-outline w-full"
+						onClick={() => setAfficherTelephone(true)}
+					>
+						Ajouter un numéro de téléphone
+					</button>
+				)}
+
 				<ChampModifier
 					id="role"
 					label="Rôle"
@@ -207,7 +234,6 @@ function Compte() {
 					value={formulaire.role}
 					readOnly
 				/>
-
 				<h2 className="mt-4 font-semibold">Changer de mot de passe</h2>
 				<p className="text-xs text-base-content/60">Laisse vide pour garder l'actuel.</p>
 				<ChampModifier
@@ -217,8 +243,8 @@ function Compte() {
 					autoComplete="current-password"
 					className="input w-full validator"
 					value={formulaire.ancien_mot_de_passe}
-					onChange={modifier}
-					erreur={erreursChamps.ancien_mot_de_passe}
+					onChange={modifierChamp('ancien_mot_de_passe')}
+					error={erreursChamps.ancien_mot_de_passe}
 				/>
 				<ChampModifier
 					id="nouveau_mot_de_passe"
@@ -227,8 +253,8 @@ function Compte() {
 					autoComplete="new-password"
 					className="input w-full validator"
 					value={formulaire.nouveau_mot_de_passe}
-					onChange={modifier}
-					erreur={erreursChamps.nouveau_mot_de_passe}
+					onChange={modifierChamp('nouveau_mot_de_passe')}
+					error={erreursChamps.nouveau_mot_de_passe}
 				/>
 				<ChampModifier
 					id="confirmation_mot_de_passe"
@@ -237,10 +263,9 @@ function Compte() {
 					autoComplete="new-password"
 					className="input w-full validator"
 					value={formulaire.confirmation_mot_de_passe}
-					onChange={modifier}
-					erreur={erreursChamps.confirmation_mot_de_passe}
+					onChange={modifierChamp('confirmation_mot_de_passe')}
+					error={erreursChamps.confirmation_mot_de_passe}
 				/>
-
 				{erreurEnvoi && (
 					<div role="alert" className="alert alert-error">
 						<CircleX size={20} strokeWidth={1.75} />
@@ -253,11 +278,9 @@ function Compte() {
 						<span>Ton profil a bien été mis à jour.</span>
 					</div>
 				)}
-
 				<button type="submit" className="btn btn-primary w-full mt-4" disabled={envoi}>
 					Enregistrer
 				</button>
-
 				<button
 					type="button"
 					className="btn btn-ghost w-full"
