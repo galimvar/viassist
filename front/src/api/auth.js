@@ -47,3 +47,7 @@ export const getAgendaDay = (decalage) => {
 export const getAgendaWeek = (decalage) => {
 	return appeler(`/agenda/semaine?decalage=${decalage}`);
 };
+
+export const getMessagesByDate = (date) => {
+	return appeler(`/message?date=${date}`);
+};

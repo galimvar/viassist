@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router'; // Ajout de useLocation pour l'état actif
 import { useAuth } from '../context/AuthContext.jsx';
-import { House, Settings, LogOut, UserRound, CalendarRange } from 'lucide-react';
-import { ROLES } from '../constantes/roles.js';
+import { House, Settings, LogOut, UserRound, CalendarRange, BookOpenText } from 'lucide-react';
+import { ROLES, JOURNAL_ROLES } from '../constantes/roles.js';
 
 export default function Nav() {
 	const navigate = useNavigate();
@@ -18,6 +18,12 @@ export default function Nav() {
 			label: 'Agenda',
 			Icone: CalendarRange,
 			roles: [ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE],
+		},
+		{
+			chemin: '/journal',
+			label: 'Journal',
+			Icone: BookOpenText,
+			roles: JOURNAL_ROLES,
 		},
 	].filter((l) => !l.roles || l.roles.includes(utilisatrice?.role_id));
 
