@@ -22,27 +22,52 @@ export default function Journal() {
 	const [errorMessage, setErrorMessage] = useState(null); // null : pas d'erreur
 
 	useEffect(() => {
+		let isOutdated = false; // passera à true si une autre date es tchoisie entre-temps
+
 		const loadMessages = async () => {
 			setIsLoading(true); // un nouveau chargement commence
 			setErrorMessage(null); // on efface une éventuelle erreur précédente
 
 			try {
 				const data = await getMessagesByDate(selectedDate);
-				setMessages(data.messages);
+				if (isOutdated === false) {
+					setMessages(data.messages);
+				}
 			} catch (error) {
-				console.error(error);
-				setMessages([]); // pas de données affichées en cas d'erreur
-				setErrorMessage('Impossible de charger les messages. Réessayez plus tard.');
+				if (isOutdated === false) {
+					console.error(error);
+					setMessages([]); // pas de données affichées en cas d'erreur
+					setErrorMessage('Impossible de charger les messages. Réessayez plus tard.');
+				}
 			} finally {
-				setIsLoading(false); // chargement terminé (erreur ou pas)
+				if (isOutdated === false) {
+					setIsLoading(false); // chargement terminé (erreur ou pas)
+				}
 			}
 		};
 		loadMessages();
+
+		// Nettoyage : exécuté avant le prochain effeft (nouvelle date) ou quand on quitte la page
+		return () => {
+			isOutdated = true;
+		};
 	}, [selectedDate]);
+
+	// Appelée à chaque changement dans le champ de date
+	function handleChangeDate(event) {
+		const newDate = event.target.value; // chaîne 'AAAA-MM-JJ' ou '' si le champ est vidé
+
+		if (newDate !== '') {
+			setSelectedDate(newDate); // le uuseEffect se relance et recharge les messages
+		}
+	}
 
 	return (
 		<>
 			<h2>Journal</h2>
+
+			<label htmlFor="journal-date">Date</label>
+			<input id="journal-date" type="date" value={selectedDate} onChange={handleChangeDate} />
 
 			{isLoading === true && <p role="status">Chargement...</p>}
 
