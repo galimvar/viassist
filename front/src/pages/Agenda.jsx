@@ -43,12 +43,12 @@ const Agenda = () => {
 							<li>
 								<a onClick={() => setDisplayChoice('Jour')}>Jour</a>
 							</li>
-							<li>
+							{/* <li>
 								<a onClick={() => setDisplayChoice('Semaine')}>Semaine</a>
 							</li>
 							<li>
 								<a onClick={() => setDisplayChoice('Mois')}>Mois</a>
-							</li>
+							</li> */}
 						</ul>
 					</div>
 				</div>
