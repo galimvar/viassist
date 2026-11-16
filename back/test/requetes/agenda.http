@@ -1,0 +1,28 @@
+@baseUrl = http://localhost:3000/api
+
+### 1. Sans connexion - renvoie 401
+GET {{baseUrl}}/agenda/jour
+
+### 2. Connexion - renvoie 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail":"sophie.martin@example.com",
+    "mot_de_passe":"Motdepasse1!"
+}
+
+### 3. Jour courant - renvoie 200
+GET {{baseUrl}}/agenda/jour
+
+### 4. Lendemain - renvoie 200
+GET {{baseUrl}}/agenda/jour?interval=1
+
+### 5. Semaine courante - renvoie 200
+GET {{baseUrl}}/agenda/semaine
+
+### 6. Mois précédent - renvoie 200
+GET {{baseUrl}}/agenda/mois?interval=-1
+
+### 7. Interval invalide - renvoie 422
+GET {{baseUrl}}/agenda/jour?interval=abc

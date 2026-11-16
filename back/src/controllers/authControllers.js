@@ -3,11 +3,10 @@ import { ErreurHttp } from '../erreurs.js';
 
 const FORMAT_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const FORMAT_DATE_NAISSANCE = /^\d{4}\/\d{2}\/\d{2}$/m;
-const LONGUEUR_MIN_MOT_DE_PASSE = 8;
 const DUREE_COOKIE_MS = 2 * 60 * 60 * 1000; // 2 h, comme le token
 
 // ---------- Validation : la forme des données, avant toute règle métier ----------
-function validerInscription({ nom, prenom, mail, date_naissance, mot_de_passe }) {
+function validerInscription({ nom, prenom, mail, date_naissance }) {
 	const erreurs = {};
 	if (typeof nom !== 'string' || nom.trim() === '') {
 		erreurs.nom = 'Le nom est obligatoire';

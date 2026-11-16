@@ -4,7 +4,7 @@
 
 ### MUST-01 Visualisation
 
--> **En tant que** proche d'une personne en perte d'autonomie, **je veux** pouvoir consulter le planning **afin de** savoir quand passer voir ce membre de la famille.  
+-> **En tant que** proche d'une personne en perte d'autonomie, **je veux** pouvoir consulter le planning **afin de** savoir quand passer voir ce membre de la famille.
 
 -> **Étant donné que** je consulte le planning **quand** je souhaite rendre visite à mon proche **alors** je peux m'apercevoir qu'il est actuellement en rendez-vous **mais** que je peux y aller mardi.
 
@@ -78,7 +78,7 @@ Récurrences possibles :
 
 ### COULD-09 Alerte
 
--> **En tant qu**'aidant familial **je veux** éviter de surcharger la journée de mon proche **afin de** ne pas le fatiguer avec trop de RDV en peu de temps. 
+-> **En tant qu**'aidant familial **je veux** éviter de surcharger la journée de mon proche **afin de** ne pas le fatiguer avec trop de RDV en peu de temps.
 
 -> **Étant donné que** je dois prendre un nouveau RDV pour mon proche **quand** je l'ajoute dans l'agenda **alors** une alerte m'indique que la journée est déjà bien chargée.
 
@@ -138,7 +138,7 @@ Récurrences possibles :
 
 -> **Étant donné que** mon bénéficiaire est immunodéprimé **quand** j'ouvre la fiche de la personne **alors** j'ai une information m'indiquant le protocole sanitaire.
 
-## Gestion des comptes
+## Authentification
 
 ### MUST - 1 - Connexion
 
@@ -195,3 +195,39 @@ Rôle → Accès :
 -> **En tant** qu'intervenant, **je veux** pouvoir indiquer le niveau d'importance d'une information afin que les consultants puissent rapidement la distinguer.
 
 -> **Étant donné que** mon utilisation de couches est régulière **quand** le stock est presque épuisé **alors** je peux indiquer dans le journal de bord l'importance d'en racheter prochainement.
+
+## Gestion de compte
+
+### MUST - 1 - Consultation
+
+Ticket Linear : VIA-90
+
+-> **En tant qu**'utilisateur, **je veux** pouvoir consulter les informations de mon compte **afin de** vérifier que les autres intervenants disposent de coordonnées à jour pour me joindre.
+
+-> **Étant donné que** je suis connecté **quand** j'ouvre la page « Mon compte » **alors** je vois mon nom, mon prénom, ma date de naissance, mon adresse mail, mon numéro de téléphone s'il est renseigné, et mon rôle.
+
+-> **Étant donné que** je ne suis pas connecté **quand** j'essaie d'accéder à la page « Mon compte » **alors** je suis redirigé vers la connexion.
+
+Critères d'acceptation :
+
+- Le mot de passe n'est jamais affiché ni renvoyé par l'API, même sous forme chiffrée.
+- Un champ non renseigné (téléphone) s'affiche « — ».
+
+### MUST - 2 - Modification
+
+Ticket Linear : VIA-91
+
+-> **En tant qu**'utilisateur, **je veux** pouvoir modifier les informations de mon compte **afin que** les autres intervenants puissent me joindre avec des coordonnées à jour.
+
+-> **Étant donné que** j'ai changé de numéro de téléphone **quand** je modifie mes informations **alors** le nouveau numéro est enregistré et visible sur mon compte.
+
+-> **Étant donné que** je souhaite changer de mot de passe **quand** je saisis un nouveau mot de passe **alors** l'application me demande mon mot de passe actuel pour confirmer qu'il s'agit bien de moi.
+
+Critères d'acceptation :
+
+- Je peux modifier mon nom, mon prénom, ma date de naissance et mon adresse mail.
+- Je peux ajouter, modifier ou effacer un numéro de téléphone (facultatif). Les espaces et les points sont acceptés à la saisie.
+- Un champ invalide affiche un message d'erreur sous le champ concerné, et rien n'est enregistré.
+- Une adresse mail déjà utilisée par un autre compte est refusée.
+- Le nouveau mot de passe fait au moins 8 caractères et doit être confirmé.
+- Je ne peux pas modifier mon propre rôle.

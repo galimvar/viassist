@@ -5,8 +5,9 @@ import { ErreurHttp } from '../erreurs.js';
 
 const COUT_HASH = 10; // plus c'est haut, plus c'est lent (et sûr)
 const DUREE_SESSION = '2h';
+const LONGUEUR_MIN_MOT_DE_PASSE = 8;
 
-const validerInscription = () => {
+const validerInscription = (mot_de_passe) => {
 	const erreurs = {};
 
 	if (typeof mot_de_passe !== 'string' || mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
@@ -51,16 +52,18 @@ export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe
 
 export async function connecter({ mail, mot_de_passe }) {
 	const personne = await Personne.trouverParMail(mail);
-
+	if (!personne) {
+		throw new ErreurHttp(404, 'mail ou mot de passe incorrect');
+	}
 	// Même message que le mail existe ou non : on ne dit pas quels mails sont inscrits
 	const correct =
-		personne.mot_de_passe_hash &&
+		personne?.mot_de_passe_hash &&
 		(await bcrypt.compare(mot_de_passe, personne.mot_de_passe_hash));
 	if (!correct) {
 		throw new ErreurHttp(401, 'mail ou mot de passe incorrect');
 	}
 
-	const token = jwt.sign({ sub: personne.id }, process.env.JWT_SECRET, {
+	const token = jwt.sign({ sub: personne.id, role: personne.role_id }, process.env.JWT_SECRET, {
 		expiresIn: DUREE_SESSION,
 	});
 

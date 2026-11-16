@@ -1,11 +1,28 @@
-@baseUrl = http://localhost:3000/auth
-### GET connexion ok, renvoie 200
+@baseUrl = http://localhost:3000/api/auth
+### POST connexion ok, renvoie 200
 POST {{baseUrl}}/connexion
 Content-Type: application/json
 
 {
     "mail":"sophie.martin@example.com",
     "mot_de_passe":"Motdepasse1!"
+}
+### POST connexion pas ok, renvoie 401
+POST {{baseUrl}}/connexion
+Content-Type: application/json
+
+{
+    "mail":"sophie.martin@example.com",
+    "mot_de_passe":"Motdepeasse1!"
+}
+
+### POST connexion vide, renvoie 422
+POST {{baseUrl}}/connexion
+Content-Type: application/json
+
+{
+    "mail":"",
+    "mot_de_passe":""
 }
 
 ### GET connexion ok, renvoie 204
@@ -19,7 +36,7 @@ Content-Type: application/json
 {
     "nom":"Lagarre",
     "prenom":"Rémy",
-    "mail":"remy.lagarre@gmeaaezaeil.com",
+    "mail":"remy.lagarre@gmail.com",
     "date_naissance":"1989/04/10",
     "mot_de_passe":"Prout!1234",
     "role":"admin"
