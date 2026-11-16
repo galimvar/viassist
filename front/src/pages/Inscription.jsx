@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { inscrire } from '../api/auth.js';
 import { CircleX } from 'lucide-react';
 import ChampModifier from '../components/ChampModifier.jsx';
+import logo from '../../../conception/visuals_references/logo/logo2.png';
 
 export default function Inscription() {
 	const navigate = useNavigate();
@@ -47,6 +48,7 @@ export default function Inscription() {
 				className="card bg-base-100 w-full max-w-md mx-auto mt-12 shadow-lg"
 			>
 				<div className="card-body items-center text-center">
+					<img src={logo} alt="logo Vi'assist" width={160} />
 					<h2 className="card-title">Inscription</h2>
 
 					<fieldset className="fieldset w-full text-left">
