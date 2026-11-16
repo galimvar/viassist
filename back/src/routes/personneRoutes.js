@@ -5,8 +5,8 @@ import { ROLES } from '../constantes/roles.js';
 
 export const personneRoute = Router();
 
-personneRoute.get('/:id', personneController.getPersonneById);
-personneRoute.get('/', auth, personneController.getAllPersonnes);
+personneRoute.get('/:id', auth, exigerRole(ROLES.ADMIN), personneController.getPersonneById);
+personneRoute.get('/', auth, exigerRole(ROLES.ADMIN), personneController.getAllPersonnes);
 personneRoute.post('/inscription', personneController.postPersonne);
 personneRoute.patch(
 	'/delete',
@@ -15,5 +15,5 @@ personneRoute.patch(
 	personneController.deletePersonneById,
 );
 
-personneRoute.put('/modifierMoi', auth, personneController.modifierMoi);
+personneRoute.patch('/modifierMoi', auth, personneController.modifierMoi);
 personneRoute.patch('/:id', auth, exigerRole(ROLES.ADMIN), personneController.modifierPersonne);

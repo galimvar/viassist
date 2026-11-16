@@ -1,7 +1,7 @@
 import { db } from '../db.js';
 
 // Les colonnes qu'on peut renvoyer au front : jamais le hash
-const COLONNES_PUBLIQUES = 'id, nom, prenom, date_naissance, mail, role_id';
+const COLONNES_PUBLIQUES = 'id, nom, prenom, date_naissance, mail, telephone, role_id';
 
 export async function trouverParMail(mail) {
 	const { rows } = await db.query(
@@ -21,7 +21,7 @@ export async function trouverTous() {
 export async function trouverParId(id) {
 	// Jointure sur role : on renvoie aussi l'intitulé (« admin », « proche »...) et pas seulement l'id
 	const { rows } = await db.query(
-		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, p.role_id, r.intitule AS role
+		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, p.telephone, p.role_id, r.intitule AS role
 		 FROM personne p JOIN role r ON r.id = p.role_id
 		 WHERE p.id = $1`,
 		[id],
@@ -66,7 +66,7 @@ export async function archiverParId(id) {
 
 export async function updateUser(
 	id,
-	{ nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id },
+	{ nom, prenom, date_naissance, mail, telephone, mot_de_passe_hash, role_id },
 ) {
 	const { rows } = await db.query(
 		`UPDATE personne 
@@ -74,11 +74,17 @@ export async function updateUser(
 			prenom = COALESCE($2, prenom), 
 			date_naissance = COALESCE($3, date_naissance),
 			mail = COALESCE($4, mail),
-			mot_de_passe_hash = COALESCE($5, mot_de_passe_hash),
-			role_id = COALESCE($6, role_id)
-		WHERE id = $7
+
+			telephone = CASE
+			WHEN $5 = '' THEN NULL
+			ELSE COALESCE($5, telephone)
+			END,
+
+			mot_de_passe_hash = COALESCE($6, mot_de_passe_hash),
+			role_id = COALESCE($7, role_id)
+		WHERE id = $8
 		RETURNING ${COLONNES_PUBLIQUES}`,
-		[nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id, id],
+		[nom, prenom, date_naissance, mail, telephone, mot_de_passe_hash, role_id, id],
 	);
 	return rows[0] ?? null;
 }

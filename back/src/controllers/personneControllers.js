@@ -3,6 +3,7 @@ import { ErreurHttp } from '../erreurs.js';
 
 const FORMAT_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LONGUEUR_MIN_MOT_DE_PASSE = 8;
+const FORMAT_TELEPHONE = /^(0|\+33)[1-9]\d{8}$/;
 // ---------- Validation : la forme des données, avant toute règle métier ----------
 
 function validerInscription({ nom, prenom, date_naissance, mail, mot_de_passe }) {
@@ -36,6 +37,12 @@ function validerModification(body) {
 	const erreurs = validerInscription(body);
 	delete erreurs.mot_de_passe;
 
+	const { telephone } = body;
+	if (telephone !== undefined && telephone !== '') {
+		if (typeof telephone !== 'string' || !FORMAT_TELEPHONE.test(normaliserTel(telephone)))
+			erreurs.telephone = 'Le numéro de téléphone est invalide';
+	}
+
 	const { ancien_mot_de_passe, nouveau_mot_de_passe } = body;
 	if (nouveau_mot_de_passe) {
 		if (nouveau_mot_de_passe.length < LONGUEUR_MIN_MOT_DE_PASSE) {
@@ -49,6 +56,7 @@ function validerModification(body) {
 }
 
 const normaliserMail = (mail) => mail.trim().toLowerCase();
+const normaliserTel = (telephone) => telephone.replace(/[^\d+]/g, '');
 
 // ---------- Les handlers : reçoivent la requête, appellent le service, répondent ----------
 
@@ -88,7 +96,7 @@ export async function postPersonne(req, res) {
 	res.status(201).json({ personne });
 }
 
-//----------------------- PUT ------------------------//
+//----------------------- PATCH ------------------------//
 
 export async function modifierMoi(req, res) {
 	const body = req.body ?? {};
@@ -101,8 +109,9 @@ export async function modifierMoi(req, res) {
 		id: req.personne.id,
 		nom: body.nom?.trim(),
 		prenom: body.prenom.trim(),
-		mail: normaliserMail(body.mail),
 		date_naissance: body.date_naissance,
+		mail: normaliserMail(body.mail),
+		telephone: body.telephone === undefined ? undefined : normaliserTel(body.telephone),
 		ancien_mot_de_passe: body.ancien_mot_de_passe,
 		nouveau_mot_de_passe: body.nouveau_mot_de_passe,
 		confirmation_mot_de_passe: body.confirmation_mot_de_passe,
@@ -121,8 +130,9 @@ export async function modifierPersonne(req, res) {
 		id: req.params.id,
 		nom: body.nom?.trim(),
 		prenom: body.prenom.trim(),
-		mail: normaliserMail(body.mail),
 		date_naissance: body.date_naissance,
+		mail: normaliserMail(body.mail),
+		telephone: body.telephone === undefined ? undefined : normaliserTel(body.telephone),
 		role_id: body.role_id,
 	});
 	res.status(200).json({ personne });

@@ -1,24 +1,49 @@
-@baseUrl = http://localhost:3000/api/personne
-### GET affiche une personne (200)
-GET {{baseUrl}}/1
+@baseUrl = http://localhost:3000/api
+
+# ==========================================================================
+#  personne.http — lecture des profils (réservée à l'admin)
+#  ⚠️ Lancer DANS L'ORDRE : REST Client mémorise le cookie de connexion.
+# ==========================================================================
+
+### 0. Déconnexion (repartir d'un état propre) → 204
+POST {{baseUrl}}/auth/deconnexion
+
+### 1. Lire un profil sans être connecté → 401 « Connexion requise » (authentification)
+GET {{baseUrl}}/personne/1
+
+# ---------------------------------------------------------------- PROCHE (Laurent, role 3)
+
+### 2. Connexion de Laurent → 200
+POST {{baseUrl}}/auth/connexion
 Content-Type: application/json
 
 {
-    "id": 1,
-    "nom": "Lemaire",
-    "prenom": "Odette",
-    "date_naissance": "1941-03-14",
-    "mail": "odette.lemaire@example.com"
+    "mail": "laurent.delacroix@example.com",
+    "mot_de_passe": "Motdepasse1!"
 }
 
-### GET affiche toutes les personnes personne (200)
-GET {{baseUrl}}/
+### 3. Lire un profil en tant que proche → 403 « Droits insuffisants » (autorisation)
+GET {{baseUrl}}/personne/1
+
+### 4. Lister les personnes en tant que proche → 403 (si la ligne 9 est protégée, sinon 200)
+GET {{baseUrl}}/personne/
+
+# ---------------------------------------------------------------- ADMIN (Sophie, role 1)
+
+### 5. Connexion de Sophie → 200
+POST {{baseUrl}}/auth/connexion
 Content-Type: application/json
 
 {
-    "id": 1,
-    "nom": "Lemaire",
-    "prenom": "Odette",
-    "date_naissance": "1941-03-14",
-    "mail": "odette.lemaire@example.com"
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
 }
+
+### 6. Lire un profil en tant qu'admin → 200, avec telephone et sans mot_de_passe_hash
+GET {{baseUrl}}/personne/1
+
+### 7. Lister les personnes en tant qu'admin → 200
+GET {{baseUrl}}/personne/
+
+### 8. Déconnexion → 204
+POST {{baseUrl}}/auth/deconnexion
