@@ -5,7 +5,7 @@ export default function TableauDeBord() {
 	const { utilisatrice, deconnexion } = useAuth();
 	return (
 		<main className="grid h-svh place-items-center bg-base-200 p-4">
-			<section className="card w-96 bg-base-100 shadow-sm">
+			<section className="card w-full bg-base-100 shadow-sm md:w-96">
 				<figure className="px-6 pt-6">
 					<img src={logo} alt="logo Vi'assist" width={160} className="h-16 w-auto" />
 				</figure>

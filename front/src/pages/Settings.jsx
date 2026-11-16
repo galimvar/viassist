@@ -67,27 +67,37 @@ function Settings() {
 						<span>{erreur}</span>
 					</div>
 				)}
-				<li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Utilisateurs</li>
+				<li className="p-4 pb-2 text-xs opacity-60 tracking-wide list-row grid  grid-cols-[auto_1fr_1fr_auto] md:grid-cols-6 ">
+					<div>Id</div>
+					<div>Prénom - NOM</div>
+					<div className=" hidden md:block">Date de naissance</div>
+					<div className=" hidden md:block">Email</div>
+					<div>Rôle</div>
+					<div>Options</div>
+				</li>
+
 				{personnes.map((p) => {
 					return (
-						<li className="list-row grid grid-cols-6" key={p.id}>
+						<li
+							className="list-row grid grid-cols-[auto_1fr_1fr_auto] md:grid-cols-6 "
+							key={p.id}
+						>
 							<div className="text-4xl font-thin opacity-30 tabular-nums">{p.id}</div>
 
-							<div className="list-col-grow">
+							<div>
 								<div>{p.prenom}</div>
 								<div className="text-xs uppercase font-semibold opacity-60">
 									{p.nom}
 								</div>
 							</div>
-							<div className="list-col-grow">
+							<div className=" hidden md:block">
 								<div>{formateDate(formateDateReverse(p.date_naissance))}</div>
 							</div>
-							<div className="list-col-grow">
+							<div className="  hidden md:block">
 								<div>{p.mail}</div>
 							</div>
-							<div className="list-col-grow">
-								<div>Rôle</div>
-								<div className="text-xs uppercase font-semibold opacity-60">
+							<div>
+								<div className="text-xs capitalize font-semibold opacity-60 md:uppercase">
 									{p.intitule}
 								</div>
 							</div>

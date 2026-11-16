@@ -31,7 +31,7 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 	return (
 		<section
 			id="displayWindow"
-			className="bg-base-100 border border-base-500 h-200 bg-secondary  w-2xl mx-auto overflow-y-auto"
+			className="bg-base-100 border border-base-500 h-svh bg-secondary w-auto  mx-auto overflow-y-auto md:h-full w-2xl"
 		>
 			<div id="BackgroundDailies"></div>
 			{events.map((element) => (

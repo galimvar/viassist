@@ -12,8 +12,8 @@ const Agenda = () => {
 		<>
 			<h2 className="flex justify-self-center mb-10">Agenda</h2>
 
-			<section className="grid grid-col-2 gap-10">
-				<div className="grid grid-cols-3" id="enTete">
+			<section className="grid grid-cols-1 gap-10">
+				<div className="grid grid-cols-[1fr_1fr_1fr]" id="enTete">
 					<div className="col-start-2 flex justify-center">
 						<button
 							type="button"
@@ -26,7 +26,7 @@ const Agenda = () => {
 								color="var(--color-primary)"
 							/>
 						</button>
-						<h3 className="mx-30 justify-center bg-color-red">{date}</h3>
+						<h3 className="mx-10 justify-center md:mx-30">{date}</h3>
 						<button type="button" onClick={() => setDecalage(decalage + 1)}>
 							<ChevronRight size={32} color="var(--color-primary)" />
 						</button>
