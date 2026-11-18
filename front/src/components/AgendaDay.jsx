@@ -45,14 +45,14 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 	return (
 		<section
 			id="displayWindow"
-			className="border rounded-box w-[66dvw] h-[66dvh] grid grid-cols-[1fr_9fr] overflow-y-auto"
+			className="border rounded-box bg-base-200 w-[66dvw] h-[66dvh] grid grid-cols-[1fr_9fr] overflow-y-auto"
 		>
 			<div
 				aria-hidden="true"
 				className="grid grid-rows-[repeat(24,3rem)] justify-self-center"
 			>
 				{HEURES.map((h) => (
-					<p key={h} className="self-start -translate-y-1/2 text-xs first:invisible">
+					<p key={h} className="self-start -translate-y-1/2 text-sm first:invisible">
 						{String(h).padStart(2, '0')}:00
 					</p>
 				))}
@@ -62,7 +62,7 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 			<div className="relative">
 				<div aria-hidden="true" className="grid grid-rows-[repeat(24,3rem)] ">
 					{HEURES.map((h) => (
-						<div key={h} className="border-t border-black first:border-t-0" />
+						<div key={h} className="border-t border-black first:border-t-0 mx-1" />
 					))}
 				</div>
 				<div id="events">
@@ -72,14 +72,14 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 
 						return (
 							<details
-								className="absolute top-0 inset-x-1 collapse bg-base-100 border border-base-300 w-[55dvw] open:z-10"
+								className="absolute top-0 inset-x-1 collapse bg-base-100 border border-base-300 w-[55dvw] open:z-10 justify-self-center"
 								name="my-accordion-det-1"
 								open
 								key={element.id}
 								style={{ transform: `translateY(${y}rem)` }}
 							>
 								<summary className="collapse-title font-semibold text-base">
-									<time>{element.heure_debut} </time>
+									<time>{`${h}:${String(m).padEnd(2, '0')}`} </time>
 									<span>{element.intitule}</span>
 								</summary>
 								<section className="collapse-content text-sm">
