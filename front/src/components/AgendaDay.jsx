@@ -29,7 +29,7 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 
 	useEffect(() => {
 		const chargerData = async () => {
-			const json = await getAgendaDay(decalag);
+			const json = await getAgendaDay(decalage);
 			setData(json);
 			dateFormat({
 				long: formaterDateLong(Object.keys(json)[0]),
