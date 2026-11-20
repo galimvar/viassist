@@ -8,6 +8,7 @@ import {
 	TriangleAlert,
 	OctagonAlert,
 	SquareExclamationPoint,
+	Menu,
 } from 'lucide-react';
 
 const Agenda = () => {
@@ -20,8 +21,22 @@ const Agenda = () => {
 			<h2 className="flex justify-self-center mb-10">Agenda</h2>
 
 			<section className="grid grid-rows[1fr_3fr]">
-				<div id="enTete" className="grid grid-cols-[1fr_1fr_1fr_1fr] grid-rows-[1fr_1fr]">
-					<div className="col-start-2 flex justify-center pl-20">
+				<div id="enTete" className="grid grid-cols-[1fr_5fr_1fr_1fr]">
+					{/* Filter Button */}
+					<div className="dropdown dropdown-right justify-self-start self-center">
+						<button
+							tabIndex={0}
+							role="button"
+							className="text-primary hover:text-secondary bg-base-200 rounded-r-(--radius-box) -ml-4 overflow-x-clip"
+						>
+							<Menu className="lg:size-10 size-10 m-2" />
+						</button>
+						<form
+							tabIndex={-1}
+							className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+						></form>
+					</div>
+					<div className="col-start-2 flex justify-center">
 						<button
 							type="button"
 							aria-label="Jour précédent"
@@ -45,7 +60,7 @@ const Agenda = () => {
 						</button>
 					</div>
 
-					<div className="dropdown dropdown-hover dropdown-center justify-self-center">
+					<div className="dropdown dropdown-hover dropdown-center justify-self-center self-center">
 						<button tabIndex={0} role="button" className="btn m-1">
 							{displayChoice}
 						</button>
@@ -64,9 +79,19 @@ const Agenda = () => {
 							</li>
 						</ul>
 					</div>
-					<button className="col-start-4 justify-self-end text-primary hover:text-secondary bg-base-200 rounded-l-(--radius-box) -mr-4 pr-2 overflow-x-clip">
-						<CalendarPlus className="lg:size-15 size-10" />
-					</button>
+					<div className="dropdown dropdown-left justify-self-end self-center">
+						<button
+							tabIndex={0}
+							role="button"
+							className="text-primary hover:text-secondary bg-base-200 rounded-l-(--radius-box) -mr-4 overflow-x-clip"
+						>
+							<CalendarPlus className="lg:size-10 size-10 m-2" />
+						</button>
+						<form
+							tabIndex={-1}
+							className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+						></form>
+					</div>
 				</div>
 
 				<article

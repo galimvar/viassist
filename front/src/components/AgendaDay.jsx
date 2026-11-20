@@ -69,14 +69,21 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 
 			{/* Colonne 2 : lines + futurs events */}
 			<div className="relative">
+				{/* Lines display */}
 				<div aria-hidden="true" className="grid grid-rows-[repeat(24,3rem)] ">
 					{HEURES.map((hour) => (
-						<div key={hour} className="border-t border-black first:border-t-0 mx-1" />
+						<div
+							key={hour}
+							className="border-t border-black first:border-t-0 mx-1 mr-3"
+						/>
 					))}
 				</div>
+
+				{/* Event display */}
 				<div id="events">
 					{events.map((element) => {
 						const [hour, minute] = element.heure_debut.split(':').map(Number);
+						// Calcul where the even have to be place in the agenda
 						const y = ((hour * 60 + minute) * HAUTEUR_HEURES) / 60;
 
 						return (
