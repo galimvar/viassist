@@ -44,14 +44,6 @@ const Agenda = () => {
 							<ChevronRight size={32} />
 						</button>
 					</div>
-					<div className="col-start-2 row-start-2 flex justify-start">
-						<TriangleAlert className="size-5 mr-1" color="red" />
-						<span className="mr-10">Urgent</span>
-						<OctagonAlert className="size-5 mr-1" color="orange" />
-						<span className="mr-10">Important</span>
-						<SquareExclamationPoint className="size-5 mr-1" color="green" />
-						<span className="mr-10">Rendez-vous</span>
-					</div>
 
 					<div className="dropdown dropdown-hover dropdown-center justify-self-center">
 						<button tabIndex={0} role="button" className="btn m-1">
