@@ -1,0 +1,75 @@
+@baseUrl = http://localhost:3000/api
+
+# ==========================================================================
+#  beneficiaire.http — bénéficiaires et rôle par bénéficiaire (ADR 006)
+#  ⚠️ Lancer DANS L'ORDRE : REST Client mémorise le cookie de connexion.
+#  Seed : 1 = Marguerite (Sophie admin), 2 = Georges (Sophie proche, Paul admin)
+# ==========================================================================
+
+### 0. Déconnexion (repartir d'un état propre) → 204
+POST {{baseUrl}}/auth/deconnexion
+
+### 1. Lister sans être connecté → 401
+GET {{baseUrl}}/beneficiaires
+
+# ---------------------------------------------------------------- Sophie
+
+### 2. Connexion de Sophie → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 3. Mes bénéficiaires → 200 : Marguerite (role_id 1, admin) et Georges (role_id 3, proche)
+GET {{baseUrl}}/beneficiaires
+
+### 4. Fiche de Georges → 200, avec role_id 3
+GET {{baseUrl}}/beneficiaires/2
+
+### 5. Fiche d'un bénéficiaire inexistant / non accompagné → 404
+GET {{baseUrl}}/beneficiaires/999
+
+### 6. Créer un bénéficiaire → 201 (Sophie en devient admin)
+POST {{baseUrl}}/beneficiaires
+Content-Type: application/json
+
+{
+    "nom": "Delacroix",
+    "prenom": "Henri",
+    "date_naissance": "1936-01-20"
+}
+
+### 7. Créer un bénéficiaire sans nom et avec une date mal formée → 422
+POST {{baseUrl}}/beneficiaires
+Content-Type: application/json
+
+{
+    "prenom": "Henri",
+    "date_naissance": "20/01/1936"
+}
+
+### 8. Mes bénéficiaires → 200 : maintenant 3, dont Henri en admin
+GET {{baseUrl}}/beneficiaires
+
+# ---------------------------------------------------------------- Paul
+
+### 9. Connexion de Paul → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 10. Mes bénéficiaires → 200 : Georges seulement
+GET {{baseUrl}}/beneficiaires
+
+### 11. Fiche de Marguerite → 404 (Paul ne l'accompagne pas : on ne révèle pas qu'elle existe)
+GET {{baseUrl}}/beneficiaires/1
+
+### 12. Déconnexion → 204
+POST {{baseUrl}}/auth/deconnexion

@@ -1,6 +1,6 @@
 import { db } from '../db.js';
 
-export async function findMessagesByDate(date) {
+export async function findMessagesByDate(date, beneficiaireId) {
 	// TO_CHAR sur la date du message permet de renvoyer la date sous forme de texte
 	const { rows } = await db.query(
 		`
@@ -8,11 +8,11 @@ export async function findMessagesByDate(date) {
 		FROM message
 		JOIN personne ON message.personne_id = personne.id
 		LEFT JOIN categorie ON message.categorie_id = categorie.id
-		WHERE message.date = $1
+		WHERE message.date = $1 AND message.beneficiaire_id = $2
 		ORDER BY message.importance DESC, message.id ASC;`,
 		// importance est un ENUM, donc trié par ordre de déclaration. cf. 001-migration : 'faible', 'moyenne', 'élevée'
 		// Départage par id (ASC) : à importance égale, les messages s'affichent dans l'ordre où ils ont été enregistrés, pour une lecture chronologique de la journée (message.date n'a pas d'heure)
-		[date],
+		[date, beneficiaireId],
 	);
 
 	return rows;

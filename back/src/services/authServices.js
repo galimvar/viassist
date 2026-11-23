@@ -17,7 +17,7 @@ const validerInscription = (mot_de_passe) => {
 	return erreurs;
 };
 
-export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe, role }) {
+export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe }) {
 	// Règle métier : un mail ne sert qu'à un seul compte
 	const existante = await Personne.trouverParMail(mail);
 	if (existante) {
@@ -28,8 +28,6 @@ export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe
 		throw new ErreurHttp(422, 'Données invalides', erreurs);
 	}
 
-	const role_id = await Personne.trouverRole(role);
-
 	const mot_de_passe_hash = await bcrypt.hash(mot_de_passe, COUT_HASH);
 
 	try {
@@ -39,7 +37,6 @@ export async function inscrire({ nom, prenom, date_naissance, mail, mot_de_passe
 			date_naissance: date_naissance,
 			mail: mail,
 			mot_de_passe_hash: mot_de_passe_hash,
-			role_id: role_id.id,
 		});
 	} catch (erreur) {
 		// 23505 = violation de UNIQUE : deux inscriptions au même instant
@@ -63,7 +60,8 @@ export async function connecter({ mail, mot_de_passe }) {
 		throw new ErreurHttp(401, 'mail ou mot de passe incorrect');
 	}
 
-	const token = jwt.sign({ sub: personne.id, role: personne.role_id }, process.env.JWT_SECRET, {
+	// Pas de rôle dans le token : il dépend du bénéficiaire (ADR 006), il est lu en base à chaque requête
+	const token = jwt.sign({ sub: personne.id }, process.env.JWT_SECRET, {
 		expiresIn: DUREE_SESSION,
 	});
 
