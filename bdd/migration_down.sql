@@ -1,6 +1,8 @@
+DROP TABLE IF EXISTS "accompagner";
 DROP TABLE IF EXISTS "participer";
 DROP TABLE IF EXISTS "message";
 DROP TABLE IF EXISTS "evenement";
+DROP TABLE IF EXISTS "beneficiaire";
 DROP TABLE IF EXISTS "personne";
 DROP TABLE IF EXISTS "categorie";
 DROP TABLE IF EXISTS "role";
