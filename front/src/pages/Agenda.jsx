@@ -29,7 +29,7 @@ const Agenda = () => {
 							role="button"
 							className="text-primary hover:text-secondary bg-base-200 rounded-r-(--radius-box) -ml-4 overflow-x-clip"
 						>
-							<Menu className="lg:size-10 size-10 m-2" />
+							<Menu className="lg:size-10 size-10 m-2 cursor-pointer" />
 						</button>
 						<form
 							tabIndex={-1}
@@ -40,7 +40,7 @@ const Agenda = () => {
 						<button
 							type="button"
 							aria-label="Jour précédent"
-							className="text-primary hover:text-secondary mr-5"
+							className="text-primary hover:text-secondary mr-5 cursor-pointer"
 							onClick={() => setDecalage(decalage - 1)}
 						>
 							<ChevronLeft size={32} />
@@ -53,7 +53,7 @@ const Agenda = () => {
 						<button
 							type="button"
 							aria-label="Jour suivant"
-							className="text-primary hover:text-secondary ml-5"
+							className="text-primary hover:text-secondary ml-5 cursor-pointer"
 							onClick={() => setDecalage(decalage + 1)}
 						>
 							<ChevronRight size={32} />
@@ -85,7 +85,7 @@ const Agenda = () => {
 							role="button"
 							className="text-primary hover:text-secondary bg-base-200 rounded-l-(--radius-box) -mr-4 overflow-x-clip"
 						>
-							<CalendarPlus className="lg:size-10 size-10 m-2" />
+							<CalendarPlus className="lg:size-10 size-10 m-2 cursor-pointer" />
 						</button>
 						<form
 							tabIndex={-1}

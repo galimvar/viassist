@@ -52,7 +52,7 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 		// The section is about the display bloc of the agenda
 		<section
 			id="displayWindow"
-			className="border rounded-box bg-base-200 w-[66dvw] hour-[66dvh] grid grid-cols-[1fr_9fr] overflow-y-auto max-hour-[60dvh]"
+			className="border rounded-box bg-base-200 w-[66dvw] grid grid-cols-[1fr_9fr] overflow-y-auto h-[66dvh]"
 		>
 			{/* Colonne 1 : Time display */}
 			<div
