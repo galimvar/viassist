@@ -18,4 +18,8 @@
 | dateMessage | date du message | DATE | ... | Obligatoire | ... |
 | importanceMessage | niveau d'importance du message | ENUM | ... | Obligatoire | "faible", "moyenne", "élevée" |
 | intituleCatégorie | nom de la catégorie de classement des messages | VARCHAR | 50 | Obligatoire, Unique | ... |
-| intituléRôle | rôle de la personne dans l'application | VARCHAR | 50 | Obligatoire | ... |
+| intituléRôle | rôle d'une personne auprès d'un bénéficiaire | VARCHAR | 50 | Obligatoire, Unique | Porté par le lien personne ↔ bénéficiaire (table accompagner), plus par la personne |
+| nomBénéficiaire | nom de famille de la personne aidée | VARCHAR | 50 | Obligatoire | Le bénéficiaire n'a pas forcément de compte (ADR 006) |
+| prénomBénéficiaire | prénom de la personne aidée | VARCHAR | 50 | Obligatoire | ... |
+| dateNaissanceBénéficiaire | date de naissance de la personne aidée | DATE | ... | Facultatif | ... |
+| estArchivéBénéficiaire | le dossier du bénéficiaire est archivé | BOOLEAN | ... | Obligatoire | Faux par défaut |
