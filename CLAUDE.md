@@ -20,8 +20,8 @@ Monorepo sans package.json racine : lancer chaque commande dans `back/` ou `fron
 | front   | `npm run lint`                            | oxlint                                           |
 
 - **Tests** : aucun test automatisé n'existe encore (`npm test` échoue volontairement dans `back/`, et Vitest, cité dans CONTRIBUTING, n'est pas installé). Les tests d'API sont des fichiers `back/test/requetes/*.http` (extension REST Client), une requête par cas avec le code attendu en commentaire. Il faut se connecter d'abord (`auth.http`) : le cookie `token` est réutilisé par les autres requêtes.
-- **Base PostgreSQL** : schéma dans `bdd/migrations/NNN-*.sql`, à appliquer dans l'ordre (aucun script npm ne le fait), données de test dans `bdd/seed.sql`, remise à zéro avec `bdd/migration_down.sql`. Une nouvelle migration prend le numéro suivant et s'écrit dans `BEGIN; … COMMIT;`.
-- **Environnement** : `back/.env` (gitignoré) d'après `back/.env.exemple` : `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, et `JWT_SECRET` (requis, voir le commentaire dans l'exemple pour le générer). Ne jamais lire ni afficher `back/.env`.
+- **Base PostgreSQL** : schéma dans `bdd/migrations/NNN-*.sql`, données de test dans `bdd/seed.sql`, remise à zéro avec `bdd/migration_down.sql`. La base tourne via Docker : `bdd/docker-compose.yml` (gitignoré, il contient les identifiants) est copié depuis `bdd/docker-compose.exemple.yml` et rejoue migrations + seed au premier `docker compose up -d` seulement (`down -v` pour repartir de zéro). Une nouvelle migration prend le numéro suivant, s'écrit dans `BEGIN; … COMMIT;` et doit être ajoutée aux `volumes` de `docker-compose.exemple.yml`.
+- **Environnement** : `back/.env` (gitignoré) d'après `back/.env.exemple` (valeurs bidon volontaires) : `PORT` (doit valoir 3000, cible du proxy Vite ; sans lui Express prend un port aléatoire), `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, et `JWT_SECRET` (requis, voir le commentaire dans l'exemple pour le générer). Ne jamais lire ni afficher `back/.env` ni `bdd/docker-compose.yml`.
 
 ## Architecture back (`back/src`, Express 5, ES modules)
 
