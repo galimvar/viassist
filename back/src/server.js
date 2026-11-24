@@ -1,5 +1,6 @@
-import { app } from "./app.js";
+import { app } from './app.js';
+import 'dotenv/config';
 
-app.listen(3000, () => {
-    console.log("Serveur démarré sur http://localhost:3000");
-})
+app.listen(process.env.PORT, () => {
+	console.log(`Serveur démarré sur http://localhost:${process.env.PORT}`);
+});
