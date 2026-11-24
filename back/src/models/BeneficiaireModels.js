@@ -39,6 +39,67 @@ export async function trouverParId(id) {
 	return rows[0] ?? null;
 }
 
+// ---------------------------------------------------------------- membres (table accompagner)
+
+// Les comptes archivés n'apparaissent pas : ils ne peuvent plus se connecter
+export async function listerMembres(beneficiaireId) {
+	const { rows } = await db.query(
+		`SELECT p.id, p.nom, p.prenom, p.mail, p.telephone, a.role_id, r.intitule AS role
+		 FROM accompagner a
+		 JOIN personne p ON p.id = a.personne_id
+		 JOIN role r ON r.id = a.role_id
+		 WHERE a.beneficiaire_id = $1 AND p.est_archive = false
+		 ORDER BY a.role_id, p.nom, p.prenom`,
+		[beneficiaireId],
+	);
+	return rows;
+}
+
+// Nombre de membres (comptes actifs) qui ont ce rôle chez ce bénéficiaire
+export async function compterParRole(beneficiaireId, roleId) {
+	const { rows } = await db.query(
+		`SELECT count(*)::int AS nombre
+		 FROM accompagner a
+		 JOIN personne p ON p.id = a.personne_id
+		 WHERE a.beneficiaire_id = $1 AND a.role_id = $2 AND p.est_archive = false`,
+		[beneficiaireId, roleId],
+	);
+	return rows[0].nombre; // ::int : sinon pg renvoie count(*) en chaîne (bigint)
+}
+
+// Lève une erreur 23505 (clé primaire) si la personne est déjà membre
+export async function ajouterMembre(beneficiaireId, personneId, roleId) {
+	const { rows } = await db.query(
+		`INSERT INTO accompagner (personne_id, beneficiaire_id, role_id)
+		 VALUES ($1, $2, $3)
+		 RETURNING personne_id, beneficiaire_id, role_id`,
+		[personneId, beneficiaireId, roleId],
+	);
+	return rows[0];
+}
+
+export async function modifierRoleMembre(beneficiaireId, personneId, roleId) {
+	const { rows } = await db.query(
+		`UPDATE accompagner SET role_id = $3
+		 WHERE personne_id = $1 AND beneficiaire_id = $2
+		 RETURNING personne_id, beneficiaire_id, role_id`,
+		[personneId, beneficiaireId, roleId],
+	);
+	return rows[0] ?? null;
+}
+
+export async function retirerMembre(beneficiaireId, personneId) {
+	const { rows } = await db.query(
+		`DELETE FROM accompagner
+		 WHERE personne_id = $1 AND beneficiaire_id = $2
+		 RETURNING personne_id`,
+		[personneId, beneficiaireId],
+	);
+	return rows[0] ?? null;
+}
+
+// ---------------------------------------------------------------- création
+
 /**
  * Crée un bénéficiaire et rattache son créateur avec le rôle donné (admin).
  * Les deux INSERT sont dans une transaction : pas de bénéficiaire sans admin.

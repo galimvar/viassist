@@ -28,6 +28,32 @@ function validerBeneficiaire({ nom, prenom, date_naissance }) {
 	return erreurs;
 }
 
+const FORMAT_MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validerRole(role_id, erreurs) {
+	if (!Number.isInteger(role_id)) {
+		erreurs.role_id = 'Le rôle est obligatoire (identifiant entier)';
+	}
+	return erreurs;
+}
+
+function validerNouveauMembre({ mail, role_id }) {
+	const erreurs = {};
+	if (typeof mail !== 'string' || !FORMAT_MAIL.test(mail.trim())) {
+		erreurs.mail = "Le mail n'a pas un format valide";
+	}
+	return validerRole(role_id, erreurs);
+}
+
+// :personneId vient de l'URL, donc c'est une chaîne : même traitement que dans exigerRoleSur
+function lirePersonneId(req) {
+	const personneId = parseInt(req.params.personneId, 10);
+	if (!Number.isInteger(personneId)) {
+		throw new ErreurHttp(404, 'Membre introuvable');
+	}
+	return personneId;
+}
+
 // ---------- Les handlers : reçoivent la requête, appellent le service, répondent ----------
 
 // GET /api/beneficiaires : les bénéficiaires de la personne connectée, avec son rôle chez chacun
@@ -59,4 +85,51 @@ export async function creer(req, res) {
 export async function fiche(req, res) {
 	const beneficiaire = await beneficiaireService.fiche(req.acces.beneficiaireId);
 	res.json({ beneficiaire, role_id: req.acces.role });
+}
+
+// ---------- Membres (réservé à l'admin du bénéficiaire) ----------
+
+// GET /api/beneficiaires/:beneficiaireId/membres
+export async function listerMembres(req, res) {
+	const membres = await beneficiaireService.listerMembres(req.acces.beneficiaireId);
+	res.json({ membres });
+}
+
+// POST /api/beneficiaires/:beneficiaireId/membres   { mail, role_id }
+export async function ajouterMembre(req, res) {
+	const body = req.body ?? {};
+	const erreurs = validerNouveauMembre(body);
+	if (Object.keys(erreurs).length > 0) {
+		throw new ErreurHttp(422, 'Données invalides', erreurs);
+	}
+
+	const membre = await beneficiaireService.ajouterMembre(req.acces.beneficiaireId, {
+		mail: body.mail.trim().toLowerCase(), // même format qu'en base (cf. authControllers)
+		role_id: body.role_id,
+	});
+	res.status(201).json({ membre });
+}
+
+// PATCH /api/beneficiaires/:beneficiaireId/membres/:personneId   { role_id }
+export async function modifierRoleMembre(req, res) {
+	const personneId = lirePersonneId(req);
+	const body = req.body ?? {};
+	const erreurs = validerRole(body.role_id, {});
+	if (Object.keys(erreurs).length > 0) {
+		throw new ErreurHttp(422, 'Données invalides', erreurs);
+	}
+
+	const membre = await beneficiaireService.modifierRoleMembre(
+		req.acces.beneficiaireId,
+		personneId,
+		body.role_id,
+	);
+	res.json({ membre });
+}
+
+// DELETE /api/beneficiaires/:beneficiaireId/membres/:personneId
+export async function retirerMembre(req, res) {
+	const personneId = lirePersonneId(req);
+	await beneficiaireService.retirerMembre(req.acces.beneficiaireId, personneId);
+	res.status(204).end();
 }
