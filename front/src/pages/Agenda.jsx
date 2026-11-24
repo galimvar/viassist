@@ -1,7 +1,15 @@
 import AgendaDay from '../components/AgendaDay';
 import AgendaWeek from '../components/AgendaWeek';
 import { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import {
+	ChevronRight,
+	ChevronLeft,
+	CalendarPlus,
+	TriangleAlert,
+	OctagonAlert,
+	SquareExclamationPoint,
+	Menu,
+} from 'lucide-react';
 
 const Agenda = () => {
 	const [displayChoice, setDisplayChoice] = useState('Jour');
@@ -12,48 +20,84 @@ const Agenda = () => {
 		<>
 			<h2 className="flex justify-self-center mb-10">Agenda</h2>
 
-			<section className="grid grid-cols-1 gap-10">
-				<div className="grid grid-cols-[1fr_1fr_1fr]" id="enTete">
+			<section className="grid grid-rows[1fr_3fr]">
+				<div id="enTete" className="grid grid-cols-[1fr_5fr_1fr_1fr]">
+					{/* Filter Button */}
+					<div className="dropdown dropdown-right justify-self-start self-center">
+						<button
+							tabIndex={0}
+							role="button"
+							className="text-primary hover:text-secondary bg-base-200 rounded-r-(--radius-box) -ml-4 overflow-x-clip"
+						>
+							<Menu className="lg:size-10 size-10 m-2 cursor-pointer" />
+						</button>
+						<form
+							tabIndex={-1}
+							className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+						></form>
+					</div>
 					<div className="col-start-2 flex justify-center">
 						<button
 							type="button"
 							aria-label="Jour précédent"
+							className="text-primary hover:text-secondary mr-5 cursor-pointer"
 							onClick={() => setDecalage(decalage - 1)}
 						>
-							<ChevronLeft
-								size={32}
-								aria-hidden="true"
-								color="var(--color-primary)"
-							/>
+							<ChevronLeft size={32} />
 						</button>
-						<h3 className="mx-10 justify-center md:mx-30">{date}</h3>
-						<button type="button" onClick={() => setDecalage(decalage + 1)}>
-							<ChevronRight size={32} color="var(--color-primary)" />
+						<h3 className="text-center lg:w-[30dvw] w-[20dvw] whitespace-nowrap translate-y-1/6">
+							<span className="hidden lg:inline lg:mx-20 text-xl">{date.long}</span>
+							<span className="lg:hidden my-5">{date.short}</span>
+						</h3>
+
+						<button
+							type="button"
+							aria-label="Jour suivant"
+							className="text-primary hover:text-secondary ml-5 cursor-pointer"
+							onClick={() => setDecalage(decalage + 1)}
+						>
+							<ChevronRight size={32} />
 						</button>
 					</div>
 
-					<div className="col-start-3 dropdown dropdown-hover">
+					<div className="dropdown dropdown-hover dropdown-center justify-self-center self-center">
 						<button tabIndex={0} role="button" className="btn m-1">
 							{displayChoice}
 						</button>
 						<ul
 							tabIndex={-1}
-							className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+							className="dropdown-content menu bg-base-200 rounded-box z-1 w-25 p-2 shadow-sm mx-auto"
 						>
 							<li>
 								<a onClick={() => setDisplayChoice('Jour')}>Jour</a>
 							</li>
-							{/* <li>
+							<li>
 								<a onClick={() => setDisplayChoice('Semaine')}>Semaine</a>
 							</li>
 							<li>
 								<a onClick={() => setDisplayChoice('Mois')}>Mois</a>
-							</li> */}
+							</li>
 						</ul>
+					</div>
+					<div className="dropdown dropdown-left justify-self-end self-center">
+						<button
+							tabIndex={0}
+							role="button"
+							className="text-primary hover:text-secondary bg-base-200 rounded-l-(--radius-box) -mr-4 overflow-x-clip"
+						>
+							<CalendarPlus className="lg:size-10 size-10 m-2 cursor-pointer" />
+						</button>
+						<form
+							tabIndex={-1}
+							className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+						></form>
 					</div>
 				</div>
 
-				<section className="justify-items-center align-start ">
+				<article
+					id="agendaImport"
+					className="justify-items-center align-start lg:h-[66dvh] lg:w-full w-[90dvw] mx-auto"
+				>
 					{displayChoice == 'Jour' && (
 						<AgendaDay decalage={decalage} dateFormat={setDate} />
 					)}
@@ -63,7 +107,7 @@ const Agenda = () => {
 					{displayChoice == 'Mois' && (
 						<AgendaMonth decalage={decalage} dateFormat={setDate} />
 					)}
-				</section>
+				</article>
 			</section>
 		</>
 	);
