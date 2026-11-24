@@ -17,15 +17,12 @@ const formaterDateShort = (iso) =>
 // Creating an empty array of 24 index from array-like {length: 24}. "_" means we do not use the orignal value which is undefined and we replace it by i.
 // So for each with loop we return i as the value of each index.
 const HEURES = Array.from({ length: 24 }, (_, i) => i);
-// Same here but for 7 days
-const JOURS = Array.from({ length: 7 }, (_, i) => i);
 
 //Setup of high for every bloc and separation between lines of agenda background
 const HAUTEUR_HEURES = 3;
 
 const AgendaWeek = ({ decalage, dateFormat }) => {
 	const [data, setData] = useState();
-	const [events, setEvents] = useState([]);
 
 	useEffect(() => {
 		const chargerData = async () => {
@@ -34,15 +31,12 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 			dateFormat({
 				long: `du ${formaterDateLong(Object.keys(json)[0])} au ${formaterDateLong(
 					Object.keys(json)[Object.keys(json).length - 1],
-				)}
-				`,
+				)}`,
 				short: `du ${formaterDateShort(Object.keys(json)[0])} au ${formaterDateShort(
 					Object.keys(json)[Object.keys(json).length - 1],
-				)}
-				`,
+				)}`,
 			});
-
-			setEvents(Object.values(json)[0]);
+			console.log(data);
 		};
 		chargerData();
 	}, [decalage]);
@@ -97,10 +91,13 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 			</div>
 
 			{/* Colonne 2 : lines + futurs events */}
-			<div id="weekDisplay" className="grid grid-cols-[repeat(7,12.5dvw)] ml-2 row-start-2">
-				{JOURS.map((jour) => (
-					<div key={jour} className="">
-						<div className="relative">
+			<div
+				id="weekDisplay"
+				className="grid grid-cols-[repeat(7,12.5dvw)] ml-2 row-start-2 mb-2"
+			>
+				{Object.keys(data).map((jour) => (
+					<div key={jour} className="relative">
+						<div>
 							{/* Lines display */}
 							<div aria-hidden="true" className="grid grid-rows-[repeat(24,3rem)] ">
 								{HEURES.map((hour) => (
@@ -110,43 +107,44 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 									/>
 								))}
 							</div>
+							<div id="events">
+								{data[jour].map((element) => {
+									const [hour, minute] = element.heure_debut
+										.split(':')
+										.map(Number);
+									// Calcul where the even have to be place in the agenda
+									const y = ((hour * 60 + minute) * HAUTEUR_HEURES) / 60;
+
+									return (
+										// Each event will be displayed as follow
+										<details
+											className="group absolute top-0 collapse bg-base-100 border border-base-300 w-[12dvw] open:z-10 justify-self-center"
+											name="my-accordion-det-1"
+											key={element.id}
+											style={{ transform: `translateY(${y}rem)` }}
+										>
+											{/* Event time and title. padStart adds a leading zero so hours and minutes always have 2 digits (9:5 → 09:05) */}{' '}
+											<summary className="collapse-title font-semibold text-xs truncate group-open:whitespace-normal">
+												<time>
+													{`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}
+												</time>{' '}
+												<span>{element.intitule}</span>
+											</summary>
+											{/* Here is the commentary section of each events */}
+											<section className="collapse-content text-xs">
+												<dl>
+													<dt>Description :</dt>
+													<dd>{element.description}</dd>
+												</dl>
+											</section>
+										</details>
+									);
+								})}
+							</div>
 						</div>
 					</div>
 				))}
 			</div>
-			{/* Event display */}
-			{/* <div id="events">
-				{events.map((element) => {
-					const [hour, minute] = element.heure_debut.split(':').map(Number);
-					// Calcul where the even have to be place in the agenda
-					const y = ((hour * 60 + minute) * HAUTEUR_HEURES) / 60;
-
-					return (
-						// Each event will be displayed as follow
-						<details
-							className="absolute top-0 inset-x-1 collapse bg-base-100 border border-base-300 w-[55dvw] open:z-10 justify-self-center"
-							name="my-accordion-det-1"
-							open
-							key={element.id}
-							style={{ transform: `translateY(${y}rem)` }}
-						> */}
-			{/* Here is the name and time of the event. padEnd is to prevent the minutes to display incorrectly */}
-			{/* <summary className="collapse-title font-semibold text-base">
-								<time>{`${hour}:${String(minute).padEnd(2, '0')}`} </time>
-								<span>{element.intitule}</span>
-							</summary> */}
-
-			{/* Here is the commentary section of each events */}
-			{/* <section className="collapse-content text-sm">
-								<dl>
-									<dt>Description :</dt>
-									<dd>{element.description}</dd>
-								</dl>
-							</section>
-						</details>
-					);
-				})}
-			</div> */}
 		</section>
 	);
 };
