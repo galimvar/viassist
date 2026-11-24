@@ -1,0 +1,34 @@
+# Modèle de configuration de la base PostgreSQL.
+# 1. Copier ce fichier en docker-compose.yml (gitignoré) dans le même dossier.
+# 2. Remplacer USER, PASSWORD, NAME et PORT_LOCAL par vos valeurs,
+#    les mêmes que DB_USER, DB_PASSWORD, DB_NAME et DB_PORT dans back/.env.
+#
+# Lancer :   docker compose up -d
+# Arrêter :  docker compose down        (les données sont conservées dans le volume)
+# Reset :    docker compose down -v     (supprime le volume : migrations et seed sont rejoués au prochain up)
+#
+# Les fichiers montés dans /docker-entrypoint-initdb.d ne sont exécutés qu'au premier lancement,
+# par ordre alphabétique. Chaque nouvelle migration doit être ajoutée à la liste des volumes ci-dessous.
+services:
+    db:
+        image: postgres:16
+        container_name: viassist-db
+        environment:
+            POSTGRES_USER: USER
+            POSTGRES_PASSWORD: PASSWORD
+            POSTGRES_DB: NAME
+            POSTGRES_INITDB_ARGS: '--locale-provider=icu --icu-locale=fr-FR'
+            TZ: Europe/Paris
+        ports:
+            - 'PORT_LOCAL:5432'
+        volumes:
+            - ./migrations/001-migration-init.sql:/docker-entrypoint-initdb.d/001-migration-init.sql
+            - ./migrations/002-authentification.sql:/docker-entrypoint-initdb.d/002-authentification.sql
+            - ./migrations/003-migration-role.sql:/docker-entrypoint-initdb.d/003-migration-role.sql
+            - ./migrations/004-migration-est-archive.sql:/docker-entrypoint-initdb.d/004-migration-est-archive.sql
+            - ./migrations/005-migration-telephone.sql:/docker-entrypoint-initdb.d/005-migration-telephone.sql
+            - ./seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+            - viassist-data:/var/lib/postgresql/data
+
+volumes:
+    viassist-data:
