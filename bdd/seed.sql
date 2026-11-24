@@ -92,6 +92,10 @@ INSERT INTO accompagner (personne_id, beneficiaire_id, role_id) VALUES
   (4, 2, 3),
   (8, 2, 4);
 
+-- Invitation EN ATTENTE (aucun accès tant qu'elle n'est pas acceptée) : Paul invite Laurent chez Georges
+INSERT INTO accompagner (personne_id, beneficiaire_id, role_id, statut) VALUES
+  (3, 2, 3, 'en_attente');
+
 -- ---------------------------------------------------------------- événements (1373 + 7)
 -- Un INSERT par mois, du plus ancien au plus récent. Marguerite (beneficiaire_id 1) puis Georges (2).
 

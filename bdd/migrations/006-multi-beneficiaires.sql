@@ -1,11 +1,16 @@
 -- 006-multi-beneficiaires.sql : plusieurs bénéficiaires, rôle porté par le lien (cf. ADR 006)
 --   * nouvelle table beneficiaire (compte facultatif via personne_id)
---   * nouvelle table accompagner (personne, bénéficiaire, rôle)
+--   * nouvelle table accompagner (personne, bénéficiaire, rôle, statut de l'invitation)
 --   * evenement.beneficiaire_id et message.beneficiaire_id (obligatoires)
 --   * personne.role_id est supprimé : le rôle dépend du bénéficiaire
 --
 -- Tout est dans une transaction : si une étape échoue, rien n'est modifié.
 -- Les données existantes sont rattachées à un bénéficiaire (étape 3).
+--
+-- PRÉREQUIS sur une base qui contient déjà des événements ou des messages : au moins une
+-- personne avec role_id = 5 (bénéficiaire), qui devient le bénéficiaire de reprise. Sinon,
+-- l'étape 4 échoue avec « column "beneficiaire_id" … contains null values » et la transaction
+-- annule tout : créer ou corriger cette personne, puis relancer. Sur une base vide, rien à faire.
 
 BEGIN;
 
@@ -31,6 +36,10 @@ CREATE TABLE "accompagner" (
 		ON UPDATE NO ACTION ON DELETE CASCADE,
 	"role_id" INTEGER NOT NULL REFERENCES "role"("id")
 		ON UPDATE NO ACTION ON DELETE NO ACTION,
+	-- 'en_attente' : invitation envoyée par un admin, AUCUN accès tant qu'elle n'est pas acceptée.
+	-- DEFAULT 'accepte' : les liens repris à l'étape 3 (et ceux du seed) sont déjà acceptés.
+	"statut" VARCHAR(20) NOT NULL DEFAULT 'accepte'
+		CHECK ("statut" IN ('en_attente', 'accepte')),
 	PRIMARY KEY("personne_id", "beneficiaire_id")
 );
 
