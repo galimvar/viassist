@@ -27,7 +27,7 @@ const Agenda = () => {
 						<button
 							tabIndex={0}
 							role="button"
-							className="text-primary hover:text-secondary bg-base-200 rounded-r-(--radius-box) -ml-4 overflow-x-clip"
+							className="text-primary hover:text-secondary bg-base-200 rounded-r-(--radius-box) -ml-4 overflow-x-clip cursor-pointer"
 						>
 							<Menu className="lg:size-10 size-10 m-2 cursor-pointer" />
 						</button>
@@ -83,7 +83,7 @@ const Agenda = () => {
 						<button
 							tabIndex={0}
 							role="button"
-							className="text-primary hover:text-secondary bg-base-200 rounded-l-(--radius-box) -mr-4 overflow-x-clip"
+							className="text-primary hover:text-secondary bg-base-200 rounded-l-(--radius-box) -mr-4 overflow-x-clip cursor-pointer"
 						>
 							<CalendarPlus className="lg:size-10 size-10 m-2 cursor-pointer" />
 						</button>
