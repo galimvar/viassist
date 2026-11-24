@@ -38,7 +38,7 @@ const normalisermail = (mail) => mail.trim().toLowerCase();
 // ---------- Les handlers : reçoivent la requête, appellent le service, répondent ----------
 export async function inscription(req, res) {
 	const body = req.body ?? {};
-	const { nom, prenom, mail, date_naissance, mot_de_passe, role } = body;
+	const { nom, prenom, mail, date_naissance, mot_de_passe } = body;
 	const erreurs = validerInscription(body);
 	if (Object.keys(erreurs).length > 0) {
 		throw new ErreurHttp(422, 'Données invalides', erreurs);
@@ -50,7 +50,6 @@ export async function inscription(req, res) {
 		date_naissance: date_naissance.trim(),
 		mail: normalisermail(mail),
 		mot_de_passe: mot_de_passe,
-		role: role,
 	});
 	res.status(201).json({ personne });
 }

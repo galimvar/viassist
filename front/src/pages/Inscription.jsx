@@ -29,7 +29,6 @@ export default function Inscription() {
 				date_naissance: newDate,
 				mail: mail,
 				mot_de_passe: motDePasse,
-				role: 'admin',
 			});
 			navigate('/connexion');
 		} catch (err) {

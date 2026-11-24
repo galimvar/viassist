@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
 
-// roles (optionnel) : liste des rôles autorisés. Sans roles, il suffit d'être connecté.
-export default function RouteProtegee({ children, roles }) {
+// Il suffit d'être connecté. Les rôles dépendent du bénéficiaire actif : voir BeneficiaireRequis.
+export default function RouteProtegee({ children }) {
 	const { utilisatrice, chargement } = useAuth();
 	const location = useLocation();
 
@@ -10,10 +10,6 @@ export default function RouteProtegee({ children, roles }) {
 
 	if (!utilisatrice) {
 		return <Navigate to="/connexion" replace state={{ depuis: location.pathname }} />;
-	}
-
-	if (roles && !roles.includes(utilisatrice.role_id)) {
-		return <Navigate to="/" replace />;
 	}
 
 	// Utilisable avec des children, ou comme layout route (avec <Outlet />)

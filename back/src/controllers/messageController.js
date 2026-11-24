@@ -43,7 +43,7 @@ export async function listMessages(req, res) {
 		throw new ErreurHttp(422, 'Données invalides', errors);
 	}
 
-	// 4. Transmission de la date au service
-	const messages = await messageService.getMessagesByDate(date);
+	// 4. Transmission de la date et du bénéficiaire (rempli par exigerRoleSur) au service
+	const messages = await messageService.getMessagesByDate(date, req.acces.beneficiaireId);
 	return res.status(200).json({ messages });
 }

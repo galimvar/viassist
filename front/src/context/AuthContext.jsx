@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import * as api from '../api/auth.js';
+import { oublierIdMemorise } from './memoireBeneficiaire.js';
 
 const AuthContext = createContext(null);
 
@@ -22,6 +23,7 @@ export function AuthProvider({ children }) {
 
 	async function deconnexion() {
 		await api.deconnecter();
+		oublierIdMemorise(); // le bénéficiaire choisi ne survit pas à la session
 		setUtilisatrice(null);
 	}
 

@@ -12,7 +12,7 @@ Monorepo sans package.json racine : lancer chaque commande dans `back/` ou `fron
 
 | Dossier | Commande                                  | Effet                                            |
 | ------- | ----------------------------------------- | ------------------------------------------------ |
-| back    | `npm run dev`                             | API Express sur http://localhost:3000 (nodemon)  |
+| back    | `npm run dev`                             | API Express sur le port `PORT` (3000, nodemon)   |
 | back    | `npm run lint`                            | ESLint                                           |
 | back    | `npm run format` / `npm run format:check` | Prettier (écrit / vérifie)                       |
 | front   | `npm run dev`                             | Vite ; `/api` est proxifié vers `localhost:3000` |
@@ -28,19 +28,21 @@ Monorepo sans package.json racine : lancer chaque commande dans `back/` ou `fron
 Couches strictes, une ressource = un fichier par couche :
 `routes/` → `controllers/` → `services/` → `models/` → `db.js` (Pool `pg`).
 
-- **routes** : chemin + middlewares `auth` puis `exigerRole(ROLES.X, …)` (`middlewares/auth.js`). `auth` lit le JWT dans le cookie httpOnly `token` et remplit `req.personne = { id, role }`. Montées sous `/api/<ressource>` dans `app.js`.
+- **routes** : chemin + middlewares `auth` puis `exigerRoleSur(ROLES.X, …)` (`middlewares/auth.js`). `auth` lit le JWT (`{ sub }`) dans le cookie httpOnly `token` et remplit `req.personne = { id }`. `exigerRoleSur` lit `:beneficiaireId` dans l'URL, cherche le rôle de la personne chez ce bénéficiaire (table `accompagner`) et remplit `req.acces = { beneficiaireId, role }` ; 404 si elle ne l'accompagne pas, 403 si le rôle n'est pas autorisé. Montées sous `/api/<ressource>` dans `app.js`.
+- **Multi-bénéficiaires (ADR 006)** : le rôle n'est pas global, il est porté par le lien personne ↔ bénéficiaire (`accompagner`). Les ressources d'un bénéficiaire sont imbriquées : `/api/beneficiaires/:beneficiaireId/agenda/…`, `/messages`, `/membres` (sous-routeurs en `Router({ mergeParams: true })`). Toute requête sur `evenement` ou `message` filtre par `beneficiaire_id`.
+- **Invitations** : un admin n'ajoute pas un membre, il l'**invite** (`accompagner.statut = 'en_attente'`). Une invitation ne donne aucun accès et n'apparaît pas dans la liste des membres tant que la personne ne l'a pas acceptée (`/api/invitations`, sans `exigerRoleSur` : tout est filtré sur `req.personne.id`). L'invitation répond toujours 202 avec le même message, que le mail existe ou non (pas d'énumération des comptes). Toute requête qui donne un accès filtre donc sur `statut = 'accepte'`, `beneficiaire.est_archive` et `personne.est_archive` (voir `trouverRoleDe`).
 - **controllers** : validation de la _forme_ des entrées (types, formats, longueurs), normalisation, puis appel du service et réponse HTTP.
 - **services** : règles métier (unicité, hash bcrypt, signature JWT).
 - **models** : seul endroit où il y a du SQL. Toujours en requêtes paramétrées (`$1`, …). Le JSON est souvent construit directement en SQL (`json_build_object`, `json_agg`) : voir `models/AgendaModels.js`.
 - **Erreurs** : lancer `new ErreurHttp(status, message, details)` (`erreurs.js`). Express 5 transmet seul les rejets des handlers `async` au middleware `middlewares/erreurs.js`, qui renvoie `{ message, erreurs }` : pas de try/catch dans les contrôleurs.
-- **Rôles** : `constantes/roles.js` (ADMIN 1, INVITE 2, PROCHE 3, INTERVENANT 4, BENEFICIAIRE 5). Ce sont les id de la table `role`, dupliqués dans `front/src/constantes/roles.js` : modifier les trois ensemble.
+- **Rôles** : `constantes/roles.js` (ADMIN 1, INVITE 2, PROCHE 3, INTERVENANT 4, BENEFICIAIRE 5). Ce sont les id de la table `role`, dupliqués dans `front/src/constantes/roles.js` : modifier les trois ensemble. Le rôle BENEFICIAIRE est réservé au compte lié au bénéficiaire (`beneficiaire.personne_id`), et un bénéficiaire garde toujours au moins un admin.
 - La suppression d'une personne est un archivage logique (`personne.est_archive`), pas un `DELETE`.
 
 ## Architecture front (`front/src`, React 19, react-router 8, Tailwind 4 + DaisyUI 5)
 
 - `api/auth.js` : **tous** les appels réseau passent par `appeler()` (fetch sur `/api…`, lève une erreur portant `status` et `erreurs` par champ). Aucun `fetch` dans les composants d'affichage.
 - `context/AuthContext.jsx` : `useAuth()` → `{ utilisatrice, chargement, connexion, deconnexion }`. La session est restaurée via `GET /api/auth/moi`, puisque le token n'est jamais accessible au JS.
-- `App.jsx` : routes imbriquées sous `<RouteProtegee><Layout/></RouteProtegee>`. Le filtrage par rôle (`roles={[...]}`) n'est que de l'ergonomie : chaque route API doit aussi avoir son `exigerRole`.
+- `App.jsx` : routes imbriquées sous `<RouteProtegee><Layout/></RouteProtegee>`. Le filtrage par rôle (`roles={[...]}`) n'est que de l'ergonomie : chaque route API doit aussi avoir son `exigerRoleSur`.
 - `pages/` = écrans, `components/` = éléments réutilisables. Mobile-first, HTML sémantique, contraste WCAG AA (CONTRIBUTING §7).
 
 ## Conventions (CONTRIBUTING.md)

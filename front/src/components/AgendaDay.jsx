@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAgendaDay } from '../api/auth';
+import { getAgendaDay } from '../api/beneficiaires.js';
+import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
 
 // Function to adjust the display of the date. Long : vendredi 20 decembre, short : vendredi 20 dec. .
 const formaterDateLong = (iso) =>
@@ -26,10 +27,11 @@ const HAUTEUR_HEURES = 3;
 const AgendaDay = ({ decalage, dateFormat }) => {
 	const [data, setData] = useState();
 	const [events, setEvents] = useState([]);
+	const beneficiaireId = useBeneficiaire().actif.id;
 
 	useEffect(() => {
 		const chargerData = async () => {
-			const json = await getAgendaDay(decalage);
+			const json = await getAgendaDay(beneficiaireId, decalage);
 			setData(json);
 			dateFormat({
 				long: formaterDateLong(Object.keys(json)[0]),
@@ -39,7 +41,7 @@ const AgendaDay = ({ decalage, dateFormat }) => {
 			setEvents(Object.values(json)[0]);
 		};
 		chargerData();
-	}, [decalage]);
+	}, [decalage, beneficiaireId]);
 
 	if (!data)
 		return (

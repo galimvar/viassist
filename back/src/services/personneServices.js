@@ -5,46 +5,21 @@ import { ErreurHttp } from '../erreurs.js';
 
 const COUT_HASH = 10;
 
-export async function getUserProfile(id) {
-	const utilisateurs = await Personne.trouverParId(id);
-
-	return utilisateurs;
-}
-
-export async function getAllUsers() {
-	const utilisateurs = await Personne.trouverTous();
-	/*   if (!utilisateurs) {
-    throw new ErreurHttp(401, 'Session invalide');
-  } */
-	return utilisateurs;
-}
-
-export async function getUserProfileByMail(mail) {
-	const utilisateurs = await Personne.trouverParMail(mail);
-	/*   if (!utilisateurs) {
-    throw new ErreurHttp(401, 'Session invalide');
-  } */
-	return utilisateurs;
-}
-
 export async function createUser(personne) {
 	const existante = await Personne.trouverParMail(personne.mail);
 	if (existante) {
 		throw new ErreurHttp(409, 'Un compte existe déjà avec cet email');
 	}
 
-	const role_id = await Personne.trouverRole(personne.role).id;
-
 	const mot_de_passe_hash = await bcrypt.hash(personne.mot_de_passe, COUT_HASH);
 	try {
-		return await Personne.creer(
-			personne.nom,
-			personne.prenom,
-			personne.date_naissance,
-			personne.mail,
+		return await Personne.creer({
+			nom: personne.nom,
+			prenom: personne.prenom,
+			date_naissance: personne.date_naissance,
+			mail: personne.mail,
 			mot_de_passe_hash,
-			role_id,
-		);
+		});
 	} catch (erreur) {
 		// 23505 = violation de UNIQUE : deux inscriptions au même instant
 		if (erreur.code === '23505') {
@@ -65,10 +40,9 @@ export async function modifierUser(personne) {
 		ancien_mot_de_passe,
 		nouveau_mot_de_passe,
 		confirmation_mot_de_passe,
-		role_id,
 	} = personne;
 
-	const donneesAEnvoyer = { nom, prenom, date_naissance, mail, telephone, role_id };
+	const donneesAEnvoyer = { nom, prenom, date_naissance, mail, telephone };
 
 	if (nouveau_mot_de_passe) {
 		if (!ancien_mot_de_passe) {
@@ -106,12 +80,4 @@ export async function modifierUser(personne) {
 	}
 
 	return userModifie;
-}
-
-export async function archiveUserProfile(id) {
-	const utilisateurs = await Personne.archiverParId(id);
-	/*   if (!utilisateurs) {
-    throw new ErreurHttp(401, 'Session invalide');
-  } */
-	return utilisateurs;
 }

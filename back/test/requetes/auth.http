@@ -38,8 +38,7 @@ Content-Type: application/json
     "prenom":"Rémy",
     "mail":"remy.lagarre@gmail.com",
     "date_naissance":"1989/04/10",
-    "mot_de_passe":"Prout!1234",
-    "role":"admin"
+    "mot_de_passe":"Prout!1234"
 }
 ### GET renvoie 200
 GET {{baseUrl}}/moi

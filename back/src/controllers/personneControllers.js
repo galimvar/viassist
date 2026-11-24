@@ -60,24 +60,6 @@ const normaliserTel = (telephone) => telephone.replace(/[^\d+]/g, '');
 
 // ---------- Les handlers : reçoivent la requête, appellent le service, répondent ----------
 
-//-----------------------GET-------------------------//
-export async function getPersonneById(req, res) {
-	const id = req.params.id;
-	const personnes = await personneService.getUserProfile(id);
-	res.json({ personnes });
-}
-
-export async function getPersonneByMail(req, res) {
-	const mail = req.params.mail;
-	const personnes = await personneService.getUserProfileByMail(mail);
-	res.json({ personnes });
-}
-
-export async function getAllPersonnes(req, res) {
-	const personnes = await personneService.getAllUsers();
-	res.json({ personnes });
-}
-
 //-----------------------POST-------------------------//
 export async function postPersonne(req, res) {
 	const body = req.body ?? {};
@@ -117,31 +99,4 @@ export async function modifierMoi(req, res) {
 		confirmation_mot_de_passe: body.confirmation_mot_de_passe,
 	});
 	res.status(200).json({ personne });
-}
-
-export async function modifierPersonne(req, res) {
-	const body = req.body ?? {};
-	const erreurs = validerModification(body);
-	if (Object.keys(erreurs).length > 0) {
-		throw new ErreurHttp(422, 'Données invalides', erreurs);
-	}
-
-	const personne = await personneService.modifierUser({
-		id: req.params.id,
-		nom: body.nom?.trim(),
-		prenom: body.prenom.trim(),
-		date_naissance: body.date_naissance,
-		mail: normaliserMail(body.mail),
-		telephone: body.telephone === undefined ? undefined : normaliserTel(body.telephone),
-		role_id: body.role_id,
-	});
-	res.status(200).json({ personne });
-}
-
-//-----------------------DELETE-------------------------//
-export async function deletePersonneById(req, res) {
-	const id = req.body.id;
-	console.log(id);
-	const personnes = await personneService.archiveUserProfile(id);
-	res.json({ personnes });
 }
