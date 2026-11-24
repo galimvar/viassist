@@ -4,6 +4,95 @@ Vi'Assist est une application web qui aide les aidants familiaux à **organiser 
 
 Elle remplace les échanges dispersés par un espace partagé : un agenda (planning et rendez-vous), un journal de bord et une fiche personne, accessibles selon le rôle de chacun.
 
+## Lancer le projet en local
+
+Le dépôt contient trois parties : `bdd/` (base PostgreSQL), `back/` (API Express) et `front/` (React + Vite). Il n'y a pas de `package.json` à la racine : chaque commande npm se lance dans `back/` ou dans `front/`.
+
+### Prérequis
+
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) en version LTS (npm est inclus)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/), pour la base de données
+
+### 1. Cloner le dépôt
+
+```bash
+git clone git@github.com:galimvar/viassist.git
+cd viassist
+```
+
+### 2. Lancer la base de données
+
+Le fichier `docker-compose.yml` n'est pas versionné (il contient vos identifiants). On le crée à partir du modèle :
+
+```bash
+cd bdd
+cp docker-compose.exemple.yml docker-compose.yml      # PowerShell : Copy-Item docker-compose.exemple.yml docker-compose.yml
+```
+
+Dans `docker-compose.yml`, remplacer `USER`, `PASSWORD`, `NAME` et `PORT_LOCAL` par vos valeurs (par exemple un port local libre comme `5440`). Puis :
+
+```bash
+docker compose up -d
+```
+
+### 3. Lancer l'API (back)
+
+```bash
+cd back
+npm install
+cp .env.exemple .env      # PowerShell : Copy-Item .env.exemple .env
+```
+
+Remplir `back/.env` :
+
+| Variable | Valeur |
+|---|---|
+| `PORT` | `3000` : c'est le port vers lequel le front redirige les appels `/api` |
+| `DB_HOST` | `localhost` |
+| `DB_PORT` | le `PORT_LOCAL` choisi dans `docker-compose.yml` |
+| `DB_USER`, `DB_PASSWORD`, `DB_NAME` | les mêmes valeurs que dans `docker-compose.yml` |
+| `JWT_SECRET` | une clé générée avec la commande ci-dessous |
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Puis lancer l'API :
+
+```bash
+npm run dev
+```
+
+Le terminal affiche `Serveur démarré sur http://localhost:3000`.
+
+### 4. Lancer le front
+
+Dans un **second terminal**, depuis la racine du dépôt :
+
+```bash
+cd front
+npm install
+npm run dev
+```
+
+Ouvrir l'adresse affichée par Vite (en général http://localhost:5173). L'API doit tourner en même temps : le front lui transmet tous les appels `/api`.
+
+### Commandes utiles
+
+| Dossier | Commande | Effet |
+|---|---|---|
+| `back` | `npm run dev` | Lance l'API avec rechargement automatique (nodemon) |
+| `back` | `npm run lint` | Vérifie le code avec ESLint |
+| `back` | `npm run format` / `npm run format:check` | Reformate / vérifie le formatage avec Prettier |
+| `front` | `npm run dev` | Lance le serveur de développement Vite |
+| `front` | `npm run build` | Construit la version de production |
+| `front` | `npm run lint` | Vérifie le code avec oxlint |
+
+Les requêtes de test de l'API sont dans `back/test/requetes/*.http`. Elles s'exécutent avec l'extension VS Code [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client), en commençant par `auth.http` pour se connecter.
+
+Pour le workflow Git et les conventions de code, voir [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+
 ## 1. Problématique
 
 Nous cherchons à résoudre un problème d'**organisation et de transmission de données** pour un aidant, lorsque l'un de ses proches en perte d'autonomie nécessite une assistance à domicile.
