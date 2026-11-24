@@ -6,6 +6,7 @@ import { gestionErreurs } from './middlewares/erreurs.js';
 import { authRouter } from './routes/authRoutes.js';
 import { rolesRoute as rolesRouter } from './routes/rolesRoutes.js';
 import { beneficiaireRouter } from './routes/beneficiaireRoutes.js';
+import { invitationRouter } from './routes/invitationRoutes.js';
 
 export const app = express();
 
@@ -23,5 +24,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/roles', rolesRouter);
 // Agenda et messages sont imbriqués : /api/beneficiaires/:beneficiaireId/agenda et /messages
 app.use('/api/beneficiaires', beneficiaireRouter);
+// Invitations reçues par la personne connectée (accepter / refuser)
+app.use('/api/invitations', invitationRouter);
 
 app.use(gestionErreurs); // toujours en dernier

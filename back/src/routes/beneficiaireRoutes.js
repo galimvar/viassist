@@ -27,7 +27,7 @@ const MEMBRES = '/:beneficiaireId/membres';
 const UN_MEMBRE = `${MEMBRES}/:personneId`;
 
 beneficiaireRouter.get(MEMBRES, auth, ADMIN, beneficiaireController.listerMembres);
-beneficiaireRouter.post(MEMBRES, auth, ADMIN, beneficiaireController.ajouterMembre);
+beneficiaireRouter.post(MEMBRES, auth, ADMIN, beneficiaireController.inviterMembre);
 beneficiaireRouter.patch(UN_MEMBRE, auth, ADMIN, beneficiaireController.modifierRoleMembre);
 beneficiaireRouter.delete(UN_MEMBRE, auth, ADMIN, beneficiaireController.retirerMembre);
 

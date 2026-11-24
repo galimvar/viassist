@@ -113,18 +113,24 @@ export async function listerMembres(req, res) {
 }
 
 // POST /api/beneficiaires/:beneficiaireId/membres   { mail, role_id }
-export async function ajouterMembre(req, res) {
+// Crée une INVITATION. 202 Accepted (« demande prise en compte ») et le même message dans tous
+// les cas : on ne révèle ni si le mail est inscrit, ni s'il est déjà membre ou déjà invité.
+export async function inviterMembre(req, res) {
 	const body = req.body ?? {};
 	const erreurs = validerNouveauMembre(body);
 	if (Object.keys(erreurs).length > 0) {
 		throw new ErreurHttp(422, 'Données invalides', erreurs);
 	}
 
-	const membre = await beneficiaireService.ajouterMembre(req.acces.beneficiaireId, {
+	await beneficiaireService.inviterMembre(req.acces.beneficiaireId, {
 		mail: body.mail.trim().toLowerCase(), // même format qu'en base (cf. authControllers)
 		role_id: body.role_id,
 	});
-	res.status(201).json({ membre });
+	res.status(202).json({
+		message:
+			'Si un compte Vi’Assist existe avec ce mail, une invitation lui a été envoyée. ' +
+			'La personne apparaîtra dans la liste quand elle l’aura acceptée.',
+	});
 }
 
 // PATCH /api/beneficiaires/:beneficiaireId/membres/:personneId   { role_id }

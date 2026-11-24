@@ -39,23 +39,17 @@ export async function listerMembres(beneficiaireId) {
 	return Beneficiaire.listerMembres(beneficiaireId);
 }
 
-export async function ajouterMembre(beneficiaireId, { mail, role_id }) {
+/**
+ * Invite une personne (compte existant) : elle devra ACCEPTER avant d'avoir le moindre accès.
+ * Ne renvoie rien et ne lève rien selon que le mail existe, est déjà membre ou déjà invité :
+ * l'appelant reçoit toujours la même réponse, ce qui empêche de deviner quels mails sont inscrits.
+ */
+export async function inviterMembre(beneficiaireId, { mail, role_id }) {
 	verifierRoleAttribuable(role_id);
 
-	// On n'ajoute que des comptes existants (pas d'invitation par mail pour l'instant)
 	const personne = await Personne.trouverParMail(mail);
-	if (!personne) {
-		throw new ErreurHttp(404, 'Aucun compte actif avec ce mail');
-	}
-
-	try {
-		return await Beneficiaire.ajouterMembre(beneficiaireId, personne.id, role_id);
-	} catch (erreur) {
-		// 23505 = clé primaire (personne_id, beneficiaire_id) déjà présente
-		if (erreur.code === '23505') {
-			throw new ErreurHttp(409, 'Cette personne accompagne déjà ce bénéficiaire');
-		}
-		throw erreur;
+	if (personne) {
+		await Beneficiaire.inviter(beneficiaireId, personne.id, role_id);
 	}
 }
 

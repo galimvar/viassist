@@ -1,0 +1,92 @@
+@baseUrl = http://localhost:3000/api
+
+# ==========================================================================
+#  invitation.http — invitations reçues (côté personne invitée, cf. ADR 006)
+#  ⚠️ Lancer DANS L'ORDRE, sur un seed frais : ces requêtes MODIFIENT la base.
+#  Seed : Laurent (3) est invité chez Georges (2) comme proche, invitation EN ATTENTE.
+# ==========================================================================
+
+### 0. Déconnexion (repartir d'un état propre) → 204
+POST {{baseUrl}}/auth/deconnexion
+
+### 1. Mes invitations sans être connecté → 401
+GET {{baseUrl}}/invitations
+
+# ---------------------------------------------------------------- Laurent, invité chez Georges
+
+### 2. Connexion de Laurent → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "laurent.delacroix@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 3. Mes invitations → 200 : Georges, rôle proche
+GET {{baseUrl}}/invitations
+
+### 4. Tant qu'il n'a pas accepté : les messages de Georges → 404 (aucun accès)
+GET {{baseUrl}}/beneficiaires/2/messages?date=2026-11-10
+
+### 5. Accepter une invitation qui n'existe pas (Marguerite : déjà membre, pas invité) → 404
+POST {{baseUrl}}/invitations/1/accepter
+
+### 6. Identifiant invalide → 404
+POST {{baseUrl}}/invitations/abc/accepter
+
+### 7. Accepter l'invitation de Georges → 200
+POST {{baseUrl}}/invitations/2/accepter
+
+### 8. Accepter une deuxième fois → 404 (plus en attente)
+POST {{baseUrl}}/invitations/2/accepter
+
+### 9. Maintenant : les messages de Georges → 200
+GET {{baseUrl}}/beneficiaires/2/messages?date=2026-11-10
+
+### 10. Mes bénéficiaires → 200 : Marguerite et Georges (proche)
+GET {{baseUrl}}/beneficiaires
+
+### 11. Mes invitations → 200 : liste vide
+GET {{baseUrl}}/invitations
+
+### 12. « Refuser » un lien déjà accepté → 404 (refuser ne retire pas un membre)
+DELETE {{baseUrl}}/invitations/2
+
+# ---------------------------------------------------------------- Paul invite Hugo, qui refuse
+
+### 13. Connexion de Paul (admin chez Georges) → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 14. Paul invite Hugo → 202
+POST {{baseUrl}}/beneficiaires/2/membres
+Content-Type: application/json
+
+{
+    "mail": "hugo.lambert@example.com",
+    "role_id": 4
+}
+
+### 15. Connexion de Hugo → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "hugo.lambert@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 16. Hugo refuse → 204
+DELETE {{baseUrl}}/invitations/2
+
+### 17. Hugo : messages de Georges → 404
+GET {{baseUrl}}/beneficiaires/2/messages?date=2026-11-10
+
+### 18. Déconnexion → 204
+POST {{baseUrl}}/auth/deconnexion
