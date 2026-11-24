@@ -37,6 +37,13 @@ Pour savoir quel est le bénéficiaire actif dans une requête :
   - si le rôle ne fait pas partie des rôles autorisés, il répond 403.
 - Ce middleware interroge directement la couche models. C'est une exception assumée à l'ADR 004 : le contrôle d'accès est transverse, comme `auth`.
 - Tout utilisateur connecté peut créer un bénéficiaire, et il en devient automatiquement admin. Un bénéficiaire garde toujours au moins un admin.
+- **Un admin n'ajoute pas un membre, il l'invite.** La colonne `accompagner.statut` vaut `en_attente` tant que la personne invitée n'a pas accepté :
+  - une invitation en attente ne donne **aucun accès**, et la personne n'apparaît pas dans la liste des membres ;
+  - la personne invitée accepte ou refuse elle-même ses invitations (`/api/invitations`) ;
+  - la réponse à une invitation est **toujours la même** (202), que le mail corresponde à un compte ou non, déjà membre ou non, pour qu'on ne puisse pas deviner quels mails sont inscrits.
+
+  Sans cette étape, n'importe quel compte pouvait créer un bénéficiaire, y ajouter une personne sans son accord, puis lire son nom et son mail dans la liste des membres (relevé en relecture de la PR #56).
+- Un accès n'est accordé que si le lien est **accepté**, que le bénéficiaire n'est **pas archivé** et que le compte de la personne n'est **pas archivé**. Comme ces conditions sont relues en base à chaque requête, archiver un compte coupe ses accès immédiatement, sans attendre l'expiration du jeton.
 - Le JWT ne contient plus que `{ sub }`.
 
 ## Conséquences
@@ -51,3 +58,5 @@ Pour savoir quel est le bénéficiaire actif dans une requête :
 - Chaque requête protégée fait une requête SQL de plus pour lire le rôle.
 - C'est un gros chantier : migration avec reprise des données, nouvelles URL d'API, écran de choix du bénéficiaire, refonte de l'écran de gestion des personnes.
 - Les écrans qui affichaient « le rôle de l'utilisateur » doivent maintenant savoir quel bénéficiaire est actif.
+- Un admin ne voit pas ses invitations en attente, et ne peut donc pas les annuler : la personne invitée doit les refuser. C'est le prix de la réponse identique, qui empêche de deviner les comptes.
+- Restent à traiter : une route « supprimer mon compte » (droit à l'effacement), puisque l'archivage par un admin a été retiré, et la protection de la règle du dernier admin contre deux modifications simultanées (`SELECT … FOR UPDATE`).
