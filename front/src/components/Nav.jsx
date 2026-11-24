@@ -1,23 +1,26 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
 import {
 	House,
-	Settings,
+	UsersRound,
+	ArrowLeftRight,
 	LogOut,
 	UserRound,
 	CalendarRange,
 	BookOpenText,
 	Menu,
 } from 'lucide-react';
-import { ROLES, JOURNAL_ROLES } from '../constantes/roles.js';
+import { ROLES, AGENDA_ROLES, JOURNAL_ROLES } from '../constantes/roles.js';
 
 const MENU_ID = 'menu-plus';
 
 export default function Nav() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { utilisatrice, deconnexion } = useAuth();
+	const { deconnexion } = useAuth();
+	const { actif, role } = useBeneficiaire(); // role : mon rôle chez le bénéficiaire actif
 
 	const liens = [
 		{ chemin: '/', label: 'Home', Icone: House },
@@ -25,7 +28,7 @@ export default function Nav() {
 			chemin: '/agenda',
 			label: 'Agenda',
 			Icone: CalendarRange,
-			roles: [ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE],
+			roles: AGENDA_ROLES,
 		},
 		{
 			chemin: '/journal',
@@ -36,13 +39,19 @@ export default function Nav() {
 		// secondaire: true -> dans le menu « Plus » sur mobile, dans la navbar sur desktop
 		{ chemin: '/compte', label: 'Mon compte', Icone: UserRound, secondaire: true },
 		{
-			chemin: '/settings',
-			label: 'Settings',
-			Icone: Settings,
+			chemin: '/membres',
+			label: 'Membres',
+			Icone: UsersRound,
 			roles: [ROLES.ADMIN],
 			secondaire: true,
 		},
-	].filter((l) => !l.roles || l.roles.includes(utilisatrice?.role_id));
+		{
+			chemin: '/beneficiaires',
+			label: actif ? 'Changer de bénéficiaire' : 'Bénéficiaires',
+			Icone: ArrowLeftRight,
+			secondaire: true,
+		},
+	].filter((l) => !l.roles || l.roles.includes(role));
 
 	const liensPrincipaux = liens.filter((l) => !l.secondaire);
 	const liensSecondaires = liens.filter((l) => l.secondaire);
@@ -148,7 +157,12 @@ export default function Nav() {
 						);
 					})}
 				</div>
-				<div className="navbar-end">
+				<div className="navbar-end gap-2">
+					{actif && (
+						<span className="badge badge-soft badge-primary">
+							{actif.prenom} {actif.nom}
+						</span>
+					)}
 					<button
 						className="btn btn-ghost gap-2 text-error hover:bg-error/10"
 						onClick={deconnexion}

@@ -27,27 +27,10 @@ export const deconnecter = () => appeler('/auth/deconnexion', { method: 'POST' }
 
 export const recupererMoi = () => appeler('/auth/moi');
 
-export const recupererPersonnes = () => appeler('/personne/');
-
 export const recupererRoles = () => appeler('/roles');
 
-export const supprimerPersonne = (id) =>
-	appeler('/personne/delete', { method: 'PATCH', body: JSON.stringify({ id: id }) });
 // infos = { nom, prenom, mail, date_naissance, telephone, ancien_mot_de_passe, nouveau_mot_de_passe, confirmation_mot_de_passe }
 export const modifierProfil = (infos) =>
 	appeler('/personne/modifierMoi', { method: 'PATCH', body: JSON.stringify(infos) });
-export const modifierPersonne = (infos, id) =>
-	appeler(`/personne/${id}`, { method: 'PATCH', body: JSON.stringify(infos) });
-//! TODO AJOUTER AGENDA ET JOURNAL ///
 
-export const getAgendaDay = (decalage) => {
-	return appeler(`/agenda/jour?decalage=${decalage}`);
-};
-
-export const getAgendaWeek = (decalage) => {
-	return appeler(`/agenda/semaine?decalage=${decalage}`);
-};
-
-export const getMessagesByDate = (date) => {
-	return appeler(`/message?date=${date}`);
-};
+// Agenda, journal et membres dépendent d'un bénéficiaire : voir api/beneficiaires.js

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAgendaWeek } from '../api/auth';
+import { getAgendaWeek } from '../api/beneficiaires.js';
+import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
 
 // Pour le titre de la semaine : "lundi 9 novembre"
 const formaterDate = (iso) =>
@@ -19,10 +20,11 @@ const formaterJour = (iso) =>
 const AgendaWeek = ({ decalage, dateFormat }) => {
 	const [data, setData] = useState();
 	const [jours, setJours] = useState([]);
+	const beneficiaireId = useBeneficiaire().actif.id;
 	``;
 	useEffect(() => {
 		const chargerData = async () => {
-			const json = await getAgendaWeek(decalage);
+			const json = await getAgendaWeek(beneficiaireId, decalage);
 			setData(json);
 			const jours = Object.keys(json);
 			console.log(json);
@@ -31,7 +33,7 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 				`);
 		};
 		chargerData();
-	}, [decalage, dateFormat]);
+	}, [decalage, dateFormat, beneficiaireId]);
 
 	if (!data) return <p>Chargement…</p>;
 

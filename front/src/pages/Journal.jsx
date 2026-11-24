@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getMessagesByDate } from '../api/auth.js';
+import { getMessagesByDate } from '../api/beneficiaires.js';
+import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
 import MessageCard from '../components/MessageCard.jsx';
 
 //==================== FONCTIONS UTILES ====================//
@@ -16,6 +17,7 @@ function getTodayDate() {
 
 //==================== COMPOSANT ====================//
 export default function Journal() {
+	const beneficiaireId = useBeneficiaire().actif.id;
 	const [selectedDate, setSelectedDate] = useState(getTodayDate());
 	const [messages, setMessages] = useState([]);
 	const [isLoading, setIsLoading] = useState(true); // true : au 1er affichage, l'appel va partir
@@ -29,7 +31,7 @@ export default function Journal() {
 			setErrorMessage(null); // on efface une éventuelle erreur précédente
 
 			try {
-				const data = await getMessagesByDate(selectedDate);
+				const data = await getMessagesByDate(beneficiaireId, selectedDate);
 				if (isOutdated === false) {
 					setMessages(data.messages);
 				}
@@ -51,7 +53,7 @@ export default function Journal() {
 		return () => {
 			isOutdated = true;
 		};
-	}, [selectedDate]);
+	}, [selectedDate, beneficiaireId]); // recharge aussi quand on change de bénéficiaire
 
 	// Appelée à chaque changement dans le champ de date
 	function handleChangeDate(event) {
