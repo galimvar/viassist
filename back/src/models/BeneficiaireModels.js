@@ -1,6 +1,9 @@
 import { db } from '../db.js';
 
-const COLONNES_PUBLIQUES = 'b.id, b.nom, b.prenom, b.date_naissance, b.personne_id';
+// date_naissance renvoyée en TEXTE 'AAAA-MM-JJ' : sinon pg la convertit en Date JavaScript à minuit
+// heure locale, que res.json écrit en UTC… soit la veille (1941-03-14 → "1941-03-13T22:00:00.000Z")
+const DATE_NAISSANCE = `TO_CHAR(b.date_naissance, 'YYYY-MM-DD') AS date_naissance`;
+const COLONNES_PUBLIQUES = `b.id, b.nom, b.prenom, ${DATE_NAISSANCE}, b.personne_id`;
 
 /**
  * Rôle d'une personne chez un bénéficiaire (non archivé).
@@ -36,6 +39,25 @@ export async function trouverParId(id) {
 		`SELECT ${COLONNES_PUBLIQUES} FROM beneficiaire b WHERE b.id = $1 AND b.est_archive = false`,
 		[id],
 	);
+	return rows[0] ?? null;
+}
+
+/**
+ * Remplace la fiche d'un bénéficiaire (non archivé) par les valeurs reçues.
+ * Le contrôleur envoie TOUJOURS les trois champs : nom et prénom non vides,
+ * date_naissance en 'AAAA-MM-JJ' ou null (champ vidé dans le formulaire).
+ *
+ * @returns {Promise<object|null>} la fiche modifiée (mêmes colonnes que trouverParId), ou null si introuvable
+ */
+export async function modifier(id, { nom, prenom, date_naissance }) {
+	const { rows } = await db.query(
+		`UPDATE beneficiaire b 
+		SET nom = $1, prenom=$2,  date_naissance=$3 WHERE id=$4 
+		AND est_archive = false 
+		RETURNING ${COLONNES_PUBLIQUES}`,
+		[nom, prenom, date_naissance, id],
+	);
+
 	return rows[0] ?? null;
 }
 
@@ -112,7 +134,7 @@ export async function creerAvecAdmin({ nom, prenom, date_naissance }, personneId
 		const { rows } = await client.query(
 			`INSERT INTO beneficiaire (nom, prenom, date_naissance)
 			 VALUES ($1, $2, $3)
-			 RETURNING id, nom, prenom, date_naissance, personne_id`,
+			 RETURNING id, nom, prenom, TO_CHAR(date_naissance, 'YYYY-MM-DD') AS date_naissance, personne_id`,
 			[nom, prenom, date_naissance],
 		);
 		const beneficiaire = rows[0];

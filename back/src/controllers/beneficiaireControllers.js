@@ -87,6 +87,23 @@ export async function fiche(req, res) {
 	res.json({ beneficiaire, role_id: req.acces.role });
 }
 
+// PATCH /api/beneficiaires/:beneficiaireId   { nom, prenom, date_naissance? } (admin)
+// Le formulaire renvoie toute la fiche : une date absente ou vide veut dire « effacer la date »
+export async function modifierFiche(req, res) {
+	const body = req.body ?? {};
+	const erreurs = validerBeneficiaire(body);
+	if (Object.keys(erreurs).length > 0) {
+		throw new ErreurHttp(422, 'Données invalides', erreurs);
+	}
+
+	const beneficiaire = await beneficiaireService.modifierFiche(req.acces.beneficiaireId, {
+		nom: body.nom.trim(),
+		prenom: body.prenom.trim(),
+		date_naissance: body.date_naissance || null,
+	});
+	res.json({ beneficiaire });
+}
+
 // ---------- Membres (réservé à l'admin du bénéficiaire) ----------
 
 // GET /api/beneficiaires/:beneficiaireId/membres

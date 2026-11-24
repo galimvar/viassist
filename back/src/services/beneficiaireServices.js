@@ -24,6 +24,15 @@ export async function fiche(beneficiaireId) {
 	return beneficiaire;
 }
 
+// Fiche du bénéficiaire (pas les comptes des membres : un compte est partagé entre bénéficiaires)
+export async function modifierFiche(beneficiaireId, infos) {
+	const beneficiaire = await Beneficiaire.modifier(beneficiaireId, infos);
+	if (!beneficiaire) {
+		throw new ErreurHttp(404, 'Bénéficiaire introuvable');
+	}
+	return beneficiaire;
+}
+
 // ---------------------------------------------------------------- membres
 
 export async function listerMembres(beneficiaireId) {

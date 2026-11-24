@@ -19,10 +19,12 @@ beneficiaireRouter.get(
 	beneficiaireController.fiche,
 );
 
-// Membres : gestion réservée à l'admin DE CE bénéficiaire
+// Fiche et membres : réservés à l'admin DE CE bénéficiaire
+const ADMIN = exigerRoleSur(ROLES.ADMIN);
+beneficiaireRouter.patch('/:beneficiaireId', auth, ADMIN, beneficiaireController.modifierFiche);
+
 const MEMBRES = '/:beneficiaireId/membres';
 const UN_MEMBRE = `${MEMBRES}/:personneId`;
-const ADMIN = exigerRoleSur(ROLES.ADMIN);
 
 beneficiaireRouter.get(MEMBRES, auth, ADMIN, beneficiaireController.listerMembres);
 beneficiaireRouter.post(MEMBRES, auth, ADMIN, beneficiaireController.ajouterMembre);

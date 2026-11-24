@@ -71,6 +71,47 @@ GET {{baseUrl}}/beneficiaires
 ### 11. Fiche de Marguerite → 404 (Paul ne l'accompagne pas : on ne révèle pas qu'elle existe)
 GET {{baseUrl}}/beneficiaires/1
 
+### 11b. Fiche de Georges → 200, date_naissance "1938-06-05" (texte, pas la veille en UTC)
+GET {{baseUrl}}/beneficiaires/2
+
+### 11c. Paul (admin) modifie la fiche de Georges → 200
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Georges",
+    "date_naissance": "1938-06-06"
+}
+
+### 11d. Paul efface la date de naissance (champ vide) → 200, date_naissance null
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Georges",
+    "date_naissance": ""
+}
+
+### 11e. Fiche sans prénom → 422
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin"
+}
+
+### 11f. Remettre la date du seed → 200
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Georges",
+    "date_naissance": "1938-06-05"
+}
+
 # ==========================================================================
 #  Membres — réservé à l'admin du bénéficiaire
 #  ⚠️ Ces requêtes MODIFIENT la base : relancer bdd/seed.sql pour les rejouer.
@@ -181,6 +222,15 @@ DELETE {{baseUrl}}/beneficiaires/1/membres/abc
 
 ### 27. Membres de Georges, où Sophie n'est que proche → 403
 GET {{baseUrl}}/beneficiaires/2/membres
+
+### 27b. Modifier la fiche de Georges, où Sophie n'est que proche → 403
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Jojo"
+}
 
 # ---------------------------------------------------------------- Paul, admin chez Georges
 
