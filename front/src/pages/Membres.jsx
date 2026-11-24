@@ -100,10 +100,10 @@ export default function Membres() {
 		setVolet(nom);
 	}
 
-	async function apresAjout(mail) {
+	// Pas de rechargement de la liste : une invitation en attente n'y apparaît pas
+	function apresInvitation(message) {
 		fermerVolet();
-		setConfirmation(`${mail} a été ajouté·e.`);
-		await charger();
+		setConfirmation(message);
 	}
 
 	function apresFiche() {
@@ -132,7 +132,7 @@ export default function Membres() {
 					onClick={() => ouvrirVolet('ajout')}
 				>
 					<UserRoundPlus size={20} aria-hidden="true" />
-					Ajouter une personne
+					Inviter une personne
 				</button>
 			</div>
 
@@ -219,11 +219,11 @@ export default function Membres() {
 				<FicheBeneficiaire onEnregistre={apresFiche} onAnnuler={fermerVolet} />
 			</Volet>
 
-			<Volet titre="Ajouter une personne" ouvert={volet === 'ajout'} onFermer={fermerVolet}>
+			<Volet titre="Inviter une personne" ouvert={volet === 'ajout'} onFermer={fermerVolet}>
 				<AjoutMembre
 					beneficiaireId={beneficiaireId}
 					roles={roles}
-					onAjoute={apresAjout}
+					onInvite={apresInvitation}
 					onAnnuler={fermerVolet}
 				/>
 			</Volet>

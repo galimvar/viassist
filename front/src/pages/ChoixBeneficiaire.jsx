@@ -4,10 +4,11 @@ import { ChevronRight, CircleX, UserRound, UserRoundPlus } from 'lucide-react';
 import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
 import { creerBeneficiaire } from '../api/beneficiaires.js';
 import ChampModifier from '../components/ChampModifier.jsx';
+import Invitations from '../components/Invitations.jsx';
 import { enTantQue } from '../constantes/roles.js';
 
 export default function ChoixBeneficiaire() {
-	const { beneficiaires, actif, chargement, choisir, recharger } = useBeneficiaire();
+	const { beneficiaires, invitations, actif, chargement, choisir, recharger } = useBeneficiaire();
 	const navigate = useNavigate();
 
 	const [formulaireOuvert, setFormulaireOuvert] = useState(false);
@@ -54,9 +55,14 @@ export default function ChoixBeneficiaire() {
 				{aucun ? 'Bienvenue' : 'Qui accompagnez-vous ?'}
 			</h1>
 
+			{/* Invitations en attente (rien n'est affiché s'il n'y en a pas) */}
+			<Invitations />
+
 			{aucun ? (
 				<p>
-					Vous n'accompagnez encore personne. Ajoutez la personne que vous aidez pour
+					Vous n'accompagnez encore personne.{' '}
+					{invitations.length > 0 && 'Acceptez une invitation ci-dessus, ou '}
+					{invitations.length > 0 ? 'ajoutez' : 'Ajoutez'} la personne que vous aidez pour
 					commencer : vous en serez l'administrateur ou l'administratrice.
 				</p>
 			) : (

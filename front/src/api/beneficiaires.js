@@ -17,6 +17,17 @@ export const creerBeneficiaire = (infos) =>
 export const modifierBeneficiaire = (beneficiaireId, infos) =>
 	appeler(`/beneficiaires/${beneficiaireId}`, { method: 'PATCH', body: JSON.stringify(infos) });
 
+// ---------------------------------------------------------------- invitations reçues
+
+// → { invitations: [{ id (du bénéficiaire), nom, prenom, role_id, role }] }
+export const recupererInvitations = () => appeler('/invitations');
+
+export const accepterInvitation = (beneficiaireId) =>
+	appeler(`/invitations/${beneficiaireId}/accepter`, { method: 'POST' });
+
+export const refuserInvitation = (beneficiaireId) =>
+	appeler(`/invitations/${beneficiaireId}`, { method: 'DELETE' });
+
 // ---------------------------------------------------------------- agenda et journal
 
 export const getAgendaDay = (beneficiaireId, decalage) =>
@@ -34,8 +45,8 @@ export const getMessagesByDate = (beneficiaireId, date) =>
 export const recupererMembres = (beneficiaireId) =>
 	appeler(`/beneficiaires/${beneficiaireId}/membres`);
 
-// infos = { mail, role_id }
-export const ajouterMembre = (beneficiaireId, infos) =>
+// Crée une INVITATION. infos = { mail, role_id } → 202 { message } identique que le mail existe ou non
+export const inviterMembre = (beneficiaireId, infos) =>
 	appeler(`/beneficiaires/${beneficiaireId}/membres`, {
 		method: 'POST',
 		body: JSON.stringify(infos),

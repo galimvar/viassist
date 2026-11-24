@@ -1,28 +1,30 @@
 import { useState } from 'react';
-import { CircleX, UserRoundPlus } from 'lucide-react';
-import { ajouterMembre } from '../api/beneficiaires.js';
+import { CircleX, Send } from 'lucide-react';
+import { inviterMembre } from '../api/beneficiaires.js';
 import { ROLES } from '../constantes/roles.js';
 import ChampModifier from './ChampModifier.jsx';
 
-// Formulaire d'ajout d'un membre (affiché dans un Volet sur la page Membres)
-// roles : ceux qu'on peut attribuer ; onAjoute(mail) : appelé après un ajout réussi
-export default function AjoutMembre({ beneficiaireId, roles, onAjoute, onAnnuler }) {
+// Formulaire d'INVITATION d'un membre (affiché dans un Volet sur la page Membres).
+// La personne invitée doit accepter avant d'avoir accès. L'API répond le même message que le mail
+// existe ou non (pas d'énumération des comptes) : on se contente de l'afficher.
+// roles : ceux qu'on peut attribuer ; onInvite(message) : appelé après l'envoi
+export default function AjoutMembre({ beneficiaireId, roles, onInvite, onAnnuler }) {
 	const [mail, setMail] = useState('');
 	const [roleId, setRoleId] = useState(ROLES.PROCHE);
 	const [erreur, setErreur] = useState(null);
 	const [erreurs, setErreurs] = useState({});
 	const [envoiEnCours, setEnvoiEnCours] = useState(false);
 
-	async function ajouter(event) {
+	async function inviter(event) {
 		event.preventDefault();
 		setErreur(null);
 		setErreurs({});
 		setEnvoiEnCours(true);
 		try {
-			await ajouterMembre(beneficiaireId, { mail, role_id: roleId });
-			await onAjoute(mail);
+			const { message } = await inviterMembre(beneficiaireId, { mail, role_id: roleId });
+			onInvite(message);
 		} catch (err) {
-			setErreur(err.message); // ex. 404 : pas de compte ; 409 : déjà membre
+			setErreur(err.message); // seulement 422 (format) ou une erreur technique
 			setErreurs(err.erreurs ?? {});
 		} finally {
 			setEnvoiEnCours(false);
@@ -30,9 +32,10 @@ export default function AjoutMembre({ beneficiaireId, roles, onAjoute, onAnnuler
 	}
 
 	return (
-		<form onSubmit={ajouter} className="flex flex-col gap-2">
+		<form onSubmit={inviter} className="flex flex-col gap-2">
 			<p className="text-sm text-base-content/70">
-				La personne doit déjà avoir un compte Vi'Assist.
+				La personne doit déjà avoir un compte Vi'Assist. Elle recevra une invitation et
+				n'aura accès à rien tant qu'elle ne l'aura pas acceptée.
 			</p>
 
 			<ChampModifier
@@ -74,8 +77,8 @@ export default function AjoutMembre({ beneficiaireId, roles, onAjoute, onAnnuler
 					Annuler
 				</button>
 				<button className="btn btn-primary" disabled={envoiEnCours}>
-					<UserRoundPlus size={20} aria-hidden="true" />
-					Ajouter
+					<Send size={20} aria-hidden="true" />
+					Inviter
 				</button>
 			</div>
 		</form>
