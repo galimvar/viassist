@@ -1,29 +1,22 @@
 import { db } from '../db.js';
 
 // Les colonnes qu'on peut renvoyer au front : jamais le hash
-const COLONNES_PUBLIQUES = 'id, nom, prenom, date_naissance, mail, telephone, role_id';
+const COLONNES_PUBLIQUES = 'id, nom, prenom, date_naissance, mail, telephone';
 
 export async function trouverParMail(mail) {
 	const { rows } = await db.query(
-		`SELECT ${COLONNES_PUBLIQUES}, mot_de_passe_hash, role_id FROM personne WHERE mail = $1 AND est_archive=false`,
+		`SELECT ${COLONNES_PUBLIQUES}, mot_de_passe_hash FROM personne WHERE mail = $1 AND est_archive=false`,
 		[mail],
 	);
 	return rows[0] ?? null;
 }
 
-export async function trouverTous() {
-	const { rows } = await db.query(
-		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, p.role_id, r.intitule FROM personne p JOIN role r ON p.role_id = r.id WHERE est_archive=false ORDER BY p.id ASC`,
-	);
-	return rows ?? null;
-}
-
 export async function trouverParId(id) {
-	// Jointure sur role : on renvoie aussi l'intitulé (« admin », « proche »...) et pas seulement l'id
+	// Le rôle n'est plus ici : il dépend du bénéficiaire (voir BeneficiaireModels.trouverParPersonne)
 	const { rows } = await db.query(
-		`SELECT p.id, p.nom, p.prenom, p.date_naissance, p.mail, p.telephone, p.role_id, r.intitule AS role
-		 FROM personne p JOIN role r ON r.id = p.role_id
-		 WHERE p.id = $1`,
+		`SELECT ${COLONNES_PUBLIQUES}
+		 FROM personne
+		 WHERE id = $1`,
 		[id],
 	);
 	return rows[0] ?? null;
@@ -40,33 +33,19 @@ export async function trouverAvecHashParId(id) {
 	return rows[0] ?? null;
 }
 
-export async function creer({ nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id }) {
+export async function creer({ nom, prenom, date_naissance, mail, mot_de_passe_hash }) {
 	const { rows } = await db.query(
-		`INSERT INTO personne (nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id)
-     VALUES ($1, $2, $3, $4, $5, $6)
+		`INSERT INTO personne (nom, prenom, date_naissance, mail, mot_de_passe_hash)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING ${COLONNES_PUBLIQUES}`,
-		[nom, prenom, date_naissance, mail, mot_de_passe_hash, role_id],
+		[nom, prenom, date_naissance, mail, mot_de_passe_hash],
 	);
-	return rows[0];
-}
-
-export async function trouverRole(role) {
-	const { rows } = await db.query(`SELECT id FROM role WHERE intitule = $1`, [role]);
-	return rows[0];
-}
-
-export async function archiverParId(id) {
-	const { rows } = await db.query(
-		`UPDATE personne SET est_archive=true WHERE id=$1 RETURNING id`,
-		[id],
-	);
-
 	return rows[0];
 }
 
 export async function updateUser(
 	id,
-	{ nom, prenom, date_naissance, mail, telephone, mot_de_passe_hash, role_id },
+	{ nom, prenom, date_naissance, mail, telephone, mot_de_passe_hash },
 ) {
 	const { rows } = await db.query(
 		`UPDATE personne 
@@ -80,11 +59,10 @@ export async function updateUser(
 			ELSE COALESCE($5, telephone)
 			END,
 
-			mot_de_passe_hash = COALESCE($6, mot_de_passe_hash),
-			role_id = COALESCE($7, role_id)
-		WHERE id = $8
+			mot_de_passe_hash = COALESCE($6, mot_de_passe_hash)
+		WHERE id = $7
 		RETURNING ${COLONNES_PUBLIQUES}`,
-		[nom, prenom, date_naissance, mail, telephone, mot_de_passe_hash, role_id, id],
+		[nom, prenom, date_naissance, mail, telephone, mot_de_passe_hash, id],
 	);
 	return rows[0] ?? null;
 }

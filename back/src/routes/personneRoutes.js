@@ -1,19 +1,10 @@
 import { Router } from 'express';
 import * as personneController from '../controllers/personneControllers.js';
-import { auth, exigerRole } from '../middlewares/auth.js';
-import { ROLES } from '../constantes/roles.js';
+import { auth } from '../middlewares/auth.js';
 
 export const personneRoute = Router();
 
-personneRoute.get('/:id', auth, exigerRole(ROLES.ADMIN), personneController.getPersonneById);
-personneRoute.get('/', auth, exigerRole(ROLES.ADMIN), personneController.getAllPersonnes);
+// Les anciennes routes admin (lister, lire, modifier, archiver n'importe quelle personne) sont
+// supprimées : un admin ne gère plus que les membres de SES bénéficiaires (ADR 006).
 personneRoute.post('/inscription', personneController.postPersonne);
-personneRoute.patch(
-	'/delete',
-	auth,
-	exigerRole(ROLES.ADMIN),
-	personneController.deletePersonneById,
-);
-
 personneRoute.patch('/modifierMoi', auth, personneController.modifierMoi);
-personneRoute.patch('/:id', auth, exigerRole(ROLES.ADMIN), personneController.modifierPersonne);

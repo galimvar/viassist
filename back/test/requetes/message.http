@@ -1,34 +1,41 @@
 @URL = http://localhost:3000/api
+# Bénéficiaires du seed : 1 = Marguerite, 2 = Georges. Les deux ont des messages le 2026-11-10.
 
 ### 1. A lancer EN PREMIER : Message(s) sans être connecté - renvoie 401
-GET {{URL}}/message
+GET {{URL}}/beneficiaires/1/messages
 
-### 2. Connexion OBLIGATOIRE - renvoie 200 (et dépose le cookie) 
+### 2. Connexion OBLIGATOIRE (Thomas, intervenant chez les deux) - renvoie 200 (et dépose le cookie)
 POST {{URL}}/auth/connexion
 Content-Type: application/json
 
 {
-    "mail":"sophie.martin@example.com",
+    "mail":"thomas.riviere@example.com",
     "mot_de_passe":"Motdepasse1!"
 }
 
 ### 3. Connecté => Message(s) avec un mauvais format de date - renvoie 422
-GET {{URL}}/message?date=bonjour
+GET {{URL}}/beneficiaires/1/messages?date=bonjour
 
-### 4. Connecté => Message(s) du jour - renvoie 200
-GET {{URL}}/message
+### 4. Connecté => Message(s) du jour chez Marguerite - renvoie 200
+GET {{URL}}/beneficiaires/1/messages
 
-### 5. Connecté => Message(s) d'une date donnée - renvoie 200
-GET {{URL}}/message?date=2026-11-09
+### 5. Connecté => Messages du 2026-11-10 chez Marguerite - renvoie 200, 2 messages
+GET {{URL}}/beneficiaires/1/messages?date=2026-11-10
 
-### 6. Connecté => Message(s) d'une date inexistante - renvoie 422
-GET {{URL}}/message?date=2026-13-40
+### 6. Connecté => Messages du 2026-11-10 chez Georges - renvoie 200, 1 seul message (l'ordonnance)
+GET {{URL}}/beneficiaires/2/messages?date=2026-11-10
 
-### 7. Connecté => Message(s) d'une date inexistante (30 fév) - renvoie 422
-GET {{URL}}/message?date=2026-02-30
+### 7. Connecté => Message(s) d'une date inexistante - renvoie 422
+GET {{URL}}/beneficiaires/1/messages?date=2026-13-40
 
-### 8. Déconnexion - renvoie 204 (et supprime le cookie)
+### 8. Connecté => Message(s) d'une date inexistante (30 fév) - renvoie 422
+GET {{URL}}/beneficiaires/1/messages?date=2026-02-30
+
+### 9. Connecté => bénéficiaire non accompagné - renvoie 404
+GET {{URL}}/beneficiaires/999/messages
+
+### 10. Déconnexion - renvoie 204 (et supprime le cookie)
 POST {{URL}}/auth/deconnexion
 
-### 9. Déconnecté => Message(s) après déconnexion - renvoie 401
-GET {{URL}}/message
+### 11. Déconnecté => Message(s) après déconnexion - renvoie 401
+GET {{URL}}/beneficiaires/1/messages

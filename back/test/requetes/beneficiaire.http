@@ -1,0 +1,298 @@
+@baseUrl = http://localhost:3000/api
+
+# ==========================================================================
+#  beneficiaire.http — bénéficiaires et rôle par bénéficiaire (ADR 006)
+#  ⚠️ Lancer DANS L'ORDRE : REST Client mémorise le cookie de connexion.
+#  Seed : 1 = Marguerite (Sophie admin), 2 = Georges (Sophie proche, Paul admin)
+# ==========================================================================
+
+### 0. Déconnexion (repartir d'un état propre) → 204
+POST {{baseUrl}}/auth/deconnexion
+
+### 1. Lister sans être connecté → 401
+GET {{baseUrl}}/beneficiaires
+
+# ---------------------------------------------------------------- Sophie
+
+### 2. Connexion de Sophie → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 3. Mes bénéficiaires → 200 : Marguerite (role_id 1, admin) et Georges (role_id 3, proche)
+GET {{baseUrl}}/beneficiaires
+
+### 4. Fiche de Georges → 200, avec role_id 3
+GET {{baseUrl}}/beneficiaires/2
+
+### 5. Fiche d'un bénéficiaire inexistant / non accompagné → 404
+GET {{baseUrl}}/beneficiaires/999
+
+### 6. Créer un bénéficiaire → 201 (Sophie en devient admin)
+POST {{baseUrl}}/beneficiaires
+Content-Type: application/json
+
+{
+    "nom": "Delacroix",
+    "prenom": "Henri",
+    "date_naissance": "1936-01-20"
+}
+
+### 7. Créer un bénéficiaire sans nom et avec une date mal formée → 422
+POST {{baseUrl}}/beneficiaires
+Content-Type: application/json
+
+{
+    "prenom": "Henri",
+    "date_naissance": "20/01/1936"
+}
+
+### 8. Mes bénéficiaires → 200 : maintenant 3, dont Henri en admin
+GET {{baseUrl}}/beneficiaires
+
+# ---------------------------------------------------------------- Paul
+
+### 9. Connexion de Paul → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 10. Mes bénéficiaires → 200 : Georges seulement
+GET {{baseUrl}}/beneficiaires
+
+### 11. Fiche de Marguerite → 404 (Paul ne l'accompagne pas : on ne révèle pas qu'elle existe)
+GET {{baseUrl}}/beneficiaires/1
+
+### 11b. Fiche de Georges → 200, date_naissance "1938-06-05" (texte, pas la veille en UTC)
+GET {{baseUrl}}/beneficiaires/2
+
+### 11c. Paul (admin) modifie la fiche de Georges → 200
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Georges",
+    "date_naissance": "1938-06-06"
+}
+
+### 11d. Paul efface la date de naissance (champ vide) → 200, date_naissance null
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Georges",
+    "date_naissance": ""
+}
+
+### 11e. Fiche sans prénom → 422
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin"
+}
+
+### 11f. Remettre la date du seed → 200
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Georges",
+    "date_naissance": "1938-06-05"
+}
+
+# ==========================================================================
+#  Membres — réservé à l'admin du bénéficiaire
+#  ⚠️ Ces requêtes MODIFIENT la base : relancer bdd/seed.sql pour les rejouer.
+#  Personnes du seed : 1 Marguerite (compte du bénéficiaire 1), 2 Sophie, 14 Paul
+# ==========================================================================
+
+# ---------------------------------------------------------------- Sophie, seule admin chez Marguerite
+
+### 12. Connexion de Sophie → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 13. Membres de Marguerite → 200 (12 : Martine, archivée, n'apparaît pas ; pas de téléphone)
+GET {{baseUrl}}/beneficiaires/1/membres
+
+### 14. Inviter Paul comme proche → 202 (invitation EN ATTENTE, aucun accès pour l'instant)
+POST {{baseUrl}}/beneficiaires/1/membres
+Content-Type: application/json
+
+{
+    "mail": "Paul.Martin@example.com",
+    "role_id": 3
+}
+
+### 15. Inviter Paul une deuxième fois → 202, MÊME réponse (rien ne change)
+POST {{baseUrl}}/beneficiaires/1/membres
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "role_id": 3
+}
+
+### 16. Inviter un mail sans compte → 202, MÊME réponse (on ne révèle pas quels mails sont inscrits)
+POST {{baseUrl}}/beneficiaires/1/membres
+Content-Type: application/json
+
+{
+    "mail": "inconnu@example.com",
+    "role_id": 3
+}
+
+### 17. Attribuer le rôle « bénéficiaire » (5) → 422
+POST {{baseUrl}}/beneficiaires/1/membres
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "role_id": 5
+}
+
+### 18. Mail mal formé et rôle absent → 422 (deux erreurs)
+POST {{baseUrl}}/beneficiaires/1/membres
+Content-Type: application/json
+
+{
+    "mail": "paul.martin"
+}
+
+### 18b. Paul (invité, pas encore accepté) n'apparaît pas dans les membres → 200, toujours 12
+GET {{baseUrl}}/beneficiaires/1/membres
+
+### 18c. Modifier le rôle de Paul tant qu'il n'a pas accepté → 404
+PATCH {{baseUrl}}/beneficiaires/1/membres/14
+Content-Type: application/json
+
+{
+    "role_id": 4
+}
+
+### 18d. Connexion de Paul → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 18e. Paul accepte l'invitation chez Marguerite → 200 (détail des invitations : invitation.http)
+POST {{baseUrl}}/invitations/1/accepter
+
+### 18f. Retour de Sophie → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "sophie.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 19. Paul (qui a accepté) devient intervenant → 200
+PATCH {{baseUrl}}/beneficiaires/1/membres/14
+Content-Type: application/json
+
+{
+    "role_id": 4
+}
+
+### 20. Modifier le compte du bénéficiaire (Marguerite) → 422
+PATCH {{baseUrl}}/beneficiaires/1/membres/1
+Content-Type: application/json
+
+{
+    "role_id": 3
+}
+
+### 21. Sophie, SEULE admin, se rétrograde en proche → 409 (dernier admin)
+PATCH {{baseUrl}}/beneficiaires/1/membres/2
+Content-Type: application/json
+
+{
+    "role_id": 3
+}
+
+### 22. Sophie, SEULE admin, se retire → 409 (dernier admin)
+DELETE {{baseUrl}}/beneficiaires/1/membres/2
+
+### 23. Sophie « change » son rôle d'admin en admin → 200 (il reste bien un admin)
+PATCH {{baseUrl}}/beneficiaires/1/membres/2
+Content-Type: application/json
+
+{
+    "role_id": 1
+}
+
+### 24. Retirer Paul → 204
+DELETE {{baseUrl}}/beneficiaires/1/membres/14
+
+### 25. Retirer Paul une deuxième fois → 404
+DELETE {{baseUrl}}/beneficiaires/1/membres/14
+
+### 26. Identifiant de membre invalide → 404
+DELETE {{baseUrl}}/beneficiaires/1/membres/abc
+
+### 27. Membres de Georges, où Sophie n'est que proche → 403
+GET {{baseUrl}}/beneficiaires/2/membres
+
+### 27b. Modifier la fiche de Georges, où Sophie n'est que proche → 403
+PATCH {{baseUrl}}/beneficiaires/2
+Content-Type: application/json
+
+{
+    "nom": "Martin",
+    "prenom": "Jojo"
+}
+
+# ---------------------------------------------------------------- Paul, admin chez Georges
+
+### 28. Connexion de Paul → 200
+POST {{baseUrl}}/auth/connexion
+Content-Type: application/json
+
+{
+    "mail": "paul.martin@example.com",
+    "mot_de_passe": "Motdepasse1!"
+}
+
+### 29. Paul nomme Sophie admin chez Georges → 200
+PATCH {{baseUrl}}/beneficiaires/2/membres/2
+Content-Type: application/json
+
+{
+    "role_id": 1
+}
+
+### 30. Paul se rétrograde en proche → 200 (Sophie reste admin : ce n'est plus le dernier)
+PATCH {{baseUrl}}/beneficiaires/2/membres/14
+Content-Type: application/json
+
+{
+    "role_id": 3
+}
+
+### 31. Paul n'est plus admin → 403
+GET {{baseUrl}}/beneficiaires/2/membres
+
+### 32. Déconnexion → 204
+POST {{baseUrl}}/auth/deconnexion
