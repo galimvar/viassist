@@ -27,6 +27,7 @@ services:
             - ./migrations/003-migration-role.sql:/docker-entrypoint-initdb.d/003-migration-role.sql
             - ./migrations/004-migration-est-archive.sql:/docker-entrypoint-initdb.d/004-migration-est-archive.sql
             - ./migrations/005-migration-telephone.sql:/docker-entrypoint-initdb.d/005-migration-telephone.sql
+            - ./migrations/006-multi-beneficiaires.sql:/docker-entrypoint-initdb.d/006-multi-beneficiaires.sql
             - ./seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
             - viassist-data:/var/lib/postgresql/data
 
