@@ -52,39 +52,42 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 		// The section is about the display bloc of the agenda
 		<section
 			id="displayWindow"
-			className="grid grid-cols-[1fr_9fr] grid-rows-[1fr_1fr_40fr] border rounded-box bg-base-200 w-[95dvw] h-[66dvh] overflow-y-auto"
+			className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_40fr] border rounded-box bg-base-200 lg:w-[95dvw] lg:h-[66dvh] overflow-y-auto overflow-x-auto w-[95dvw] h-[66dvh]"
 		>
-			<div className="grid grid-cols-[repeat(7,12.5dvw)] row-start-1 col-start-2 ml-2">
-				<p key="L" className="justify-self-center">
+			<div className="grid grid-cols-[repeat(7,12.5dvw)] row-start-1 col-start-2 lg:ml-2">
+				<p key="L" className="justify-self-center text-xs lg:text-base">
 					Lundi
 				</p>
-				<p key="Ma" className="justify-self-center">
+				<p key="Ma" className="justify-self-center text-xs lg:text-base">
 					Mardi
 				</p>
-				<p key="Me" className="justify-self-center">
+				<p key="Me" className="justify-self-center text-xs lg:text-base">
 					Mercredi
 				</p>
-				<p key="J" className="justify-self-center">
+				<p key="J" className="justify-self-center text-xs lg:text-base">
 					Jeudi
 				</p>
-				<p key="V" className="justify-self-center">
+				<p key="V" className="justify-self-center text-xs lg:text-base">
 					Vendredi
 				</p>
-				<p key="S" className="justify-self-center">
+				<p key="S" className="justify-self-center text-xs lg:text-base">
 					Samedi
 				</p>
-				<p key="D" className="justify-self-center">
+				<p key="D" className="justify-self-center text-xs lg:text-base">
 					Dimanche
 				</p>
 			</div>
 			{/* Colonne 1 : Time display */}
 			<div
 				aria-hidden="true"
-				className="grid grid-rows-[repeat(24,3rem)] justify-self-center row-start-2 ml-2"
+				className="grid grid-rows-[repeat(24,3rem)] justify-self-center row-start-2 lg:ml-2 "
 			>
 				{/* Display of the time reference. padStart to avoid having one digit - from 9:00 to 09:00*/}
 				{HEURES.map((hour) => (
-					<p key={hour} className="self-start -translate-y-1/2 text-sm first:invisible">
+					<p
+						key={hour}
+						className="self-start -translate-y-1/2 text-sm first:invisible lg:text-base text-xs"
+					>
 						{String(hour).padStart(2, '0')}:00
 					</p>
 				))}
@@ -93,7 +96,7 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 			{/* Colonne 2 : lines + futurs events */}
 			<div
 				id="weekDisplay"
-				className="grid grid-cols-[repeat(7,12.5dvw)] ml-2 row-start-2 mb-2"
+				className="grid grid-cols-[repeat(7,12.5dvw)] ml-0 row-start-2 mb-2 lg:ml-2"
 			>
 				{Object.keys(data).map((jour) => (
 					<div key={jour} className="relative">

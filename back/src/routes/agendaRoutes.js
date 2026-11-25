@@ -11,5 +11,10 @@ agendaRoute.get(
 	exigerRole(ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE),
 	AgendaController.getDay,
 );
-agendaRoute.get('/semaine', auth, AgendaController.getWeek);
+agendaRoute.get(
+	'/semaine',
+	auth,
+	exigerRole(ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE),
+	AgendaController.getWeek,
+);
 agendaRoute.get('/mois', auth, AgendaController.getMonth);
