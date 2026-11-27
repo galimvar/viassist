@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { CircleCheck, CircleX } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
+import { enTantQue } from '../constantes/roles.js';
 import { recupererMoi, modifierProfil } from '../api/auth.js';
 import ChampModifier from '../components/ChampModifier.jsx';
 
@@ -12,7 +14,6 @@ function versFormulaire(p) {
 		date_naissance: p.date_naissance?.slice(0, 10) ?? '', // "AAAA-MM-JJ" exigé par type="date"
 		mail: p.mail ?? '',
 		telephone: p.telephone ?? '',
-		role: p.role ?? '',
 		ancien_mot_de_passe: '',
 		nouveau_mot_de_passe: '',
 		confirmation_mot_de_passe: '',
@@ -26,6 +27,7 @@ function formaterDate(date) {
 
 function Compte() {
 	const { deconnexion } = useAuth();
+	const { beneficiaires } = useBeneficiaire(); // le rôle dépend du bénéficiaire (ADR 006)
 	const [compte, setCompte] = useState(null);
 	const [formulaire, setFormulaire] = useState(null);
 	const [edition, setEdition] = useState(false);
@@ -103,7 +105,7 @@ function Compte() {
 				nouveau_mot_de_passe: formulaire.nouveau_mot_de_passe,
 				confirmation_mot_de_passe: formulaire.confirmation_mot_de_passe,
 			});
-			setCompte((precedent) => ({ ...donnees.personne, role: precedent.role })); // champs mis à jour, mots de passe vidés
+			setCompte(donnees.personne); // champs mis à jour, mots de passe vidés
 			setEdition(false);
 			setFormulaire(null);
 			setSucces(true);
@@ -155,8 +157,20 @@ function Compte() {
 						<dt className="font-semibold">Téléphone</dt>
 						<dd>{compte.telephone ?? '—'}</dd>
 
-						<dt className="font-semibold">Rôle</dt>
-						<dd>{compte.role ?? '—'}</dd>
+						<dt className="font-semibold">Bénéficiaires accompagnés</dt>
+						<dd>
+							{beneficiaires.length === 0 ? (
+								'—'
+							) : (
+								<ul>
+									{beneficiaires.map((b) => (
+										<li key={b.id}>
+											{b.prenom} {b.nom}, {enTantQue(b.role)}
+										</li>
+									))}
+								</ul>
+							)}
+						</dd>
 					</dl>
 
 					<button
@@ -227,13 +241,6 @@ function Compte() {
 					</button>
 				)}
 
-				<ChampModifier
-					id="role"
-					label="Rôle"
-					className="input w-full validator"
-					value={formulaire.role}
-					readOnly
-				/>
 				<h2 className="mt-4 font-semibold">Changer de mot de passe</h2>
 				<p className="text-xs text-base-content/60">Laisse vide pour garder l'actuel.</p>
 				<ChampModifier

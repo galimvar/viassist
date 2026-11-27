@@ -1,20 +1,14 @@
 import { Router } from 'express';
 import { ROLES } from '../constantes/roles.js';
-import { auth, exigerRole } from '../middlewares/auth.js';
+import { auth, exigerRoleSur } from '../middlewares/auth.js';
 import * as AgendaController from '../controllers/agendaControllers.js';
 
-export const agendaRoute = Router();
+// Monté sous /api/beneficiaires/:beneficiaireId/agenda
+// mergeParams : sans lui, req.params.beneficiaireId (défini par le routeur parent) serait vide ici
+export const agendaRoute = Router({ mergeParams: true });
 
-agendaRoute.get(
-	'/jour',
-	auth,
-	exigerRole(ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE),
-	AgendaController.getDay,
-);
-agendaRoute.get(
-	'/semaine',
-	auth,
-	exigerRole(ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE),
-	AgendaController.getWeek,
-);
-agendaRoute.get('/mois', auth, AgendaController.getMonth);
+const ROLES_AGENDA = [ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE];
+
+agendaRoute.get('/jour', auth, exigerRoleSur(...ROLES_AGENDA), AgendaController.getDay);
+agendaRoute.get('/semaine', auth, exigerRoleSur(...ROLES_AGENDA), AgendaController.getWeek);
+agendaRoute.get('/mois', auth, exigerRoleSur(...ROLES_AGENDA), AgendaController.getMonth);

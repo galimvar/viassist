@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getAgendaWeek } from '../api/auth';
-import { Stethoscope, HouseHeart, UserRoundGroup } from 'lucide-react';
+import { getAgendaWeek } from '../api/beneficiaires.js';
+import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
 
 // Function to adjust the display of the date. Long : vendredi 20 decembre, short : vendredi 20 dec. .
 const formaterDateLong = (iso) =>
@@ -36,10 +36,12 @@ const anchorRight = 'right-[0.25dvw]';
 
 const AgendaWeek = ({ decalage, dateFormat }) => {
 	const [data, setData] = useState();
-
+	const [jours, setJours] = useState([]);
+	const beneficiaireId = useBeneficiaire().actif.id;
+	``;
 	useEffect(() => {
 		const chargerData = async () => {
-			const json = await getAgendaWeek(decalage);
+			const json = await getAgendaWeek(beneficiaireId, decalage);
 			setData(json);
 			dateFormat({
 				long: `du ${formaterDateLong(Object.keys(json)[0])} au ${formaterDateLong(
@@ -51,7 +53,7 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 			});
 		};
 		chargerData();
-	}, [decalage]);
+	}, [decalage, dateFormat, beneficiaireId]);
 
 	if (!data)
 		return (

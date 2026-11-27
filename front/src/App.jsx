@@ -3,20 +3,22 @@ import Inscription from './pages/Inscription.jsx';
 import Connexion from './pages/Connexion.jsx';
 import TableauDeBord from './pages/TableauDeBord.jsx';
 import RouteProtegee from './components/RouteProtegee.jsx';
+import BeneficiaireRequis from './components/BeneficiaireRequis.jsx';
 import Layout from './components/Layout.jsx';
-import Nav from './components/Nav.jsx';
 import Compte from './pages/Compte.jsx';
-import ModifierUtilisateur from './pages//ModifierUtilisateur.jsx';
-import Settings from './pages/Settings.jsx';
+import ChoixBeneficiaire from './pages/ChoixBeneficiaire.jsx';
+import Membres from './pages/Membres.jsx';
 import Agenda from './pages/Agenda.jsx';
 import Journal from './pages/Journal.jsx';
-import { ROLES, JOURNAL_ROLES } from './constantes/roles.js';
+import { ROLES, AGENDA_ROLES, JOURNAL_ROLES } from './constantes/roles.js';
 
 function App() {
 	return (
 		<Routes>
 			<Route path="/inscription" element={<Inscription />} />
 			<Route path="/connexion" element={<Connexion />} />
+
+			{/* Connecté */}
 			<Route
 				element={
 					<RouteProtegee>
@@ -24,24 +26,25 @@ function App() {
 					</RouteProtegee>
 				}
 			>
-				<Route path="/" element={<TableauDeBord />} />
 				<Route path="/compte" element={<Compte />} />
+				<Route path="/beneficiaires" element={<ChoixBeneficiaire />} />
 
-				<Route
-					element={
-						<RouteProtegee roles={[ROLES.ADMIN, ROLES.PROCHE, ROLES.BENEFICIAIRE]} />
-					}
-				>
-					<Route path="/agenda" element={<Agenda />} />
-				</Route>
+				{/* Connecté + un bénéficiaire actif (sinon → /beneficiaires) */}
+				<Route element={<BeneficiaireRequis />}>
+					<Route path="/" element={<TableauDeBord />} />
 
-				<Route element={<RouteProtegee roles={JOURNAL_ROLES} />}>
-					<Route path="/journal" element={<Journal />} />
-				</Route>
+					{/* + un rôle autorisé chez ce bénéficiaire (mêmes listes que le back) */}
+					<Route element={<BeneficiaireRequis roles={AGENDA_ROLES} />}>
+						<Route path="/agenda" element={<Agenda />} />
+					</Route>
 
-				<Route element={<RouteProtegee roles={[ROLES.ADMIN]} />}>
-					<Route path="/settings" element={<Settings />} />
-					<Route path="/settings/personne/update" element={<ModifierUtilisateur />} />
+					<Route element={<BeneficiaireRequis roles={JOURNAL_ROLES} />}>
+						<Route path="/journal" element={<Journal />} />
+					</Route>
+
+					<Route element={<BeneficiaireRequis roles={[ROLES.ADMIN]} />}>
+						<Route path="/membres" element={<Membres />} />
+					</Route>
 				</Route>
 			</Route>
 		</Routes>

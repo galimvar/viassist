@@ -1,19 +1,30 @@
 @baseUrl = http://localhost:3000/api
 
 # ==========================================================================
-#  personne.http — lecture des profils (réservée à l'admin)
+#  personne.http — profil de la personne connectée
+#  Les routes admin (GET /personne, GET/PATCH /personne/:id, PATCH /personne/delete) ont été
+#  supprimées avec le rôle global (ADR 006). Bénéficiaires et rôles : voir beneficiaire.http.
 #  ⚠️ Lancer DANS L'ORDRE : REST Client mémorise le cookie de connexion.
 # ==========================================================================
 
 ### 0. Déconnexion (repartir d'un état propre) → 204
 POST {{baseUrl}}/auth/deconnexion
 
-### 1. Lire un profil sans être connecté → 401 « Connexion requise » (authentification)
-GET {{baseUrl}}/personne/1
+### 1. Ancienne route admin → 404 (elle n'existe plus)
+GET {{baseUrl}}/personne/
 
-# ---------------------------------------------------------------- PROCHE (Laurent, role 3)
+### 2. Modifier son profil sans être connecté → 401
+PATCH {{baseUrl}}/personne/modifierMoi
+Content-Type: application/json
 
-### 2. Connexion de Laurent → 200
+{
+    "nom": "Delacroix",
+    "prenom": "Laurent",
+    "date_naissance": "1971-05-21",
+    "mail": "laurent.delacroix@example.com"
+}
+
+### 3. Connexion de Laurent → 200
 POST {{baseUrl}}/auth/connexion
 Content-Type: application/json
 
@@ -22,28 +33,20 @@ Content-Type: application/json
     "mot_de_passe": "Motdepasse1!"
 }
 
-### 3. Lire un profil en tant que proche → 403 « Droits insuffisants » (autorisation)
-GET {{baseUrl}}/personne/1
+### 4. Mon profil → 200, sans role_id (le rôle dépend du bénéficiaire)
+GET {{baseUrl}}/auth/moi
 
-### 4. Lister les personnes en tant que proche → 403 (si la ligne 9 est protégée, sinon 200)
-GET {{baseUrl}}/personne/
-
-# ---------------------------------------------------------------- ADMIN (Sophie, role 1)
-
-### 5. Connexion de Sophie → 200
-POST {{baseUrl}}/auth/connexion
+### 5. Modifier son téléphone → 200
+PATCH {{baseUrl}}/personne/modifierMoi
 Content-Type: application/json
 
 {
-    "mail": "sophie.martin@example.com",
-    "mot_de_passe": "Motdepasse1!"
+    "nom": "Delacroix",
+    "prenom": "Laurent",
+    "date_naissance": "1971-05-21",
+    "mail": "laurent.delacroix@example.com",
+    "telephone": "06 12 34 56 78"
 }
 
-### 6. Lire un profil en tant qu'admin → 200, avec telephone et sans mot_de_passe_hash
-GET {{baseUrl}}/personne/1
-
-### 7. Lister les personnes en tant qu'admin → 200
-GET {{baseUrl}}/personne/
-
-### 8. Déconnexion → 204
+### 6. Déconnexion → 204
 POST {{baseUrl}}/auth/deconnexion
