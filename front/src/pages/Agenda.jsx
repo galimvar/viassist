@@ -19,8 +19,6 @@ const Agenda = () => {
 
 	return (
 		<>
-			<h2 className="flex justify-self-center mb-1 lg:mb-10">Agenda</h2>
-
 			<section className="grid grid-rows[1fr_1fr_5fr]">
 				<div
 					id="enTete"
