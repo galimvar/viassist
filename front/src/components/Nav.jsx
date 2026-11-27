@@ -138,7 +138,7 @@ export default function Nav() {
 
 			{/* Version Bureau (Navbar) */}
 			<nav className="navbar bg-base-100 shadow-md hidden lg:flex px-4">
-				<div className="navbar-start gap-2">
+				<div className="navbar-start w-6/8 gap-2">
 					{liens.map(({ chemin, label, Icone }) => {
 						const estActif = location.pathname === chemin;
 						return (
@@ -157,7 +157,7 @@ export default function Nav() {
 						);
 					})}
 				</div>
-				<div className="navbar-end gap-2">
+				<div className="navbar-end w-2/8 gap-2">
 					{actif && (
 						<span className="badge badge-soft badge-primary">
 							{actif.prenom} {actif.nom}
