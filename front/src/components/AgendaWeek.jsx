@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAgendaWeek } from '../api/beneficiaires.js';
 import { useBeneficiaire } from '../context/BeneficiaireContext.jsx';
+import { Stethoscope, HouseHeart, UserRoundGroup } from 'lucide-react';
 
 // Function to adjust the display of the date. Long : vendredi 20 decembre, short : vendredi 20 dec. .
 const formaterDateLong = (iso) =>
