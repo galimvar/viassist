@@ -30,6 +30,10 @@ const HEURES = Array.from({ length: 24 }, (_, i) => i);
 //Setup of high for every bloc and separation between lines of agenda background
 const HAUTEUR_HEURES = 3;
 
+//Anchor for events display chosing which side it is going to open
+const anchorLeft = 'left-[0.25dvw]';
+const anchorRight = 'right-[0.25dvw]';
+
 const AgendaWeek = ({ decalage, dateFormat }) => {
 	const [data, setData] = useState();
 
@@ -159,7 +163,7 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 					id="weekDisplay"
 					className="grid grid-cols-[repeat(7,12.5dvw)] ml-0 row-start-2 mb-2 lg:ml-2"
 				>
-					{Object.keys(data).map((jour) => (
+					{Object.keys(data).map((jour, index) => (
 						<div key={jour} className="relative">
 							<div>
 								{/* Lines display */}
@@ -186,16 +190,16 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 										return (
 											// Each event will be displayed as follow
 											<details
-												className={`group absolute top-0 collapse border border-base-300 w-[12dvw] open:z-10 justify-self-center ${
+												className={`group absolute top-0 collapse border border-base-300 w-[12dvw] open:z-10 open:w-[30dvw] lg:justify-self-center ${
 													COULEURS[element.type_evenement.intitule] ??
 													COULEUR_DEFAUT
-												}`}
+												} ${index < 5 ? anchorLeft : anchorRight}`}
 												name="my-accordion-det-1"
 												key={element.id}
 												style={{ transform: `translateY(${y}rem)` }}
 											>
 												{/* Event time and title. padStart adds a leading zero so hours and minutes always have 2 digits (9:5 → 09:05) */}{' '}
-												<summary className="collapse-title font-semibold text-xs truncate group-open:whitespace-normal">
+												<summary className="collapse-title font-semibold text-xs truncate group-open:whitespace-normal pl-3">
 													<time>
 														{`${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`}
 													</time>{' '}
