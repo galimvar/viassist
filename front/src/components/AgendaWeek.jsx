@@ -120,7 +120,7 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 			</section>
 			<section
 				id="displayWindow"
-				className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_40fr] border rounded-box bg-gray-50 lg:w-[95dvw] lg:h-[66dvh] overflow-y-auto overflow-x-auto w-[95dvw] h-[66dvh]"
+				className="grid grid-cols-[auto_1fr] grid-rows-[1fr_1fr_40fr] border rounded-box bg-gray-50 lg:w-auto lg:h-[66dvh] overflow-y-auto overflow-x-auto w-[95dvw] h-[66dvh]"
 			>
 				<div className="grid grid-cols-[repeat(7,12.5dvw)] row-start-1 col-start-2 lg:ml-2">
 					<p key="L" className="justify-self-center text-xs lg:text-base">
