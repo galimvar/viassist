@@ -79,21 +79,32 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 		// The section is about the display bloc of the agenda
 		<>
 			<section>
-				<ul className="grid grid-cols-[1fr_1fr_1fr] gap-10">
-					<li className="col-start-1 grid grid-cols-[1fr_1fr]">
-						<Stethoscope size={32} color="blue" className="justify-self-end" />
+				<ul className="grid grid-cols-[1fr_1fr_1fr] lg:gap-10 gap-5">
+					<li className="col-start-1 grid grid-cols-[1fr_1fr] ">
+						<Stethoscope
+							color="blue"
+							className="justify-self-end lg:size-8 size-5 self-center mr-1"
+						/>
 						<span className="lg:text-base text-xs text-blue-700">
 							{statsTypeEvents.medical} Médical/Paramédical
 						</span>
 					</li>
 					<li className="col-start-2 grid grid-cols-[1fr_1fr]">
-						<HouseHeart size={32} color="orange" className="justify-self-end" />
+						<HouseHeart
+							size={32}
+							color="orange"
+							className="justify-self-end lg:size-8 size-5 self-center mr-1"
+						/>
 						<span className="lg:text-base text-xs text-orange-700">
 							{statsTypeEvents.intervention} Aide à domicile
 						</span>
 					</li>
 					<li className="col-start-3 grid grid-cols-[1fr_1fr]">
-						<UserRoundGroup size={32} color="green" className="justify-self-end" />
+						<UserRoundGroup
+							size={32}
+							color="green"
+							className="justify-self-end lg:size-8 size-5 self-center mr-1"
+						/>
 						<span className="lg:text-base text-xs text-green-700">
 							{statsTypeEvents.family} Proche/Autre
 						</span>
