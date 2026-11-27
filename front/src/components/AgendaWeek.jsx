@@ -56,6 +56,25 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 			</div>
 		);
 
+	let statsTypeEvents = { medical: 0, intervention: 0, family: 0 };
+	const days = Object.keys(data);
+	for (let i = 0; i < days.length; i++) {
+		for (let event of data[days[i]]) {
+			if (
+				event.type_evenement.intitule.toLowerCase() === 'paramédical' ||
+				event.type_evenement.intitule.toLowerCase() === 'médical'
+			)
+				statsTypeEvents.medical += 1;
+			if (event.type_evenement.intitule.toLowerCase() === 'aide à domicile')
+				statsTypeEvents.intervention += 1;
+			if (
+				event.type_evenement.intitule.toLowerCase() === 'proches' ||
+				event.type_evenement.intitule.toLowerCase() === 'autres'
+			)
+				statsTypeEvents.family += 1;
+		}
+	}
+
 	return (
 		// The section is about the display bloc of the agenda
 		<>
@@ -64,18 +83,20 @@ const AgendaWeek = ({ decalage, dateFormat }) => {
 					<li className="col-start-1 grid grid-cols-[1fr_1fr]">
 						<Stethoscope size={32} color="blue" className="justify-self-end" />
 						<span className="lg:text-base text-xs text-blue-700">
-							Médical/Paramédical
+							{statsTypeEvents.medical} Médical/Paramédical
 						</span>
 					</li>
 					<li className="col-start-2 grid grid-cols-[1fr_1fr]">
 						<HouseHeart size={32} color="orange" className="justify-self-end" />
 						<span className="lg:text-base text-xs text-orange-700">
-							Aide à domicile
+							{statsTypeEvents.intervention} Aide à domicile
 						</span>
 					</li>
 					<li className="col-start-3 grid grid-cols-[1fr_1fr]">
 						<UserRoundGroup size={32} color="green" className="justify-self-end" />
-						<span className="lg:text-base text-xs text-green-700">Proche/Autre</span>
+						<span className="lg:text-base text-xs text-green-700">
+							{statsTypeEvents.family} Proche/Autre
+						</span>
 					</li>
 				</ul>
 			</section>
